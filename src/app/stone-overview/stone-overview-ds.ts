@@ -27,7 +27,7 @@ export class StoneOverviewDs implements DataSource<StoneInTable> {
 
   connect(collectionViewer: CollectionViewer): Observable<StoneInTable[]> {
 
-    this.mqttService.subscribe().subscribe((stoneEvent: StoneEvent) => {
+    MqttAdapterService.stones().subscribe((stoneEvent: StoneEvent) => {
       for (const s of this.stones) {
         if (s.uuid === stoneEvent.uuid && s.major === stoneEvent.major && s.minor === stoneEvent.minor) {
           s.lastSeen = stoneEvent.timestmp;

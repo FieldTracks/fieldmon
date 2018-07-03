@@ -29,7 +29,7 @@ export class SensorContactsDs implements DataSource<SensorContactTable> {
 
   connect(collectionViewer: CollectionViewer): Observable<SensorContactTable[]> {
 
-    this.mqttService.subscribe().subscribe((stoneEvent: StoneEvent) => {
+    MqttAdapterService.stones().subscribe((stoneEvent: StoneEvent) => {
       // const contact: SensorContactTable = new SensorContactTable();
      const stone = `(${stoneEvent.major},${stoneEvent.minor})`;
      const stmp = stoneEvent.timestmp;

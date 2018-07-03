@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule} from './material.module';
 import { NavComponent } from './nav/nav.component';
 import { MqttModule, } from 'ngx-mqtt';
-import {MQTT_SERVICE_OPTIONS} from './mqtt-adapter.service';
+import {MQTT_SERVICE_OPTIONS, MqttAdapterService} from './mqtt-adapter.service';
 import { StoneOverviewComponent } from './stone-overview/stone-overview.component';
 import { SensorContactsComponent } from './sensor-contacts/sensor-contacts.component';
 import { GraphComponent } from './graph/graph.component';
@@ -46,4 +46,11 @@ import { GraphComponent } from './graph/graph.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+  constructor(mqttService: MqttAdapterService) {
+
+  }
+
+
+}

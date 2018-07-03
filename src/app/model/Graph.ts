@@ -9,7 +9,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 
  */
 import {ageC} from '../helpers/age-helper';
-import {Observation, StoneEvent} from './StoneEvent';
+import {StoneEvent} from './StoneEvent';
 
 export class GraphNode {
   id: string;
@@ -80,8 +80,8 @@ export class GraphLink {
   }
 }
 export class Graph {
-  nodes: GraphNode [];
-  links: GraphLink [];
+  nodes: GraphNode [] = [];
+  links: GraphLink [] = [];
 
   codedLinks() {
       return this.links.map((link) => {

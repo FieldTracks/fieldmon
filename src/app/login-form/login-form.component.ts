@@ -13,6 +13,7 @@ import {MatFormField, MatFormFieldControl, MatCardTitle} from '@angular/material
 
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {environment} from '../../environments/environment';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login-form',
@@ -26,8 +27,10 @@ export class LoginFormComponent implements OnInit {
   password: string;
 
   showSpinner: Boolean;
-  constructor(private adapter: MqttAdapterService) { }
 
+  constructor(private router: Router, private adapter: MqttAdapterService) {
+
+  }
   ngOnInit() {
     this.broker = environment.mqtt_broker;
     this.showSpinner = false;
@@ -36,6 +39,6 @@ export class LoginFormComponent implements OnInit {
   login() {
     this.showSpinner = true;
     this.adapter.subscribeLogin(this.username, this.password);
-    window.open('/stone-overview', '_self');
+    this.router.navigateByUrl('/stone-overview');
   }
 }

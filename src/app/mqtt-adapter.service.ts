@@ -25,25 +25,31 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
 })
 export class MqttAdapterService {
 
-  private _stones: EventEmitter<StoneEvent>;
-  private subscription: Subscription;
+  static messages: String = '';
+
+  private static _stones: EventEmitter<StoneEvent> = new EventEmitter<StoneEvent>();
+  private static subscription: Subscription;
+
+  static stones(): Observable<StoneEvent> {
+    return MqttAdapterService._stones;
+  }
 
   constructor(private _mqttService: MqttService) {
-    this._stones = new EventEmitter<StoneEvent>();
+
   }
 
   unsubscibe() {
       try {
-        this.subscription.unsubscribe();
+        MqttAdapterService.subscription.unsubscribe();
       } catch (err) {
         // Ignore error - we just disconnect.
       }
   }
 
   subscribe() {
-    MQTT_SERVICE_OPTIONS.username = localStorage.getItem('username');
+    /*MQTT_SERVICE_OPTIONS.username = localStorage.getItem('username');
     MQTT_SERVICE_OPTIONS.password = localStorage.getItem('password');
-    console.log("Got:", localStorage.getItem('username'));
+    console.log('All messages:', MqttAdapterService.messages);
 
     try {
       this._mqttService.disconnect(true);
@@ -65,20 +71,47 @@ export class MqttAdapterService {
     this.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
       console.log(message.payload.toString());
       const event: StoneEvent = JSON.parse(message.payload.toString());
+      MqttAdapterService.messages += message.payload.toString();
       this._stones.emit(event);
     } );
     return this._stones;
+    */
   }
 
   subscribeLogin(username: string, password: string) {
     localStorage.setItem('username', username);
     localStorage.setItem('password', password);
-    this.subscribe();
+    MQTT_SERVICE_OPTIONS.username = localStorage.getItem('username');
+    MQTT_SERVICE_OPTIONS.password = localStorage.getItem('password');
+    console.log('All messages:', MqttAdapterService.messages);
+
+    try {
+      this._mqttService.disconnect(true);
+    } catch (err) {
+      // Ignore error - we just disconnect.
+    }
+
+    try {
+      MqttAdapterService.subscription.unsubscribe();
+    } catch (err) {
+      // Ignore error - we just disconnect.
+    }
+
+
+    // What happens here?
+    this._mqttService.connect(MQTT_SERVICE_OPTIONS);
+    console.log('connected');
+
+    MqttAdapterService.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
+      console.log(message.payload.toString());
+      const event: StoneEvent = JSON.parse(message.payload.toString());
+      MqttAdapterService.messages += message.payload.toString();
+      MqttAdapterService._stones.emit(event);
+    } );
+    return MqttAdapterService._stones;
   }
 
-  get stones(): Observable<StoneEvent> {
-    return this._stones;
-  }
+
 
 
 }

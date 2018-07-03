@@ -11,18 +11,8 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 import {AfterContentInit, Component, OnInit} from '@angular/core';
 import * as d3 from 'd3';
 import {MqttAdapterService} from '../mqtt-adapter.service';
-import {Graph, GraphLink} from '../model/Graph';
+import {Graph} from '../model/Graph';
 
-const data = {
-  'nodes': [
-    {'id': 'Myriel', 'group': 1},
-    {'id': 'Napoleon', 'group': 1},
-    {'id': 'Mlle.Baptistine', 'group': 1}
-  ],
-  'links': [
-    {'source': 'Napoleon', 'target': 'Myriel', 'value': 1},
-    {'source': 'Mlle.Baptistine', 'target': 'Myriel', 'value': 8}]
-};
 
 @Component({
   selector: 'app-graph',
@@ -32,7 +22,6 @@ const data = {
 export class GraphComponent implements OnInit, AfterContentInit  {
 
   constructor(private mqttService: MqttAdapterService) {
-
   }
 
   private svg;
@@ -43,11 +32,11 @@ export class GraphComponent implements OnInit, AfterContentInit  {
   private graph: Graph = new Graph();
 
   ngOnInit(): void {
-    this.mqttService.subscribe().subscribe( (sE) => {
+    MqttAdapterService.stones().subscribe( (sE) => {
       this.graph.addOrUdpateGraph(sE);
       if (this.simulation) {
-        this.simulation.nodes(this.graph.codedNodes());
-        this.simulation.links(this.graph.codedLinks());
+        // this.simulation.nodes(this.graph.codedNodes());
+        // this.simulation.links(this.graph.codedLinks());
       }
     });
   }
@@ -67,14 +56,14 @@ export class GraphComponent implements OnInit, AfterContentInit  {
       const link = this.svg.append('g')
         .attr('class', 'links')
         .selectAll('line')
-        .data(data.links)
+        // .data(data.links)
         .enter().append('line')
         .attr('stroke-width', function(d) { return Math.sqrt(d.value); });
 
       const node = this.svg.append('g')
         .attr('class', 'nodes')
         .selectAll('circle')
-        .data(data.nodes)
+        // .data(data.nodes)
         .enter().append('circle')
         .attr('r', 5)
         .attr('fill', 'purple')
@@ -87,11 +76,11 @@ export class GraphComponent implements OnInit, AfterContentInit  {
         .text(function(d) { return d.id; });
 
       this.simulation
-        .nodes(data.nodes)
+        .nodes(this.graph.codedNodes())
         .on('tick', ticked);
 
       this.simulation.force('link')
-        .links(data.links);
+        .links(this.graph.codedLinks());
 
       function ticked() {
         link

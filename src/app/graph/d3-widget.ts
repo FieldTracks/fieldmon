@@ -73,9 +73,10 @@ export class D3Widget {
     };
 
     const drawNode = function(d) {
-      myContext.moveTo(d.x + 5, d.y);
-      myContext.arc(d.x, d.y, 5, 0, 2 * Math.PI);
-    }
+      myContext.moveTo(d.x + 3, d.y);
+      myContext.arc(d.x, d.y, 3, 0, 2 * Math.PI);
+      myContext.fillText(d.name, d.x, d.y + 12);
+    };
 
     return function () {
       myContext.clearRect(0, 0, width, height);
@@ -98,6 +99,7 @@ export class D3Widget {
    */
   updateGraph(): void {
     D3Widget.forceSimulationLinks = D3Widget.graph.codedLinks();
+    console.log('Links:', D3Widget.forceSimulationLinks );
     D3Widget.forceSimulationNodes = D3Widget.graph.codedNodes();
     const nodes = D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
     const links = D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);

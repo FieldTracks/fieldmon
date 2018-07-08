@@ -66,10 +66,8 @@ export class MqttAdapterService {
 
     // What happens here?
     this._mqttService.connect(MQTT_SERVICE_OPTIONS);
-    console.log('connected');
 
     MqttAdapterService.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
-      console.log('Message:', message);
       const event: StoneEvent = JSON.parse(message.payload.toString());
       MqttAdapterService.messages += message.payload.toString();
       MqttAdapterService._stones.emit(event);

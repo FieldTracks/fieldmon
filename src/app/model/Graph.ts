@@ -30,7 +30,7 @@ export class GraphNode {
   }
 
   isOffline(): boolean {
-    return (new Date().getTime() - this.lastseenDate.getTime()) / 1000 / 60 > 10; // Offline: Not seen for 5 minutes
+    return (new Date().getTime() - this.lastseenDate.getTime()) / 1000  > 300; // Offline: Not seen for 5 minutes
   }
 
   age(): string {
@@ -38,7 +38,7 @@ export class GraphNode {
   }
 
   get lastseenDate(): Date {
-    return new Date(this.lastseenDate);
+    return new Date(this.lastseen);
   }
 }
 export class GraphLink {
@@ -66,11 +66,11 @@ export class GraphLink {
   }
 
   isObsolete(): boolean {
-    return (new Date().getTime() - this.lastseenDate.getTime()) / 1000 / 60 > 10; // Offline: Not seen for 5 minutes
+    return (new Date().getTime() - this.lastseenDate.getTime()) / 1000 > 30; // Offline: Not seen for 0.5 minutes
   }
 
   get lastseenDate(): Date {
-    return new Date(this.lastseenDate);
+    return new Date(this.lastseen);
   }
 
   constructor(start: GraphNode, end: GraphNode, forwardRssi: number) {
@@ -84,16 +84,19 @@ export class Graph {
   links: GraphLink [] = [];
 
   codedLinks() {
-      return this.links.map((link) => {
-        return {  source: link.start.id,
+    const ret = [];
+    return this.links.filter((l) => !l.isObsolete()).map((link) => {
+        return {
+                  source: link.start.id,
                   target: link.end.id,
-                  value: link.rssi()};
+                  value: link.rssi() / 100};
       });
     }
 
     codedNodes() {
-      return this.nodes.map( (node ) => {
+      return this.nodes.filter((l) => !l.isOffline()).map( (node ) => {
         return {
+          name: node.comment,
           id: node.id,
           group: 1
         };
@@ -171,11 +174,11 @@ export class Graph {
     // Look, if the link exists
     let link = null;
     for (const testLink of this.links) {
-      if (testLink.start.id === subject.id) { // Forward link found
+      if (testLink.start.id === sensor.id && testLink.end.id === subject.id) { // Forward link found
         testLink.forwardRssi = rssi;
         link = testLink;
         break;
-      } else if (testLink.end.id === subject.id) {
+      } else if (testLink.end.id === sensor.id && testLink.start.id === subject.id) {
         testLink.reverseRssi = rssi;
         link = testLink;
         break;

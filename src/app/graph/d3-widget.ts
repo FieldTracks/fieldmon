@@ -16,6 +16,7 @@ export class D3Widget {
     const width = canvas.width;
     const height = canvas.height;
 
+    // Be careful - the API is fragile!
     const forceSimulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(function (d) {
         return d.id;
@@ -29,6 +30,7 @@ export class D3Widget {
 
     forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
 
+    // Drag and Drop for shaing the nodes
     d3.select(canvas)
       .call(d3.drag()
         .container(canvas)
@@ -56,15 +58,23 @@ export class D3Widget {
     D3Widget.forceSimulation = forceSimulation;
   }
 
+  /**
+   * Tick event handler.
+   * Due to binding "this" to d3, we need a factory function returning an ordinary JavaScript function
+   * @param myContext
+   * @param width
+   * @param height
+   * @returns {() => void}
+   */
   createTicked(myContext, width, height) {
     const drawLink = function (d) {
       myContext.moveTo(d.source.x, d.source.y);
       myContext.lineTo(d.target.x, d.target.y);
     };
 
-    function drawNode(d) {
-      myContext.moveTo(d.x + 8, d.y);
-      myContext.arc(d.x, d.y, 8, 0, 2 * Math.PI);
+    const drawNode = function(d) {
+      myContext.moveTo(d.x + 5, d.y);
+      myContext.arc(d.x, d.y, 5, 0, 2 * Math.PI);
     }
 
     return function () {
@@ -83,11 +93,12 @@ export class D3Widget {
     };
   }
 
-  updateGraph() {
-    console.log('Update');
+  /**
+   * Updating the graph. Exepecting > 10 messages per second, the widet must called it in sane intervals
+   */
+  updateGraph(): void {
     D3Widget.forceSimulationLinks = D3Widget.graph.codedLinks();
     D3Widget.forceSimulationNodes = D3Widget.graph.codedNodes();
-    console.log('Update', D3Widget.forceSimulationLinks, D3Widget.forceSimulationNodes);
     const nodes = D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
     const links = D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
   }

@@ -19,7 +19,7 @@ import {ageC} from '../helpers/age-helper';
 
 export class SensorContactsDs implements DataSource<SensorContactTable> {
 
-  private contactsSubject: EventEmitter<SensorContactTable[]> = new EventEmitter();
+  private static contactsSubject: BehaviorSubject<SensorContactTable[]> = new BehaviorSubject([]);
   private contacts: SensorContactTable [] = [];
 
   constructor(private mqttService: MqttAdapterService) {
@@ -28,39 +28,50 @@ export class SensorContactsDs implements DataSource<SensorContactTable> {
 
 
   connect(collectionViewer: CollectionViewer): Observable<SensorContactTable[]> {
-
-    MqttAdapterService.stones().subscribe((stoneEvent: StoneEvent) => {
-      // const contact: SensorContactTable = new SensorContactTable();
-     const stone = `(${stoneEvent.major},${stoneEvent.minor})`;
-     const stmp = stoneEvent.timestmp;
-
-      for (const uuid in stoneEvent.data) {
-        const obs: Observation = stoneEvent.data[uuid];
-        const contact = new SensorContactTable();
-        if (obs.minor) {
-          contact.subject = `${obs.major} / ${obs.minor} / ${uuid}`;
-        } else {
-          contact.subject = `- / - / ${uuid}`;
-        }
-        contact.rssi = `${obs.min} / ${obs.max} /${obs.avg} / ${obs.remoteRssi}`;
-        contact.stone = stone;
-        contact.timestmp = stmp;
-        this.contacts.unshift(contact);
+    console.log('Subscribing ...');
+    this.mqttService.subscribe();
+    MqttAdapterService.currentEvents.subscribe((sEs: StoneEvent []) => {
+      this.contacts = [];
+      if (sEs) {
+        sEs.forEach((v: StoneEvent) => {
+          this.updateContacts(v);
+        });
       }
-      this.emit();
     });
-    // Update every 10s at least
-    interval(10000).subscribe(() => this.emit());
-    return this.contactsSubject;
+
+    // Update every 5s
+    interval(5000).subscribe(() => this.emit());
+    return SensorContactsDs.contactsSubject;
   }
 
+
   disconnect(collectionViewer: CollectionViewer): void {
-    this.contactsSubject.complete();
+    SensorContactsDs.contactsSubject.complete();
     this.mqttService.unsubscibe();
+    MqttAdapterService.currentEvents.unsubscribe();
   }
 
   private emit() {
-      this.contactsSubject.emit(this.contacts);
-      console.log('Emitting:', this.contacts);
+    console.log('Emitting', this.contacts);
+    SensorContactsDs.contactsSubject.next(this.contacts);
+  }
+
+  private updateContacts(stoneEvent: StoneEvent) {
+    const stone = `(${stoneEvent.major},${stoneEvent.minor})`;
+    const stmp = stoneEvent.timestmp;
+
+    stoneEvent.data.forEach( (obs: Observation) => {
+      const contact = new SensorContactTable();
+      if (obs.minor) {
+        contact.subject = `${obs.major} / ${obs.minor} / ${obs.uuid}`;
+      } else {
+        contact.subject = `${obs.mac}`;
+      }
+      contact.rssi = `${obs.min} / ${obs.max} /${obs.avg} / ${obs.remoteRssi}`;
+      contact.stone = stone;
+      contact.timestmp = stmp;
+      this.contacts.unshift(contact);
+      }
+    );
   }
 }

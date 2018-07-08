@@ -13,11 +13,11 @@ import {StoneInTable} from '../model/stone-in-table';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {StoneEvent} from '../model/StoneEvent';
 import {EventEmitter} from '@angular/core';
-import {interval, Observable} from 'rxjs';
+import {BehaviorSubject, interval, Observable} from 'rxjs';
 
 export class StoneOverviewDs implements DataSource<StoneInTable> {
 
-  private stonesSubject: EventEmitter<StoneInTable[]> = new EventEmitter();
+  private static stonesSubject: BehaviorSubject<StoneInTable[]> = new BehaviorSubject([]);
   private stones: StoneInTable [] = [];
 
   constructor(private mqttService: MqttAdapterService) {
@@ -27,31 +27,37 @@ export class StoneOverviewDs implements DataSource<StoneInTable> {
 
   connect(collectionViewer: CollectionViewer): Observable<StoneInTable[]> {
 
-    MqttAdapterService.stones().subscribe((stoneEvent: StoneEvent) => {
-      for (const s of this.stones) {
-        if (s.uuid === stoneEvent.uuid && s.major === stoneEvent.major && s.minor === stoneEvent.minor) {
-          s.lastSeen = stoneEvent.timestmp;
-          this.emit();
-          return;
-        } else {
-        }
-      }
-      const stone: StoneInTable = new StoneInTable(stoneEvent.comment, stoneEvent.uuid, stoneEvent.major, stoneEvent.minor, stoneEvent.timestmp);
-      this.stones.push(stone);
-      this.emit();
+    this.mqttService.subscribe();
+    MqttAdapterService.currentEvents.subscribe( (sEs: StoneEvent []) => {
+      sEs.forEach((sE: StoneEvent) => {
+        this.updateStones(sE);
+      });
+    this.emit();
     });
+
     // Update every 10s at least
     interval(10000).subscribe(() => this.emit());
-    return this.stonesSubject;
+    return StoneOverviewDs.stonesSubject;
   }
 
   disconnect(collectionViewer: CollectionViewer): void {
-    this.stonesSubject.complete();
+    StoneOverviewDs.stonesSubject.complete();
     this.mqttService.unsubscibe();
   }
 
   private emit() {
-      this.stonesSubject.emit(this.stones);
-      console.log('Emitting:', this.stones);
+    StoneOverviewDs.stonesSubject.next(this.stones);
+  }
+
+  private updateStones(sE: StoneEvent) {
+    for (const s of this.stones) {
+      if (s.uuid === sE.uuid && s.major === sE.major && s.minor === sE.minor) {
+        s.lastSeen = sE.timestmp;
+        return;
+      } else {
+      }
+    }
+    const stone: StoneInTable = new StoneInTable(sE.comment, sE.uuid, sE.major, sE.minor, sE.timestmp);
+    this.stones.push(stone);
   }
 }

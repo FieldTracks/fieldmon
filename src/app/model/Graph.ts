@@ -89,7 +89,7 @@ export class Graph {
         return {
                   source: link.start.id,
                   target: link.end.id,
-                  value: link.rssi() / 100};
+                  value: Math.pow(2, link.rssi())};
       });
     }
 
@@ -119,7 +119,7 @@ export class Graph {
       const subjectNode = this.addOrUpdateNode(obs.uuid, obs.major, obs.minor, sE.timestmp, null);
 
       // Update link
-      this.addOrUpdateLink(sensorNode, subjectNode, obs.avg, sE.timestmp);
+      this.addOrUpdateLink(sensorNode, subjectNode, obs.avg, obs.remoteRssi, sE.timestmp);
     }
   }
 
@@ -170,16 +170,17 @@ export class Graph {
    * @param {string} lastSeen
    * @returns {GraphLink}
    */
-  private addOrUpdateLink(sensor: GraphNode, subject: GraphNode, rssi: number, lastSeen: string): GraphLink {
+  private addOrUpdateLink(sensor: GraphNode, subject: GraphNode, rssi: number, remoteRssi: number, lastSeen: string): GraphLink {
     // Look, if the link exists
+    const rSsi = remoteRssi ? remoteRssi : 140; // Default - 60 dbm scaled + 200
     let link = null;
     for (const testLink of this.links) {
       if (testLink.start.id === sensor.id && testLink.end.id === subject.id) { // Forward link found
-        testLink.forwardRssi = rssi;
+        testLink.forwardRssi = rssi / rSsi;
         link = testLink;
         break;
       } else if (testLink.end.id === sensor.id && testLink.start.id === subject.id) {
-        testLink.reverseRssi = rssi;
+        testLink.reverseRssi = rssi / rSsi;
         link = testLink;
         break;
       }

@@ -11,7 +11,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 import {EventEmitter, Injectable} from '@angular/core';
 import { IMqttMessage, IMqttServiceOptions, MqttService } from 'ngx-mqtt';
 import { environment} from './../environments/environment';
-import {Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {StoneEvent} from './model/StoneEvent';
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -27,11 +27,18 @@ export class MqttAdapterService {
 
   static messages: String = '';
 
-  private static _stones: EventEmitter<StoneEvent> = new EventEmitter<StoneEvent>();
+  private static _stoneEvents: EventEmitter<StoneEvent> = new EventEmitter<StoneEvent>();
   private static subscription: Subscription;
 
-  static stones(): Observable<StoneEvent> {
-    return MqttAdapterService._stones;
+  static currentEvents: BehaviorSubject<StoneEvent []> = new BehaviorSubject<StoneEvent[]>([]);
+  private static stones = new Map();
+
+  static stoneEvents(): Observable<StoneEvent> {
+    return MqttAdapterService._stoneEvents;
+  }
+
+  static stoneStatus(): StoneEvent[] {
+    return Array.from(MqttAdapterService.stones.values());
   }
 
   constructor(private _mqttService: MqttService) {
@@ -70,9 +77,11 @@ export class MqttAdapterService {
     MqttAdapterService.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
       const event: StoneEvent = JSON.parse(message.payload.toString());
       MqttAdapterService.messages += message.payload.toString();
-      MqttAdapterService._stones.emit(event);
+      MqttAdapterService._stoneEvents.emit(event);
+      MqttAdapterService.stones.set(StoneEvent.stoneId(event), event);
+      MqttAdapterService.currentEvents.next(Array.from(MqttAdapterService.stones.values()));
     } );
-    return MqttAdapterService._stones;
+    return MqttAdapterService._stoneEvents;
 
   }
 
@@ -98,15 +107,15 @@ export class MqttAdapterService {
 
     // What happens here?
     this._mqttService.connect(MQTT_SERVICE_OPTIONS);
-    console.log('connected');
+
 
     MqttAdapterService.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
       console.log('Message:', message);
       const event: StoneEvent = JSON.parse(message.payload.toString());
       MqttAdapterService.messages += message.payload.toString();
-      MqttAdapterService._stones.emit(event);
+      MqttAdapterService._stoneEvents.emit(event);
     } );
-    return MqttAdapterService._stones;
+    return MqttAdapterService._stoneEvents;
   }
 
 

@@ -16,6 +16,7 @@ export class Observation {
   major: string;
   minor: string;
   uuid: string;
+  mac: string;
 
 }
 
@@ -26,5 +27,14 @@ export class StoneEvent {
   minor: string;
   timestmp: string;
   data: Observation [];
+
+  /**
+   * Static due to JSON.parse
+   * @param {StoneEvent} se
+   * @returns {string}
+   */
+  static stoneId(se: StoneEvent) {
+    return `${se.uuid}-${se.major}-${se.minor}`;
+  }
 }
 

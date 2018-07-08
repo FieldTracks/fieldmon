@@ -13,6 +13,7 @@ import {MqttAdapterService} from '../mqtt-adapter.service';
 import {Graph} from '../model/Graph';
 import {D3Widget} from './d3-widget';
 import {interval} from 'rxjs';
+import {StoneEvent} from '../model/StoneEvent';
 
 
 @Component({
@@ -33,6 +34,11 @@ export class GraphComponent implements OnInit, AfterContentInit {
       console.log('Got stone event', v);
       D3Widget.graph.addOrUdpateGraph(v);
 
+    });
+
+    // Take care of initial load
+    MqttAdapterService.stoneStatus().forEach( (sE: StoneEvent) => {
+      D3Widget.graph.addOrUdpateGraph(sE);
     });
   }
 

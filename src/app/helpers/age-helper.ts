@@ -18,7 +18,7 @@ export function ageC(timeStr: string): string {
   const minutes = dist % 60;
   dist = Math.floor(dist / 60);
 
-  const secondStr = (seconds > 0) ?  `${seconds}s` : '';
+  const secondStr = `${seconds}s`;
   const minuteStr = (minutes > 0) ? `${minutes}m ` : '';
   const hourStr = (dist > 0) ? `${dist}h ` : '';
 

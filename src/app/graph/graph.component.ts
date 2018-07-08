@@ -9,9 +9,10 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 
  */
 import {AfterContentInit, Component, OnInit} from '@angular/core';
-import * as d3 from 'd3';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {Graph} from '../model/Graph';
+import {D3Widget} from './d3-widget';
+import {interval} from 'rxjs';
 
 
 @Component({
@@ -19,120 +20,35 @@ import {Graph} from '../model/Graph';
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnInit, AfterContentInit  {
+export class GraphComponent implements OnInit, AfterContentInit {
+  private d3Widget = new D3Widget();
 
   constructor(private mqttService: MqttAdapterService) {
+
   }
 
-  private svg;
-  private width;
-  private height;
-  private simulation;
-  private color;
-  private graph: Graph = new Graph();
-
+  /** Subscribe to event */
   ngOnInit(): void {
-    MqttAdapterService.stones().subscribe( (sE) => {
-      this.graph.addOrUdpateGraph(sE);
-      if (this.simulation) {
-        // this.simulation.nodes(this.graph.codedNodes());
-        // this.simulation.links(this.graph.codedLinks());
-      }
+    this.mqttService.subscribe().subscribe((v) => {
+      console.log('Got stone event', v);
+      D3Widget.graph.addOrUdpateGraph(v);
+
     });
   }
 
+  /**
+   * Do not update the graph, befor all components are loaded.
+   * Then do so every 2 seconds
+   */
   ngAfterContentInit(): void {
-    this.svg = d3.select('svg');
-    this.width = + this.svg.attr('width');
-    this.height = +this.svg.attr('height');
-
-    this.color = d3.scaleOrdinal(d3.schemeCategory10);
-
-    this.simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id(function(d) { return d.id; }))
-      .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2));
-
-      const link = this.svg.append('g')
-        .attr('class', 'links')
-        .selectAll('line')
-        // .data(data.links)
-        .enter().append('line')
-        .attr('stroke-width', function(d) { return Math.sqrt(d.value); });
-
-      const node = this.svg.append('g')
-        .attr('class', 'nodes')
-        .selectAll('circle')
-        // .data(data.nodes)
-        .enter().append('circle')
-        .attr('r', 5)
-        .attr('fill', 'purple')
-        .call(d3.drag()
-          .on('start', this.createdragstarted())
-          .on('drag', this.dragged)
-          .on('end', this.createdragended()));
-
-      node.append('title')
-        .text(function(d) { return d.id; });
-
-      this.simulation
-        .nodes(this.graph.codedNodes())
-        .on('tick', ticked);
-
-      this.simulation.force('link')
-        .links(this.graph.codedLinks());
-
-      function ticked() {
-        link
-          .attr('x1', function(d) { return d.source.x; })
-          .attr('y1', function(d) { return d.source.y; })
-          .attr('x2', function(d) { return d.target.x; })
-          .attr('y2', function(d) { return d.target.y; });
-
-        node
-          .attr('cx', function(d) { return d.x; })
-          .attr('cy', function(d) { return d.y; });
+    this.d3Widget.run();
+    interval(5000).subscribe( () => {
+      this.d3Widget.updateGraph();
       }
-  }
-
-  createdragstarted() {
-    const that = this;
-   return function (d): void {
-      if (!d3.event.active) {
-      that.simulation.alphaTarget(0.3).restart();
-    }
-    d.fx = d.x;
-    d.fy = d.y;
-  };
-  }
-
-  dragged(d): void {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-  }
-
-  createdragended() {
-    const that = this;
-    return function (d): void {
-        if (!d3.event.active) {
-        that.simulation.alphaTarget(0);
-      }
-      d.fx = null;
-      d.fy = null;
-    };
+    );
 
   }
-/*
-  createResizeCanvase() {
-    const that = this;
-    const el = document.getElementById('graph');
-    return function() {
-      that.svg.width = el.offsetWidth;
-      that.height = el.offsetHeight;
-      that.svg.setMaxArea(that.width, that.height);
-    };
 
-  }
-  */
+
 
 }

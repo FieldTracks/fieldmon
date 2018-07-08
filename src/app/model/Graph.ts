@@ -131,8 +131,8 @@ export class Graph {
     let index = 0;
     let node: GraphNode = null;
     for (; index < this.nodes.length; index++) {
-      node = this.nodes[index];
-      if (node.id === nodeId ) {
+      if (this.nodes[index].id === nodeId ) {
+        node = this.nodes[index];
         break;
       }
     }

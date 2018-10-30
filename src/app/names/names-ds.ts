@@ -14,20 +14,21 @@ import {MqttAdapterService} from '../mqtt-adapter.service';
 import {BehaviorSubject, interval, Observable} from 'rxjs';
 import {Observation, StoneEvent} from '../model/StoneEvent';
 import {EventEmitter} from '@angular/core';
-import {SensorContactTable} from '../model/sensor-contact-table';
+import {Names} from '../model/Names';
 import {ageC} from '../helpers/age-helper';
 
-export class SensorContactsDs implements DataSource<SensorContactTable> {
+export class SensorContactsDs implements DataSource<Names> {
 
-  private static contactsSubject: BehaviorSubject<SensorContactTable[]> = new BehaviorSubject([]);
-  private contacts: SensorContactTable [] = [];
+  private static contactsSubject: BehaviorSubject<Names[]> = new BehaviorSubject([]);
+  private contacts: Names [] = [];
+  public autoRefresh: Boolean = true;
 
   constructor(private mqttService: MqttAdapterService) {
 
   }
 
 
-  connect(collectionViewer: CollectionViewer): Observable<SensorContactTable[]> {
+  connect(collectionViewer: CollectionViewer): Observable<Names[]> {
     console.log('Subscribing ...');
     this.mqttService.subscribe();
     MqttAdapterService.currentEvents.subscribe((sEs: StoneEvent []) => {
@@ -40,7 +41,7 @@ export class SensorContactsDs implements DataSource<SensorContactTable> {
     });
 
     // Update every 5s
-    interval(5000).subscribe(() => this.emit());
+    interval(5000).subscribe(() => this.autoRefresh ? this.emit() : console.log('NOP'));
     return SensorContactsDs.contactsSubject;
   }
 
@@ -51,7 +52,7 @@ export class SensorContactsDs implements DataSource<SensorContactTable> {
     MqttAdapterService.currentEvents.unsubscribe();
   }
 
-  private emit() {
+  public emit() {
     console.log('Emitting', this.contacts);
     SensorContactsDs.contactsSubject.next(this.contacts);
   }
@@ -61,15 +62,13 @@ export class SensorContactsDs implements DataSource<SensorContactTable> {
     const stmp = stoneEvent.timestmp;
 
     stoneEvent.data.forEach( (obs: Observation) => {
-      const contact = new SensorContactTable();
-      if (obs.minor) {
-        contact.subject = `${obs.major} / ${obs.minor} / ${obs.uuid}`;
-      } else {
-        contact.subject = `${obs.mac}`;
-      }
-      contact.rssi = `${obs.min} / ${obs.max} /${obs.avg} / ${obs.remoteRssi}`;
-      contact.stone = stone;
+      const contact = new Names();
       contact.timestmp = stmp;
+      contact.Mac = `${obs.mac}`;
+      contact.Major = `${obs.major}`;
+      contact.Minor = `${obs.minor}`;
+      contact.RSSI = `${obs.avg}`;
+      contact.Name = '';
       this.contacts.unshift(contact);
       }
     );

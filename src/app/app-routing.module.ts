@@ -14,6 +14,7 @@ import {LoginFormComponent} from './login-form/login-form.component';
 import {StoneOverviewComponent} from './stone-overview/stone-overview.component';
 import {SensorContactsComponent} from './sensor-contacts/sensor-contacts.component';
 import {GraphComponent} from './graph/graph.component';
+import { NamesComponent } from './names/names.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'stone-overview', component: StoneOverviewComponent },
   { path: 'sensor-contacts', component: SensorContactsComponent },
   { path: 'graph', component: GraphComponent },
+  { path: 'names', component: NamesComponent }
 ];
 
 

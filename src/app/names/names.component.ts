@@ -12,25 +12,40 @@ import { Component, OnInit } from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {SensorContactTable} from '../model/sensor-contact-table';
-import {SensorContactsDs} from './sensor-contacts-ds';
+import {SensorContactsDs} from './names-ds';
 
 @Component({
-  selector: 'app-sensor-contacts',
-  templateUrl: './sensor-contacts.component.html',
-  styleUrls: ['./sensor-contacts.component.css']
+  selector: 'app-names',
+  templateUrl: './names.component.html',
+  styleUrls: ['./names.component.css']
 })
-export class SensorContactsComponent implements OnInit {
+export class NamesComponent implements OnInit {
 
-  datasource: DataSource<SensorContactTable>;
+  datasource: SensorContactsDs;
 
-  displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
+  displayedColumns = ['Major / Minor', 'Mac', 'Name', 'Submit'];
 
   constructor(private mqttAdapter: MqttAdapterService) {
     this.datasource = new SensorContactsDs(mqttAdapter);
   }
 
+  refresh(): void {
+    this.datasource.emit();
+  }
+
+  toggleRefresh(): void {
+    this.datasource.autoRefresh = !this.datasource.autoRefresh;
+  }
+
+  submitName(name: String): void {
+    alert(name);
+  }
 
   ngOnInit() {
+  }
+
+  private publishName(mac: String, name: String): void {
+    // mqttService.currentEvents
   }
 
 }

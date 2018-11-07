@@ -62,14 +62,29 @@ export class SensorContactsDs implements DataSource<Names> {
     const stmp = stoneEvent.timestmp;
 
     stoneEvent.data.forEach( (obs: Observation) => {
+      for (const s of this.contacts) {
+        if ((s.Mac === obs.mac && obs.mac !== undefined) || (s.UUID === obs.uuid && (s.Major === obs.major && s.Minor === obs.minor))) {
+          return;
+        }
+      }
       const contact = new Names();
       contact.timestmp = stmp;
       contact.Mac = `${obs.mac}`;
       contact.Major = `${obs.major}`;
       contact.Minor = `${obs.minor}`;
-      contact.RSSI = `${obs.avg}`;
+      contact.RSSI = obs.avg;
+      contact.UUID = `${obs.uuid}`;
       contact.Name = '';
       this.contacts.unshift(contact);
+      this.contacts = this.contacts.sort((a, b) => {
+        if (a < b) {
+          return 1;
+        } else if (a > b) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
       }
     );
   }

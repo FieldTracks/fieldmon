@@ -14,8 +14,9 @@ export class Names {
   Major: string;
   Minor: string;
   Mac: string;
-  RSSI: string;
+  RSSI: number;
   Name: string;
+  UUID: String;
 
   timestmp: string;
 

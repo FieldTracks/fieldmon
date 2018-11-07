@@ -23,7 +23,7 @@ export class NamesComponent implements OnInit {
 
   datasource: SensorContactsDs;
 
-  displayedColumns = ['Major / Minor', 'Mac', 'Name', 'Submit'];
+  displayedColumns = ['Major / Minor', 'UUID', 'Mac', 'Name', 'Submit'];
 
   constructor(private mqttAdapter: MqttAdapterService) {
     this.datasource = new SensorContactsDs(mqttAdapter);

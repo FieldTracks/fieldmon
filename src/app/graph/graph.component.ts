@@ -28,9 +28,9 @@ export class GraphComponent implements OnInit, AfterContentInit {
 
   }
 
-  /** Subscribe to event */
+  /** Subscribe to event **/
   ngOnInit(): void {
-    this.mqttService.subscribe().subscribe((v) => {
+    /*this.mqttService.subscribe().subscribe((v) => {
       console.log('Got stone event', v);
       D3Widget.graph.addOrUdpateGraph(v);
 
@@ -39,13 +39,13 @@ export class GraphComponent implements OnInit, AfterContentInit {
     // Take care of initial load
     MqttAdapterService.stoneStatus().forEach( (sE: StoneEvent) => {
       D3Widget.graph.addOrUdpateGraph(sE);
-    });
+    });*/
   }
 
   /**
    * Do not update the graph, befor all components are loaded.
    * Then do so every 2 seconds
-   */
+   **/
   ngAfterContentInit(): void {
     this.d3Widget.run();
     interval(5000).subscribe( () => {

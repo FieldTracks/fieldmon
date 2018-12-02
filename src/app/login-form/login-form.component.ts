@@ -28,7 +28,7 @@ export class LoginFormComponent implements OnInit {
 
   showSpinner: Boolean;
 
-  constructor(private router: Router, private adapter: MqttAdapterService) {
+  constructor(private router: Router, private mqttService: MqttAdapterService) {
 
   }
   ngOnInit() {
@@ -38,7 +38,7 @@ export class LoginFormComponent implements OnInit {
 
   login() {
     this.showSpinner = true;
-    this.adapter.subscribeLogin(this.username, this.password);
+    this.mqttService.login(this.username, this.password);
     this.router.navigateByUrl('/stone-overview');
   }
 }

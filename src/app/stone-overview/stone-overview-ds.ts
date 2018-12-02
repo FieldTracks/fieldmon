@@ -13,44 +13,22 @@ import {StoneInTable} from '../model/stone-in-table';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {StoneEvent} from '../model/StoneEvent';
 import {EventEmitter} from '@angular/core';
-import {BehaviorSubject, interval, Observable} from 'rxjs';
+import {BehaviorSubject, interval, Observable, Subscription} from 'rxjs';
+import { IMqttMessage } from 'ngx-mqtt';
+import { GDataSource } from '../helpers/GDataSource';
 
-export class StoneOverviewDs implements DataSource<StoneInTable> {
+export class StoneOverviewDs extends GDataSource<StoneInTable> {
 
-  private static stonesSubject: BehaviorSubject<StoneInTable[]> = new BehaviorSubject([]);
-  private stones: StoneInTable [] = [];
+  private static stones: StoneInTable [] = [];
 
-  constructor(private mqttService: MqttAdapterService) {
-
+  constructor(protected mqttService: MqttAdapterService) {
+    super('/JellingStone/#', StoneOverviewDs.stones);
   }
 
+  protected parseMessage(message: IMqttMessage) {
+    const sE: StoneEvent = JSON.parse(message.payload.toString());
 
-  connect(collectionViewer: CollectionViewer): Observable<StoneInTable[]> {
-
-    this.mqttService.subscribe();
-    MqttAdapterService.currentEvents.subscribe( (sEs: StoneEvent []) => {
-      sEs.forEach((sE: StoneEvent) => {
-        this.updateStones(sE);
-      });
-    this.emit();
-    });
-
-    // Update every 10s at least
-    interval(10000).subscribe(() => this.emit());
-    return StoneOverviewDs.stonesSubject;
-  }
-
-  disconnect(collectionViewer: CollectionViewer): void {
-    StoneOverviewDs.stonesSubject.complete();
-    this.mqttService.unsubscibe();
-  }
-
-  private emit() {
-    StoneOverviewDs.stonesSubject.next(this.stones);
-  }
-
-  private updateStones(sE: StoneEvent) {
-    for (const s of this.stones) {
+    for (const s of StoneOverviewDs.stones) {
       if (s.uuid === sE.uuid && s.major === sE.major && s.minor === sE.minor) {
         s.lastSeen = sE.timestmp;
         return;
@@ -58,6 +36,6 @@ export class StoneOverviewDs implements DataSource<StoneInTable> {
       }
     }
     const stone: StoneInTable = new StoneInTable(sE.comment, sE.uuid, sE.major, sE.minor, sE.timestmp);
-    this.stones.push(stone);
+    StoneOverviewDs.stones.push(stone);
   }
 }

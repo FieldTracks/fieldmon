@@ -11,8 +11,10 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 import { Component, OnInit } from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
 import {MqttAdapterService} from '../mqtt-adapter.service';
-import {SensorContactTable} from '../model/sensor-contact-table';
-import {SensorContactsDs} from './names-ds';
+import { Subscription } from 'rxjs';
+import { IMqttClient, IMqttMessage } from 'ngx-mqtt';
+import { Names } from '../model/Names';
+import { NamesDs } from './names-ds';
 
 @Component({
   selector: 'app-names',
@@ -21,20 +23,26 @@ import {SensorContactsDs} from './names-ds';
 })
 export class NamesComponent implements OnInit {
 
-  datasource: SensorContactsDs;
-
+  private _refresh: Boolean;
+  private _subscription: Subscription;
+  private datasource: DataSource<NamesDs>;
   displayedColumns = ['Major / Minor', 'UUID', 'Mac', 'Name', 'Submit'];
 
-  constructor(private mqttAdapter: MqttAdapterService) {
-    this.datasource = new SensorContactsDs(mqttAdapter);
+  constructor() {
+    this._refresh = true;
+    /*this._subscription = MqttAdapterService.getSubscription('/Aggregated/Stones', (message: IMqttMessage) => {
+      
+    });*/
   }
 
+
+
   refresh(): void {
-    this.datasource.emit();
+    //this.datasource.emit();
   }
 
   toggleRefresh(): void {
-    this.datasource.autoRefresh = !this.datasource.autoRefresh;
+    this._refresh = !this._refresh;
   }
 
   submitName(name: String): void {

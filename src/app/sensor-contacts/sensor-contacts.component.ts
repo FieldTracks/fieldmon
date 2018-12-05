@@ -13,6 +13,7 @@ import {DataSource} from '@angular/cdk/collections';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {SensorContactTable} from '../model/sensor-contact-table';
 import {SensorContactsDs} from './sensor-contacts-ds';
+import { GDataSource } from '../helpers/GDataSource';
 
 @Component({
   selector: 'app-sensor-contacts',
@@ -21,7 +22,7 @@ import {SensorContactsDs} from './sensor-contacts-ds';
 })
 export class SensorContactsComponent implements OnInit, OnDestroy {
 
-  datasource: DataSource<SensorContactTable>;
+  datasource: GDataSource<SensorContactTable>;
 
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
 

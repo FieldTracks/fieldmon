@@ -22,7 +22,7 @@ export abstract class GDataSource<T> implements DataSource<T> {
   private _channel: string;
   protected abstract mqttService: MqttAdapterService;
 
-  constructor(channel: string, data: T[]) {
+  constructor(channel: string, data: T[] = []) {
     this._channel = channel;
     this.data = data;
     this.Subject = new BehaviorSubject([]);
@@ -33,23 +33,23 @@ export abstract class GDataSource<T> implements DataSource<T> {
     console.log('Subscribing ...');
     this.emit();
 
-    this._subscription = this.mqttService.getSubscription(this._channel, this.parseMessage);
+    this._subscription = this.mqttService.getSubscription(this._channel, this.parseMessage); 
 
     // Update every 5s
     this._interval = interval(5000).subscribe(() => this.emit());
     return this.Subject;
   }
 
-  protected abstract parseMessage(message: IMqttMessage): void;
+  pause(){
+    this._interval.unsubscribe();
+  }
 
-  resume() {
+  resume(){
     this.emit();
     this._interval = interval(5000).subscribe(() => this.emit());
   }
 
-  pause() {
-    this._interval.unsubscribe();
-  }
+  protected abstract parseMessage(message: IMqttMessage): void;
 
   disconnect(collectionViewer: CollectionViewer): void {
     console.log("unsubscribing...");
@@ -57,7 +57,7 @@ export abstract class GDataSource<T> implements DataSource<T> {
     this._subscription.unsubscribe();
   }
 
-  private emit() {
+  emit() {
     console.log('Emitting', this.data);
     this.Subject.next(this.data);
   }

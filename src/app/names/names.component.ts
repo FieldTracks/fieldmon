@@ -8,7 +8,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import { Subscription } from 'rxjs';
@@ -21,27 +21,29 @@ import { NamesDs } from './names-ds';
   templateUrl: './names.component.html',
   styleUrls: ['./names.component.css']
 })
-export class NamesComponent implements OnInit {
+export class NamesComponent implements OnInit, OnDestroy {
 
-  private _refresh: Boolean;
-  private _subscription: Subscription;
-  private datasource: DataSource<NamesDs>;
+  private datasource: NamesDs;
+  private _refresh: boolean;
   displayedColumns = ['Major / Minor', 'UUID', 'Mac', 'Name', 'Submit'];
 
-  constructor() {
+  constructor(private mqttAdapter: MqttAdapterService) {
+    this.datasource = new NamesDs(mqttAdapter);
     this._refresh = true;
-    /*this._subscription = MqttAdapterService.getSubscription('/Aggregated/Stones', (message: IMqttMessage) => {
-      
-    });*/
   }
 
 
 
   refresh(): void {
-    //this.datasource.emit();
+    this.datasource.emit();
   }
 
   toggleRefresh(): void {
+    if(this._refresh){
+      this.datasource.pause();
+    }else{
+      this.datasource.resume();
+    }
     this._refresh = !this._refresh;
   }
 
@@ -50,6 +52,10 @@ export class NamesComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy(){
+    this.datasource.disconnect(null);
   }
 
   private publishName(mac: String, name: String): void {

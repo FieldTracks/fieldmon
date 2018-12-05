@@ -17,6 +17,7 @@ export class Names {
   RSSI: number;
   Name: string;
   UUID: String;
+  color: string;
 
   timestmp: string;
 

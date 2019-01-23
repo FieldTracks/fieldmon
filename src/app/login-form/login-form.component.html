@@ -1,28 +1,16 @@
-<div fxLayout="fxLayoutGap" fxLayoutGap fxLayoutAlign="center center">
-<mat-card class="example-card" >
-  <mat-card-header>
-    <mat-card-title>Login ({{ broker }}):</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-spinner *ngIf="showSpinner" style="margin:0 auto;" mode="indeterminate"></mat-spinner>
-    <form class="example-form" *ngIf="!showSpinner">
-      <table class="example-full-width" cellspacing="0">
-        <tr>
-          <td>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td><mat-form-field class="example-full-width">
-            <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" required>
-          </mat-form-field></td>
-        </tr></table>
-    </form>
-  </mat-card-content>
-  <mat-card-actions *ngIf="!showSpinner">
-    <button  mat-raised-button (click)="login()" color="primary" >Login</button>
-  </mat-card-actions>
-</mat-card>
-</div>
+<section fxLayout="column" fxLayoutAlign="center center">
+  <mat-spinner *ngIf="showSpinner" style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+  <form fxLayout="column" fxLayoutAlign="center center"  *ngIf="!showSpinner" >
+    <h2 class="mat-h2">Login: {{ broker }}</h2>
+          <mat-form-field>
+            <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+          </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" required>
+        </mat-form-field>
+      <button type="submit" mat-raised-button (click)="login()" color="primary" >Login</button>
+
+  </form>
+
+
+</section>

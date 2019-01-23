@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  mqtt_broker: 'mqtt.jluehr.de',
+  mqtt_broker: 'dev.fieldtracks.org',
   mqtt_port: 1885,
   mqtt_path: ''
 };

@@ -8,12 +8,12 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {StoneEvent} from '../model/StoneEvent';
 import {StoneInTable} from '../model/stone-in-table';
 import {DataSource } from '@angular/cdk/collections';
-import {StoneOverviewDs} from './stone-overview-ds';
+import { StoneOverviewDs } from './stone-overview-ds';
 
 
 @Component({
@@ -21,7 +21,7 @@ import {StoneOverviewDs} from './stone-overview-ds';
   templateUrl: './stone-overview.component.html',
   styleUrls: ['./stone-overview.component.css']
 })
-export class StoneOverviewComponent implements OnInit {
+export class StoneOverviewComponent implements OnInit, OnDestroy {
 
   datasource: DataSource<StoneInTable>;
 
@@ -33,6 +33,10 @@ export class StoneOverviewComponent implements OnInit {
 
 
   ngOnInit() {
+  }
+
+  ngOnDestroy(){
+    this.datasource.disconnect(null);
   }
 
 }

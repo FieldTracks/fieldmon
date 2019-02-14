@@ -14,11 +14,27 @@ import {MatButtonModule, MatTableModule, MatToolbarModule} from '@angular/materi
 import { MatCardModule, MatInputModule,  } from '@angular/material';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatGridListModule} from '@angular/material/grid-list';
-import {FlexLayoutModule} from "@angular/flex-layout";
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
-  imports: [MatTableModule, CommonModule, MatToolbarModule, MatButtonModule, MatCardModule, MatInputModule, MatProgressSpinnerModule, MatGridListModule, FlexLayoutModule],
-  exports: [MatTableModule, CommonModule, MatToolbarModule, MatButtonModule, MatCardModule, MatInputModule, MatProgressSpinnerModule, MatGridListModule, FlexLayoutModule],
+  imports: [MatTableModule,
+            CommonModule,
+            MatToolbarModule,
+            MatButtonModule,
+            MatCardModule,
+            MatInputModule,
+            MatProgressSpinnerModule,
+            MatGridListModule,
+            FlexLayoutModule],
+  exports: [MatTableModule,
+            CommonModule,
+            MatToolbarModule,
+            MatButtonModule,
+            MatCardModule,
+            MatInputModule,
+            MatProgressSpinnerModule,
+            MatGridListModule,
+            FlexLayoutModule],
   declarations: []
 })
 export class MaterialModule { }

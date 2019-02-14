@@ -6,7 +6,7 @@
             <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
           </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" required>
+          <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" (keydown.enter)="login()" required>
         </mat-form-field>
       <button type="submit" mat-raised-button (click)="login()" color="primary" >Login</button>
 

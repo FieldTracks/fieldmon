@@ -20,6 +20,10 @@ export class Observation {
 
 }
 
+export class AggregatedData{
+  
+}
+
 export class StoneEvent {
   comment: string;
   uuid: string;

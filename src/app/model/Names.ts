@@ -10,14 +10,20 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import {ageC} from '../helpers/age-helper';
 
-export class SensorContactTable {
-  subject: string;
-  stone: string;
-  rssi: string;
+export class Names {
+  Major: string;
+  Minor: string;
+  Mac: string;
+  RSSI: number;
+  Name: string;
+  UUID: String;
+  Color: string;
+  Comment: string;
+  ShowEditnameField: boolean;
+
   timestmp: string;
 
   get age() {
     return ageC(this.timestmp);
-
   }
 }

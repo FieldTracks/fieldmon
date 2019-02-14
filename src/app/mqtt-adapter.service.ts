@@ -8,11 +8,11 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import {EventEmitter, Injectable} from '@angular/core';
-import { IMqttMessage, IMqttServiceOptions, MqttService } from 'ngx-mqtt';
-import { environment} from './../environments/environment';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {StoneEvent} from './model/StoneEvent';
+import { Injectable } from '@angular/core';
+import { IMqttMessage, IMqttServiceOptions, MqttService, IOnMessageEvent } from 'ngx-mqtt';
+import { environment } from './../environments/environment';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
   port: environment.mqtt_port,
@@ -25,100 +25,50 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
 })
 export class MqttAdapterService {
 
-  static messages: String = '';
+  private static _mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
+  private static _connected: Boolean = false; // TODO: Check Status // eventuell ersetzen
 
-  private static _stoneEvents: EventEmitter<StoneEvent> = new EventEmitter<StoneEvent>();
-  private static subscription: Subscription;
-
-  static currentEvents: BehaviorSubject<StoneEvent []> = new BehaviorSubject<StoneEvent[]>([]);
-  private static stones = new Map();
-
-  static stoneEvents(): Observable<StoneEvent> {
-    return MqttAdapterService._stoneEvents;
+  constructor(private router: Router) {
+    if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('password') !== null) {
+      this.login(sessionStorage.getItem('username'), sessionStorage.getItem('password'));
+    }
   }
 
-  static stoneStatus(): StoneEvent[] {
-    return Array.from(MqttAdapterService.stones.values());
-  }
+  public login(username: string, password: string) {
+    sessionStorage.setItem('username', username);
+    sessionStorage.setItem('password', password);
 
-  constructor(private _mqttService: MqttService) {
-
-  }
-
-  unsubscibe() {
-      try {
-        MqttAdapterService.subscription.unsubscribe();
-      } catch (err) {
-        // Ignore error - we just disconnect.
-      }
-  }
-
-  subscribe() {
-    MQTT_SERVICE_OPTIONS.username = localStorage.getItem('username');
-    MQTT_SERVICE_OPTIONS.password = localStorage.getItem('password');
-    console.log('All messages:', MqttAdapterService.messages);
+    MQTT_SERVICE_OPTIONS.username = sessionStorage.getItem('username');
+    MQTT_SERVICE_OPTIONS.password = sessionStorage.getItem('password');
 
     try {
-      this._mqttService.disconnect(true);
+      MqttAdapterService._mqttService.disconnect(true);
     } catch (err) {
       // Ignore error - we just disconnect.
     }
-
-    try {
-      MqttAdapterService.subscription.unsubscribe();
-    } catch (err) {
-      // Ignore error - we just disconnect.
-    }
-
 
     // What happens here?
-    this._mqttService.connect(MQTT_SERVICE_OPTIONS);
-
-    MqttAdapterService.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
-      const event: StoneEvent = JSON.parse(message.payload.toString());
-      MqttAdapterService.messages += message.payload.toString();
-      MqttAdapterService._stoneEvents.emit(event);
-      MqttAdapterService.stones.set(StoneEvent.stoneId(event), event);
-      MqttAdapterService.currentEvents.next(Array.from(MqttAdapterService.stones.values()));
-    } );
-    return MqttAdapterService._stoneEvents;
-
+    MqttAdapterService._mqttService.connect(MQTT_SERVICE_OPTIONS);
+    MqttAdapterService._connected = true;
+    MqttAdapterService._mqttService.onMessage.subscribe((event: IOnMessageEvent) => console.log(event));
   }
 
-  subscribeLogin(username: string, password: string) {
-    localStorage.setItem('username', username);
-    localStorage.setItem('password', password);
-    MQTT_SERVICE_OPTIONS.username = localStorage.getItem('username');
-    MQTT_SERVICE_OPTIONS.password = localStorage.getItem('password');
-    console.log('All messages:', MqttAdapterService.messages);
-
-    try {
-      this._mqttService.disconnect(true);
-    } catch (err) {
-      // Ignore error - we just disconnect.
+  public publishName(mac: String, name: String): void {
+    if (!name) {
+      return;
     }
-
-    try {
-      MqttAdapterService.subscription.unsubscribe();
-    } catch (err) {
-      // Ignore error - we just disconnect.
-    }
-
-
-    // What happens here?
-    this._mqttService.connect(MQTT_SERVICE_OPTIONS);
-
-
-    MqttAdapterService.subscription = this._mqttService.observe('/JellingStone/#').subscribe((message: IMqttMessage) => {
-      console.log('Message:', message);
-      const event: StoneEvent = JSON.parse(message.payload.toString());
-      MqttAdapterService.messages += message.payload.toString();
-      MqttAdapterService._stoneEvents.emit(event);
-    } );
-    return MqttAdapterService._stoneEvents;
+    MqttAdapterService._mqttService.publish('NameUpdate', JSON.stringify({
+      'mac': mac,
+      'name': name,
+      'color': '#ff0000'}));
   }
 
-
-
-
+  public getSubscription(channel: string, handle: (message: IMqttMessage) => void): Subscription {
+    if (!MqttAdapterService._connected) {
+      console.log('redirect to login');
+      this.router.navigateByUrl('/login');
+      return null;
+    }
+    return MqttAdapterService._mqttService.observe(channel).subscribe(handle);
+  }
 }

@@ -1,3 +1,4 @@
+import { NamesComponent } from './names/names.component';
 /*
 This file is part of fieldmon - (C) The Fieldtracks Project
 
@@ -32,7 +33,8 @@ import { GraphComponent } from './graph/graph.component';
     NavComponent,
     StoneOverviewComponent,
     SensorContactsComponent,
-    GraphComponent
+    GraphComponent,
+    NamesComponent
   ],
   imports: [
     BrowserModule,

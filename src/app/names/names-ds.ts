@@ -16,54 +16,71 @@ import { GDataSource } from '../helpers/GDataSource';
 export class NamesDs extends GDataSource<Names> {
 
     private static data: Names[] = [];
+    public static focus: string;
 
     constructor(protected mqttService: MqttAdapterService) {
-        super('Aggregated/Stones', NamesDs.data); 
-        while(NamesDs.data.length > 0){
+        super('Aggregated/Stones', NamesDs.data);
+        while (NamesDs.data.length > 0) {
             NamesDs.data.pop();
         } // Some stupid JS Stuff. Don't know an other way -.-
+        NamesDs.focus = '';
     }
 
-    parseMessage(message: IMqttMessage){
+    parseMessage(message: IMqttMessage) {
         const data = JSON.parse(message.payload.toString());
-        //console.log(data);
+        // console.log(data);
 
-        let stones: Names[] = []; 
+        const stones: Names[] = [];
         Object.getOwnPropertyNames(data).forEach((name: string) => {
             console.log(name);
-            let stone: Names = new Names();
+            const stone: Names = new Names();
             stone.Mac = name;
             stone.Major = data[name]['major'];
             stone.Minor = data[name]['minor'];
+            stone.Name = data[name]['comment'];
 
-            let rssi = 0;
-            data[name]['contacts'].forEach((contact) => {
-                rssi += parseInt(contact['rssi_avg']);
-            });
-            stone.RSSI = rssi / data[name]['contacts'].length;
+            stone.Name = data[name]['name'];
+
+            if (data[name]['contacts'].length > 0) {
+              let rssi = 0;
+              data[name]['contacts'].forEach((contact) => {
+                rssi += parseInt(contact['rssi_avg'], 10);
+              });
+              stone.RSSI = rssi / data[name]['contacts'].length;
+            } else {
+              stone.RSSI = -90;
+            }
 
             stone.UUID = data[name]['uuid'];
             stone.timestmp = data[name]['last_seen'];
-            stone.color = "white";
+            stone.Color = 'white';
+            stone.ShowEditnameField = false;
 
             stones.push(stone);
         });
 
+        let wasUpdated: Boolean = false;
+        NamesDs.data.forEach(x => x.Color = 'white');
         stones.forEach((element: Names) => {
-            let index = NamesDs.data.findIndex((value: Names) => {
+            const index = NamesDs.data.findIndex((value: Names) => {
                 return value.Mac === element.Mac;
             });
 
-            if(index === -1){
+            if (index === -1) {
                 NamesDs.data.push(element);
-            }else{
+                wasUpdated = true;
+            } else {
                 NamesDs.data[index].timestmp = element.timestmp;
-                NamesDs.data[index].color = 'orange';
+                if (wasUpdated && NamesDs.data[index].Mac !== NamesDs.focus) {
+                  NamesDs.data[index].Color = 'orange';
+                } else if (NamesDs.data[index].Mac === NamesDs.focus) {
+                  NamesDs.data[index].Color = 'lightgreen';
+                }
             }
         });
 
-        NamesDs.data.sort((a :Names, b :Names) => {
-            return a.RSSI - b.RSSI;
+        NamesDs.data.sort((a: Names, b: Names) => {
+            return b.RSSI - a.RSSI;
         });
     }
 }

@@ -26,19 +26,20 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
 export class MqttAdapterService {
 
   private static _mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
-  private static _password: string;
-  private static _username: string;
   private static _connected: Boolean = false; // TODO: Check Status // eventuell ersetzen
 
   constructor(private router: Router) {
+    if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('password') !== null) {
+      this.login(sessionStorage.getItem('username'), sessionStorage.getItem('password'));
+    }
   }
 
   public login(username: string, password: string) {
-    MqttAdapterService._username = username;
-    MqttAdapterService._password = password;
+    sessionStorage.setItem('username', username);
+    sessionStorage.setItem('password', password);
 
-    MQTT_SERVICE_OPTIONS.username = MqttAdapterService._username;
-    MQTT_SERVICE_OPTIONS.password = MqttAdapterService._password;
+    MQTT_SERVICE_OPTIONS.username = sessionStorage.getItem('username');
+    MQTT_SERVICE_OPTIONS.password = sessionStorage.getItem('password');
 
     try {
       MqttAdapterService._mqttService.disconnect(true);
@@ -52,9 +53,19 @@ export class MqttAdapterService {
     MqttAdapterService._mqttService.onMessage.subscribe((event: IOnMessageEvent) => console.log(event));
   }
 
+  public publishName(mac: String, name: String): void {
+    if (!name) {
+      return;
+    }
+    MqttAdapterService._mqttService.publish('NameUpdate', JSON.stringify({
+      'mac': mac,
+      'name': name,
+      'color': '#ff0000'}));
+  }
+
   public getSubscription(channel: string, handle: (message: IMqttMessage) => void): Subscription {
-    if(!MqttAdapterService._connected){
-      console.log("redirect to login");
+    if (!MqttAdapterService._connected) {
+      console.log('redirect to login');
       this.router.navigateByUrl('/login');
       return null;
     }

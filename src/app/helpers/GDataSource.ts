@@ -33,18 +33,18 @@ export abstract class GDataSource<T> implements DataSource<T> {
     console.log('Subscribing ...');
     this.emit();
 
-    this._subscription = this.mqttService.getSubscription(this._channel, this.parseMessage); 
+    this._subscription = this.mqttService.getSubscription(this._channel, this.parseMessage);
 
     // Update every 5s
     this._interval = interval(5000).subscribe(() => this.emit());
     return this.Subject;
   }
 
-  pause(){
+  pause() {
     this._interval.unsubscribe();
   }
 
-  resume(){
+  resume() {
     this.emit();
     this._interval = interval(5000).subscribe(() => this.emit());
   }
@@ -52,7 +52,7 @@ export abstract class GDataSource<T> implements DataSource<T> {
   protected abstract parseMessage(message: IMqttMessage): void;
 
   disconnect(collectionViewer: CollectionViewer): void {
-    console.log("unsubscribing...");
+    console.log('unsubscribing...');
     this._interval.unsubscribe();
     this._subscription.unsubscribe();
   }

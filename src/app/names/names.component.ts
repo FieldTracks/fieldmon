@@ -23,43 +23,42 @@ import { NamesDs } from './names-ds';
 })
 export class NamesComponent implements OnInit, OnDestroy {
 
-  private datasource: NamesDs;
+  public readonly ownUUID = '';
+  protected datasource: NamesDs;
   private _refresh: boolean;
-  displayedColumns = ['Major / Minor', 'UUID', 'Mac', 'Name', 'Submit'];
+  displayedColumns = ['type', 'reception', 'id', 'name', 'hardware', 'note'];
 
   constructor(private mqttAdapter: MqttAdapterService) {
     this.datasource = new NamesDs(mqttAdapter);
     this._refresh = true;
   }
 
-
-
   refresh(): void {
     this.datasource.emit();
   }
 
   toggleRefresh(): void {
-    if(this._refresh){
+    if (this._refresh) {
       this.datasource.pause();
-    }else{
+    } else {
       this.datasource.resume();
     }
     this._refresh = !this._refresh;
   }
 
-  submitName(name: String): void {
-    alert(name);
+  setFocused(mac: string): void {
+    NamesDs.focus = mac;
   }
 
   ngOnInit() {
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.datasource.disconnect(null);
   }
 
   private publishName(mac: String, name: String): void {
-    // mqttService.currentEvents
+    this.mqttAdapter.publishName(mac, name);
   }
 
 }

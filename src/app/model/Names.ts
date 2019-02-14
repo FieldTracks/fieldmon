@@ -17,12 +17,13 @@ export class Names {
   RSSI: number;
   Name: string;
   UUID: String;
-  color: string;
+  Color: string;
+  Comment: string;
+  ShowEditnameField: boolean;
 
   timestmp: string;
 
   get age() {
     return ageC(this.timestmp);
-
   }
 }

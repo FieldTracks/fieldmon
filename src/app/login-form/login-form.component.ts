@@ -29,8 +29,8 @@ export class LoginFormComponent implements OnInit {
   showSpinner: Boolean;
 
   constructor(private router: Router, private mqttService: MqttAdapterService) {
-
   }
+
   ngOnInit() {
     this.broker = environment.mqtt_broker;
     this.showSpinner = false;

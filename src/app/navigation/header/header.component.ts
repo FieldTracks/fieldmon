@@ -9,27 +9,27 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 
  */
 import { Component, OnInit } from '@angular/core';
+import {EventEmitter} from '@angular/core';
+import {Output} from '@angular/core';
 
 @Component({
-  selector: 'app-nav',
-  templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.css']
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
 })
-export class NavComponent implements OnInit {
+export class HeaderComponent implements OnInit {
 
   constructor() { }
+
+  @Output()
+  sidebarTooggle = new EventEmitter();
 
   ngOnInit() {
   }
 
-  openFieldtracksAbout() {
-    window.open('https://fieldtracks.org', 'blank');
+
+  onToggle() {
+    this.sidebarTooggle.emit();
   }
-
-  openFieldtracksContact() {
-    window.open('https://fieldtracks.org/contact', 'blank');
-
-  }
-
 
 }

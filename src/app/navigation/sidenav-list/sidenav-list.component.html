@@ -1,0 +1,23 @@
+<mat-nav-list>
+  <a mat-list-item routerLink="/stone-overview" (click)="sidenav.close()">
+    <mat-icon>developer_board</mat-icon>
+    <span class="nav-caption">Stones</span>
+  </a>
+  <a mat-list-item routerLink='/sensor-contacts' (click)="sidenav.close()">
+    <mat-icon>settings_remote</mat-icon>
+    <span class="nav-caption">Contacts</span>
+  </a>
+  <a mat-list-item  routerLink='/graph' (click)="sidenav.close()">
+    <mat-icon>my_location</mat-icon>
+    <span class="nav-caption">Graph</span>
+  </a>
+  <a mat-list-item  routerLink='/names' (click)="sidenav.close()">
+    <mat-icon>dns</mat-icon>
+    <span class="nav-caption">Names</span>
+  </a>
+  <a mat-list-item  routerLink='/names' (click)="logout()">
+    <mat-icon>eject</mat-icon>
+    <span class="nav-caption">Logout</span>
+  </a>
+
+</mat-nav-list>

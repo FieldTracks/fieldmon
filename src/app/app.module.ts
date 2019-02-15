@@ -18,23 +18,25 @@ import { LoginFormComponent} from './login-form/login-form.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule} from './material.module';
-import { NavComponent } from './nav/nav.component';
 import { MqttModule, } from 'ngx-mqtt';
 import {MQTT_SERVICE_OPTIONS, MqttAdapterService} from './mqtt-adapter.service';
 import { StoneOverviewComponent } from './stone-overview/stone-overview.component';
 import { SensorContactsComponent } from './sensor-contacts/sensor-contacts.component';
 import { GraphComponent } from './graph/graph.component';
+import { HeaderComponent } from './navigation/header/header.component';
+import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginFormComponent,
-    NavComponent,
     StoneOverviewComponent,
     SensorContactsComponent,
     GraphComponent,
-    NamesComponent
+    NamesComponent,
+    HeaderComponent,
+    SidenavListComponent,
   ],
   imports: [
     BrowserModule,

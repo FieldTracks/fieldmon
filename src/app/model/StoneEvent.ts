@@ -20,8 +20,8 @@ export class Observation {
 
 }
 
-export class AggregatedData{
-  
+export class AggregatedData {
+
 }
 
 export class StoneEvent {
@@ -29,8 +29,9 @@ export class StoneEvent {
   uuid: string;
   major: string;
   minor: string;
-  timestmp: string;
+  timestamp: string;
   data: Observation [];
+  mac: string;
 
   /**
    * Static due to JSON.parse

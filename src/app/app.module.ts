@@ -25,7 +25,8 @@ import { SensorContactsComponent } from './sensor-contacts/sensor-contacts.compo
 import { GraphComponent } from './graph/graph.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
-
+import { FlashtoolComponent } from './stones/flashtool/flashtool.component';
+import { OnlineComponent } from './stones/online/online.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,8 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
     NamesComponent,
     HeaderComponent,
     SidenavListComponent,
+    FlashtoolComponent,
+    OnlineComponent,
   ],
   imports: [
     BrowserModule,

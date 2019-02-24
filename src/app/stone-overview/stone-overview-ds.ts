@@ -30,12 +30,12 @@ export class StoneOverviewDs extends GDataSource<StoneInTable> {
 
     for (const s of StoneOverviewDs.stones) {
       if (s.uuid === sE.uuid && s.major === sE.major && s.minor === sE.minor) {
-        s.lastSeen = sE.timestmp;
+        s.lastSeen = sE.timestamp;
         return;
       } else {
       }
     }
-    const stone: StoneInTable = new StoneInTable(sE.comment, sE.uuid, sE.major, sE.minor, sE.timestmp);
+    const stone: StoneInTable = new StoneInTable(sE.comment, sE.uuid, sE.major, sE.minor, sE.timestamp);
     StoneOverviewDs.stones.push(stone);
   }
 }

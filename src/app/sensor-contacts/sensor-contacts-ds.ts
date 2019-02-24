@@ -28,7 +28,7 @@ export class SensorContactsDs extends GDataSource<SensorContactTable> {
         const stoneEvent: StoneEvent = JSON.parse(message.payload.toString());
 
         const stone = `(${stoneEvent.major},${stoneEvent.minor})`;
-        const stmp = stoneEvent.timestmp;
+        const stmp = stoneEvent.timestamp;
 
         stoneEvent.data.forEach( (obs: Observation) => {
             const contact = new SensorContactTable();
@@ -40,13 +40,13 @@ export class SensorContactsDs extends GDataSource<SensorContactTable> {
 
             var element: SensorContactTable = (SensorContactsDs._data.find(element => element.subject === contact.subject));
             if(element !== undefined){
-                element.timestmp = stmp;
+                element.timestamp = stmp;
                 return;
             }
 
             contact.rssi = `${obs.min} / ${obs.max} /${obs.avg} / ${obs.remoteRssi}`;
             contact.stone = stone;
-            contact.timestmp = stmp;
+            contact.timestamp = stmp;
             SensorContactsDs._data.unshift(contact);
         });
     }

@@ -21,22 +21,14 @@ import { StoneOverviewDs } from './stone-overview-ds';
   templateUrl: './stone-overview.component.html',
   styleUrls: ['./stone-overview.component.css']
 })
-export class StoneOverviewComponent implements OnInit, OnDestroy {
+export class StoneOverviewComponent implements OnInit {
 
-  datasource: DataSource<StoneInTable>;
 
-  displayedColumns = ['major', 'minor', 'comment', 'age', 'lastSeen', 'uuid'];
+  
 
-  constructor(private mqttAdapter: MqttAdapterService) {
-    this.datasource = new StoneOverviewDs(mqttAdapter);
-  }
-
+  constructor() { }
 
   ngOnInit() {
-  }
-
-  ngOnDestroy(){
-    this.datasource.disconnect(null);
   }
 
 }

@@ -15,7 +15,7 @@ import { MatCardModule, MatInputModule, MatSidenavModule} from '@angular/materia
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import { MatIconModule, MatListModule} from '@angular/material';
+import { MatIconModule, MatListModule, MatTabsModule} from '@angular/material';
 
 @NgModule({
   imports: [MatTableModule,
@@ -27,7 +27,7 @@ import { MatIconModule, MatListModule} from '@angular/material';
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule],
+            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -37,7 +37,7 @@ import { MatIconModule, MatListModule} from '@angular/material';
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule],
+            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule],
   declarations: []
 })
 export class MaterialModule { }

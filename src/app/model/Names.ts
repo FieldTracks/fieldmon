@@ -21,9 +21,9 @@ export class Names {
   Comment: string;
   ShowEditnameField: boolean;
 
-  timestmp: string;
+  timestamp: string;
 
   get age() {
-    return ageC(this.timestmp);
+    return ageC(this.timestamp);
   }
 }

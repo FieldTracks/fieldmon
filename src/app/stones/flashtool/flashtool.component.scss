@@ -1,0 +1,11 @@
+@import '~@angular/material/theming';
+
+.header-mono{
+  font-family: 'Roboto', 'monospace';
+}
+mat-card {
+  margin: 10px;
+}
+mat-error {
+  display: inline;
+}

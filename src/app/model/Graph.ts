@@ -109,17 +109,17 @@ export class Graph {
    */
   addOrUdpateGraph(sE: StoneEvent) {
     // Adding sensor-Node Or update last seen
-    const sensorNode = this.addOrUpdateNode(sE.uuid, sE.major, sE.minor, sE.timestmp, sE.comment);
+    const sensorNode = this.addOrUpdateNode(sE.uuid, sE.major, sE.minor, sE.timestamp, sE.comment);
 
     // Go through observations
     for (const obs of sE.data) {
       const subjectId = this.nodeId(obs.uuid, obs.major, obs.minor);
 
       // Update node
-      const subjectNode = this.addOrUpdateNode(obs.uuid, obs.major, obs.minor, sE.timestmp, null);
+      const subjectNode = this.addOrUpdateNode(obs.uuid, obs.major, obs.minor, sE.timestamp, null);
 
       // Update link
-      this.addOrUpdateLink(sensorNode, subjectNode, obs.avg, obs.remoteRssi, sE.timestmp);
+      this.addOrUpdateLink(sensorNode, subjectNode, obs.avg, obs.remoteRssi, sE.timestamp);
     }
   }
 

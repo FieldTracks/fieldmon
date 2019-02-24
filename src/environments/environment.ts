@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   mqtt_broker: 'dev.fieldtracks.org',
   mqtt_port: 8882,
-  mqtt_path: ''
+  mqtt_path: '',
+  uuid: 'fd:a5:06:93:a4:e2:4f:b1:af:cf:c6:eb:07:64:78:25'
 };
 
 /*

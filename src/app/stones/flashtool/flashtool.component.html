@@ -1,0 +1,50 @@
+<section fxLayout="row wrap" fxLayoutGap="22px" fxLayoutAlign="flex-start">
+  <mat-card fxFlex="0 0 auto" *ngFor="let stone of stones" >
+    <mat-card-title><span class="header-mono">{{ stone.object.mac }}</span>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span *ngIf="stone.showVersion()">
+        Version: {{ stone.object.version }}
+        <mat-error *ngIf="stone.showOutdatedWarning()" class="warn">Outdated</mat-error>
+      </span>
+      <mat-error *ngIf="stone.showWrongNetworkWarning()" >Different network</mat-error>
+
+      <mat-error *ngIf="stone.showUnknownSoftwareWarning()">
+        Unknown Software
+      </mat-error>
+
+
+
+
+    </mat-card-subtitle>
+
+
+    <form #f="ngForm">
+      <mat-card-content *ngIf="stone.showForm()" fxLayout="column" fxLayoutAlign="center start" >
+
+        <mat-form-field>
+          <input class="form-control" matInput placeholder="iBeacon Major" required [(ngModel)] = "stone.object.major" name="major" [disabled]="!stone.uiEditing">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input class="form-control" matInput placeholder="iBeacon Minor" required [(ngModel)] = "stone.object.minor" name="minor" [disabled]="!stone.uiEditing"/>
+        </mat-form-field>
+        <mat-form-field>
+          <input class="form-control" matInput placeholder="Comment" [(ngModel)] = "stone.object.comment" name="comment" [disabled]="!stone.uiEditing"/>
+        </mat-form-field>
+      <mat-card-actions mat-stroked-button  fxLayout="row" fxLayoutAlign="end" *ngIf="!stone.writing" style="width: 100%">
+        <button type="submit" name="flash" [disabled]="f.invalid || stone.uiLocked " style="margin-right: auto" *ngIf="stone.flashButtonVisible()" mat-button matTooltip="Install Software">
+          <mat-icon>system_update</mat-icon></button>
+        <button mat-stroked-button  color="primary" [disabled]="stone.uiLocked" *ngIf="stone.editButtonVisible()" (click)="editStone(stone)" mat-button matTooltip="Edit configuration">
+          <mat-icon>create</mat-icon></button>
+        <button name="send" mat-flat-button color="primary" type="submit" [disabled]="f.invalid || stone.uiLocked" *ngIf="stone.sendButtonVisible()"  mat-button matTooltip="Send configuration">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card-content>
+      <mat-card-content *ngIf="stone.showSpinner()">
+        <mat-spinner  style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+      </mat-card-content>
+    </form>
+  </mat-card>
+</section>

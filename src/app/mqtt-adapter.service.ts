@@ -11,8 +11,13 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 import { Injectable } from '@angular/core';
 import { IMqttMessage, IMqttServiceOptions, MqttService, IOnMessageEvent } from 'ngx-mqtt';
 import { environment } from './../environments/environment';
-import { Subscription } from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import { Router } from '@angular/router';
+import {StoneConfiguration} from './model/StoneConfiguration';
+import {sanitizeHtml} from '@angular/core/src/sanitization/sanitization';
+import {map} from 'rxjs/operators';
+import {StoneEvent} from './model/StoneEvent';
+import {FlashtoolStatus} from './model/flashtool-status';
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
   port: environment.mqtt_port,
@@ -64,11 +69,44 @@ export class MqttAdapterService {
   }
 
   public getSubscription(channel: string, handle: (message: IMqttMessage) => void): Subscription {
+    if(!this.sanitize()){
+      return;
+    }
+    return MqttAdapterService._mqttService.observe(channel).subscribe(handle);
+  }
+
+  public sendInstallSoftware(sc: StoneConfiguration) {
+    MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
+      operation: 'full_flash',
+      stone: sc
+    }));
+  }
+
+  public sendInstallConfiguration(sc: StoneConfiguration) {
+    MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
+      operation: 'nvs',
+      stone: sc
+    }));
+  }
+
+  public flashToolSubject(): Observable<FlashtoolStatus> {
+    if (!this.sanitize()) {
+      return;
+    }
+    return MqttAdapterService._mqttService.observe('flashtool/status/#').pipe(map(
+      (message: IMqttMessage) => {
+        return JSON.parse(message.payload.toString());
+      }
+    ));
+
+  }
+
+  private sanitize() {
     if (!MqttAdapterService._connected) {
       console.log('redirect to login');
       this.router.navigateByUrl('/login');
       return null;
     }
-    return MqttAdapterService._mqttService.observe(channel).subscribe(handle);
+    return true;
   }
 }

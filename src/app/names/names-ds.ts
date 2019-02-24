@@ -52,7 +52,7 @@ export class NamesDs extends GDataSource<Names> {
             }
 
             stone.UUID = data[name]['uuid'];
-            stone.timestmp = data[name]['last_seen'];
+            stone.timestamp = data[name]['last_seen'];
             stone.Color = 'white';
             stone.ShowEditnameField = false;
 
@@ -70,7 +70,7 @@ export class NamesDs extends GDataSource<Names> {
                 NamesDs.data.push(element);
                 wasUpdated = true;
             } else {
-                NamesDs.data[index].timestmp = element.timestmp;
+                NamesDs.data[index].timestamp = element.timestamp;
                 if (wasUpdated && NamesDs.data[index].Mac !== NamesDs.focus) {
                   NamesDs.data[index].Color = 'orange';
                 } else if (NamesDs.data[index].Mac === NamesDs.focus) {

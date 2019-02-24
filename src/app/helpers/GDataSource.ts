@@ -41,20 +41,28 @@ export abstract class GDataSource<T> implements DataSource<T> {
   }
 
   pause() {
-    this._interval.unsubscribe();
+    if (this._interval) {
+      this._interval.unsubscribe();
+    }
   }
 
   resume() {
     this.emit();
-    this._interval = interval(5000).subscribe(() => this.emit());
+    if (this._interval) {
+      this._interval = interval(5000).subscribe(() => this.emit());
+    }
   }
 
   protected abstract parseMessage(message: IMqttMessage): void;
 
   disconnect(collectionViewer: CollectionViewer): void {
     console.log('unsubscribing...');
-    this._interval.unsubscribe();
-    this._subscription.unsubscribe();
+    if (this._interval) {
+      this._interval.unsubscribe();
+    }
+    if (this._subscription) {
+      this._subscription.unsubscribe();
+    }
   }
 
   emit() {

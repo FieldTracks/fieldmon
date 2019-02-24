@@ -25,11 +25,11 @@ export class FlashtoolModel {
   }
 
   public editButtonVisible(): boolean { // Show edit button, if the ui has an object and its not in editing state
-    return this.object && !this.uiEditing && !this.object.writing;
+    return this.object && !this.uiEditing && !this.object.writing && !this.object.wrong_network;
   }
 
   public sendButtonVisible(): boolean {
-    return this.object && !this.object.unknown_software && this.uiEditing && !this.object.writing;
+    return this.object && !this.object.unknown_software && this.uiEditing && !this.object.writing && !this.object.wrong_network;
   }
 
   /**
@@ -37,7 +37,7 @@ export class FlashtoolModel {
    * It cannot be flashed if it belongs to a different network
    */
   public flashButtonVisible(): boolean {
-    return this.object && (this.object.unknown_software || this.object.outdated) && !this.object.wrong_network && !this.object.writing;
+    return this.object && (this.object.unknown_software || this.object.outdated || this.object.wrong_network ) && !this.object.writing;
   }
 
   /**

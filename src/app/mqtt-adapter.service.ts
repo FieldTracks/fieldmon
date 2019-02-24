@@ -65,28 +65,29 @@ export class MqttAdapterService {
     MqttAdapterService._mqttService.publish('NameUpdate', JSON.stringify({
       'mac': mac,
       'name': name,
-      'color': '#ff0000'}));
+      'color': '#ff0000'}))
+      .subscribe().unsubscribe();
   }
 
   public getSubscription(channel: string, handle: (message: IMqttMessage) => void): Subscription {
-    if(!this.sanitize()){
+    if (!this.sanitize()) {
       return;
     }
     return MqttAdapterService._mqttService.observe(channel).subscribe(handle);
   }
 
   public sendInstallSoftware(sc: StoneConfiguration) {
-    MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
+    const sub = MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
       operation: 'full_flash',
       stone: sc
-    }));
+    })).subscribe().unsubscribe();
   }
 
   public sendInstallConfiguration(sc: StoneConfiguration) {
     MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
       operation: 'nvs',
       stone: sc
-    }));
+    })).subscribe().unsubscribe();
   }
 
   public flashToolSubject(): Observable<FlashtoolStatus> {
@@ -109,4 +110,5 @@ export class MqttAdapterService {
     }
     return true;
   }
+
 }

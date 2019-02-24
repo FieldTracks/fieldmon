@@ -33,11 +33,11 @@
           <input class="form-control" matInput placeholder="Comment" [(ngModel)] = "stone.object.comment" name="comment" [disabled]="!stone.uiEditing"/>
         </mat-form-field>
       <mat-card-actions mat-stroked-button  fxLayout="row" fxLayoutAlign="end" *ngIf="!stone.writing" style="width: 100%">
-        <button type="submit" name="flash" [disabled]="f.invalid || stone.uiLocked " style="margin-right: auto" *ngIf="stone.flashButtonVisible()" mat-button matTooltip="Install Software">
+        <button type="submit" (click)="installSoftware(stone)"  name="flash" [disabled]="f.invalid || stone.uiLocked " style="margin-right: auto" *ngIf="stone.flashButtonVisible()" mat-button matTooltip="Install Software">
           <mat-icon>system_update</mat-icon></button>
-        <button mat-stroked-button  color="primary" [disabled]="stone.uiLocked" *ngIf="stone.editButtonVisible()" (click)="editStone(stone)" mat-button matTooltip="Edit configuration">
+        <button mat-stroked-button  color="primary" (click)="installSoftware(stone)" [disabled]="stone.uiLocked" *ngIf="stone.editButtonVisible()" (click)="editStone(stone)" mat-button matTooltip="Edit configuration">
           <mat-icon>create</mat-icon></button>
-        <button name="send" mat-flat-button color="primary" type="submit" [disabled]="f.invalid || stone.uiLocked" *ngIf="stone.sendButtonVisible()"  mat-button matTooltip="Send configuration">
+        <button name="send" (click)="sendConfig(stone)" mat-flat-button color="primary" type="submit" [disabled]="f.invalid || stone.uiLocked" *ngIf="stone.sendButtonVisible()"  mat-button matTooltip="Send configuration">
           <mat-icon>send</mat-icon>
         </button>
       </mat-card-actions>

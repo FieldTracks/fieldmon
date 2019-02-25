@@ -3,8 +3,22 @@ import {StoneConfiguration} from '../../model/StoneConfiguration';
 export class FlashtoolModel {
 
   private uiEditing: boolean; // UI is in edit state - due to manual switching or since no configuration has been set
-  private uiLocked: boolean; // UI is in locked state, due to a write operation
+  private uiLocked: boolean; // UI i s in locked state, due to a write operation
 
+  public warningText(): ErrorDisplayMessage {
+    if (!this.object) {
+      return null;
+    } else if (this.object.error) {
+      return {content: this.object.error.type, tooltip: this.object.error.details};
+    } else if (this.object.writing) {
+      return null;
+    } else if (this.object.unknown_software) {
+      return {content: 'Unknown software' };
+    } else if (this.object.wrong_network) {
+      return {content: 'Wrong network'};
+    }
+    return null;
+  }
 
   constructor(public object: StoneConfiguration) {
     this.uiEditing = object.unknown_software || object.wrong_network;
@@ -37,19 +51,9 @@ export class FlashtoolModel {
    * It cannot be flashed if it belongs to a different network
    */
   public flashButtonVisible(): boolean {
-    return this.object && (this.object.unknown_software || this.object.outdated || this.object.wrong_network ) && !this.object.writing;
+    return this.object && (this.object.unknown_software || this.object.outdated || this.object.wrong_network || this.object.error ) && !this.object.writing;
   }
 
-  /**
-   * A note on a wrong network has higher precedense
-   */
-  public showOutdatedWarning(): boolean {
-    return this.object && !this.object.wrong_network && this.object.outdated && !this.object.writing;
-  }
-
-  public showWrongNetworkWarning(): boolean {
-    return this.object && this.object.wrong_network && !this.object.writing;
-  }
 
   public showForm(): boolean {
     return this.object && !this.object.writing;
@@ -66,4 +70,8 @@ export class FlashtoolModel {
   public showUnknownSoftwareWarning(): boolean {
     return this.object && this.object.unknown_software;
   }
+}
+export interface ErrorDisplayMessage {
+  content: string;
+  tooltip?: string;
 }

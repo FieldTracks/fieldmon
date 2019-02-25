@@ -8,4 +8,9 @@ export interface StoneConfiguration {
   wrong_network?: boolean;
   unknown_software?: boolean;
   writing?: boolean;
+  error?: FlashToolStatusError;
+}
+export interface FlashToolStatusError {
+  type: string;
+  details: string;
 }

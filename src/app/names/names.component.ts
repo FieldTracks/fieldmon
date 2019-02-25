@@ -24,7 +24,7 @@ import { NamesDs } from './names-ds';
 export class NamesComponent implements OnInit, OnDestroy {
 
   public readonly ownUUID = '';
-  protected datasource: NamesDs;
+  datasource: NamesDs;
   private _refresh: boolean;
   displayedColumns = ['type', 'reception', 'id', 'name', 'hardware', 'note'];
 

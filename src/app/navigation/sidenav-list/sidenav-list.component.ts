@@ -19,4 +19,8 @@ export class SidenavListComponent implements OnInit {
     console.log('Emitting')
     this.sidebarTooggle.emit();
   }
+
+  logout (){
+
+  }
 }

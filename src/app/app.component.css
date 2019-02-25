@@ -1,4 +1,4 @@
-mat-sidenav-container, mat-sidenav-content, mat-sidenav{
+mat-sidenav-container, mat-sidenav-content, mat-sidenav, mat-drawer, mat-drawer-content, mat-drawer-container{
   height: 100%;
 }
 

@@ -5,9 +5,9 @@
     <mat-card-subtitle>
       <span *ngIf="stone.showVersion()">
         Version: {{ stone.object.version }}
-        <mat-error *ngIf="stone.showOutdatedWarning()" class="warn">Outdated</mat-error>
+        <mat-error *ngIf="stone.object.outdated" class="warn">Outdated</mat-error>
       </span>
-      <mat-error *ngIf="stone.warningText()" [matTooltip]="stone.warningText().tooltip" >{{ stone.warningText().content }}</mat-error>
+      <mat-error *ngIf="stone.warningText()">{{ stone.warningText().content }}</mat-error>
 
     </mat-card-subtitle>
 

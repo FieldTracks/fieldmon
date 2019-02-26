@@ -8,25 +8,29 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import { Component, OnInit } from '@angular/core';
-import {MatFormField, MatFormFieldControl, MatCardTitle} from '@angular/material';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
+import {BehaviorSubject, Subscription} from 'rxjs';
+import {MqttConnectionState} from 'ngx-mqtt';
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
-export class LoginFormComponent implements OnInit {
+export class LoginFormComponent implements OnInit, OnDestroy {
   broker: String;
 
   username: string;
   password: string;
 
   showSpinner: Boolean;
+  private subs: Subscription;
+  private connectionProblem: boolean;
+
 
   constructor(private router: Router, private mqttService: MqttAdapterService) {
   }
@@ -36,9 +40,31 @@ export class LoginFormComponent implements OnInit {
     this.showSpinner = false;
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe();
+  }
+
   login() {
     this.showSpinner = true;
-    this.mqttService.login(this.username, this.password);
-    this.router.navigateByUrl('/stone-overview');
+    const subj = this.mqttService.login(this.username, this.password);
+    this.subs = subj.subscribe( (state) => {
+      if (state === MqttConnectionState.CLOSED) {
+        this.showSpinner = false;
+        this.connectionProblem = true;
+        this.unsubscribe();
+      } else if (state === MqttConnectionState.CONNECTING) {
+        this.showSpinner = true;
+        this.connectionProblem = false;
+      } else if (state === MqttConnectionState.CONNECTED) {
+        this.router.navigateByUrl('/stone-overview');
+        this.unsubscribe();
+      }
+    });
+  }
+
+  private unsubscribe() {
+    if (this.subs) {
+      this.subs.unsubscribe();
+    }
   }
 }

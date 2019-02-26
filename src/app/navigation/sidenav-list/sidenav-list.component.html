@@ -1,23 +1,29 @@
 <mat-nav-list>
-  <a mat-list-item routerLink="/stone-overview" (click)="sidenavClose()">
+  <a mat-list-item *ngIf="isAuth" routerLink="/stone-overview" (click)="sidenavClose()">
     <mat-icon>developer_board</mat-icon>
     <span class="nav-caption">Stones</span>
   </a>
-  <a mat-list-item routerLink='/sensor-contacts' (click)="sidenavClose()">
+  <a mat-list-item *ngIf="isAuth"  routerLink='/sensor-contacts' (click)="sidenavClose()">
     <mat-icon>settings_remote</mat-icon>
     <span class="nav-caption">Contacts</span>
   </a>
-  <a mat-list-item  routerLink='/graph' (click)="sidenavClose()">
+  <a mat-list-item *ngIf="isAuth"   routerLink='/graph' (click)="sidenavClose()">
     <mat-icon>my_location</mat-icon>
     <span class="nav-caption">Graph</span>
   </a>
-  <a mat-list-item  routerLink='/names' (click)="sidenavClose()">
+  <a mat-list-item *ngIf="isAuth"  routerLink='/names' (click)="sidenavClose()">
     <mat-icon>dns</mat-icon>
     <span class="nav-caption">Names</span>
   </a>
-  <a mat-list-item  routerLink='/names'>
+  <a mat-list-item *ngIf="isAuth"  (click)="logout()"  routerLink='/login'>
     <mat-icon>eject</mat-icon>
     <span class="nav-caption">Logout</span>
   </a>
+
+  <a mat-list-item *ngIf="!isAuth"  (click)="logout()"  routerLink='/login'>
+    <mat-icon>face</mat-icon>
+    <span class="nav-caption">Login</span>
+  </a>
+
 
 </mat-nav-list>

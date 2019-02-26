@@ -1,16 +1,14 @@
 <section fxLayout="column" fxLayoutAlign="center center">
   <mat-spinner *ngIf="showSpinner" style="margin:0 auto;" mode="indeterminate"></mat-spinner>
-  <form fxLayout="column" fxLayoutAlign="center center"  *ngIf="!showSpinner" >
+  <form (ngSubmit)="login()" #f="ngForm" fxLayout="column" fxLayoutAlign="center center"  *ngIf="!showSpinner" >
     <h2 class="mat-h2">Login: {{ broker }}</h2>
+    <mat-error *ngIf="connectionProblem">Unable to connect. <br /> Check username, password and network connectivity</mat-error>
           <mat-form-field>
             <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
           </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" (keydown.enter)="login()" required>
+          <input matInput placeholder="Password" [(ngModel)]="password"type="password" name="password" required>
         </mat-form-field>
-      <button type="submit" mat-raised-button (click)="login()" color="primary" >Login</button>
-
+      <button type="submit" [disabled]="f.invalid" mat-raised-button color="primary" >Login</button>
   </form>
-
-
 </section>

@@ -1,23 +1,12 @@
-/*
-This file is part of fieldmon - (C) The Fieldtracks Project
-
-    fieldmon is distributed under the civilian open source license (COSLi).
-    Military usage is forbidden.
-
-    You should have received a copy of COLi along with fieldmon.
-    If not, please contact info@fieldtracks.org
-
- */
-import { Injectable } from '@angular/core';
-import { IMqttMessage, IMqttServiceOptions, MqttService, IOnMessageEvent } from 'ngx-mqtt';
-import { environment } from './../environments/environment';
-import {Observable, Subject, Subscription} from 'rxjs';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {IMqttMessage, IMqttServiceOptions, MqttConnectionState, MqttService} from 'ngx-mqtt';
+import {environment} from './../environments/environment';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {Router} from '@angular/router';
 import {StoneConfiguration} from './model/StoneConfiguration';
-import {sanitizeHtml} from '@angular/core/src/sanitization/sanitization';
 import {map} from 'rxjs/operators';
-import {StoneEvent} from './model/StoneEvent';
 import {FlashtoolStatus} from './model/flashtool-status';
+
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
   port: environment.mqtt_port,
@@ -30,8 +19,12 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
 })
 export class MqttAdapterService {
 
-  private static _mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
-  private static _connected: Boolean = false; // TODO: Check Status // eventuell ersetzen
+  private mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
+  private loginSubscript: Subscription;
+
+
+  authChange = new BehaviorSubject<boolean>(false);
+
 
   constructor(private router: Router) {
     if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('password') !== null) {
@@ -39,7 +32,7 @@ export class MqttAdapterService {
     }
   }
 
-  public login(username: string, password: string) {
+  public login(username: string, password: string): BehaviorSubject<MqttConnectionState> {
     sessionStorage.setItem('username', username);
     sessionStorage.setItem('password', password);
 
@@ -47,22 +40,43 @@ export class MqttAdapterService {
     MQTT_SERVICE_OPTIONS.password = sessionStorage.getItem('password');
 
     try {
-      MqttAdapterService._mqttService.disconnect(true);
+      this.mqttService.disconnect();
     } catch (err) {
       // Ignore error - we just disconnect.
     }
+    console.log('Connecting');
 
-    // What happens here?
-    MqttAdapterService._mqttService.connect(MQTT_SERVICE_OPTIONS);
-    MqttAdapterService._connected = true;
-    MqttAdapterService._mqttService.onMessage.subscribe((event: IOnMessageEvent) => console.log(event));
+    this.loginSubscript = this.mqttService.state.subscribe((status) => {
+      if (status === MqttConnectionState.CONNECTED) {
+        this.authChange.next(true);
+        if (this.loginSubscript) {
+          this.loginSubscript.unsubscribe();
+        }
+      } else if (status === MqttConnectionState.CLOSED) {
+        this.authChange.next(false);
+        if (this.loginSubscript) {
+          this.loginSubscript.unsubscribe();
+        }
+      }
+    });
+    this.mqttService.connect(MQTT_SERVICE_OPTIONS);
+
+    return this.mqttService.state;
+  }
+
+  public logout(): void {
+    sessionStorage.setItem('username', '');
+    sessionStorage.setItem('password', '');
+    this.mqttService.disconnect();
+    this.authChange.next(false);
+
   }
 
   public publishName(mac: String, name: String): void {
     if (!name) {
       return;
     }
-    MqttAdapterService._mqttService.publish('NameUpdate', JSON.stringify({
+    this.mqttService.publish('NameUpdate', JSON.stringify({
       'mac': mac,
       'name': name,
       'color': '#ff0000'}))
@@ -70,31 +84,25 @@ export class MqttAdapterService {
   }
 
   public getSubscription(channel: string, handle: (message: IMqttMessage) => void): Subscription {
-    if (!this.sanitize()) {
-      return;
-    }
-    return MqttAdapterService._mqttService.observe(channel).subscribe(handle);
+    return this.mqttService.observe(channel).subscribe(handle);
   }
 
   public sendInstallSoftware(sc: StoneConfiguration) {
-    const sub = MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
+    const sub = this.mqttService.publish('flashtool/command', JSON.stringify({
       operation: 'full_flash',
       stone: sc
     })).subscribe().unsubscribe();
   }
 
   public sendInstallConfiguration(sc: StoneConfiguration) {
-    MqttAdapterService._mqttService.publish('flashtool/command', JSON.stringify({
+    this.mqttService.publish('flashtool/command', JSON.stringify({
       operation: 'nvs',
       stone: sc
     })).subscribe().unsubscribe();
   }
 
   public flashToolSubject(): Observable<FlashtoolStatus> {
-    if (!this.sanitize()) {
-      return;
-    }
-    return MqttAdapterService._mqttService.observe('flashtool/status/#').pipe(map(
+    return this.mqttService.observe('flashtool/status/#').pipe(map(
       (message: IMqttMessage) => {
         return JSON.parse(message.payload.toString());
       }
@@ -102,13 +110,5 @@ export class MqttAdapterService {
 
   }
 
-  private sanitize() {
-    if (!MqttAdapterService._connected) {
-      console.log('redirect to login');
-      this.router.navigateByUrl('/login');
-      return null;
-    }
-    return true;
-  }
 
 }

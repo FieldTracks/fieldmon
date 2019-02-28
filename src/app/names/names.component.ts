@@ -1,3 +1,4 @@
+import { MatDialogRef } from '@angular/material';
 /*
 This file is part of fieldmon - (C) The Fieldtracks Project
 
@@ -8,28 +9,27 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import {DataSource} from '@angular/cdk/collections';
-import {MqttAdapterService} from '../mqtt-adapter.service';
-import { Subscription } from 'rxjs';
-import { IMqttClient, IMqttMessage } from 'ngx-mqtt';
-import { Names } from '../model/Names';
+import { Component, OnInit } from '@angular/core';
+import { MqttAdapterService } from '../mqtt-adapter.service';
 import { NamesDs } from './names-ds';
+import { MatDialog } from '@angular/material';
+import { NamesDialogComponent } from './names-dialog';
+import { Names } from '../model/Names';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-names',
   templateUrl: './names.component.html',
-  styleUrls: ['./names.component.css']
+  styleUrls: ['./names.component.css'],
 })
-export class NamesComponent implements OnInit, OnDestroy {
+export class NamesComponent implements OnInit {
 
   public readonly ownUUID = '';
-  datasource: NamesDs;
   private _refresh: boolean;
   displayedColumns = ['type', 'reception', 'id', 'name', 'hardware', 'note'];
+  private namesDialogRef: MatDialogRef<NamesDialogComponent>;
 
-  constructor(private mqttAdapter: MqttAdapterService) {
-    this.datasource = new NamesDs(mqttAdapter);
+  constructor(private mqttAdapter: MqttAdapterService, private datasource: NamesDs, private dialog: MatDialog) {
     this._refresh = true;
   }
 
@@ -53,11 +53,22 @@ export class NamesComponent implements OnInit, OnDestroy {
   ngOnInit() {
   }
 
-  ngOnDestroy() {
-    this.datasource.disconnect(null);
+  private openDialog(subject: Names) {
+    this.namesDialogRef = this.dialog.open(NamesDialogComponent, {
+      hasBackdrop: false,
+      data: {
+        name: subject.Name
+      }
+    });
+
+    this.namesDialogRef.afterClosed().pipe(filter(name => name)).subscribe(name => {
+      this.publishName(subject.Mac, name);
+      subject.Name = name;
+    });
   }
 
   private publishName(mac: String, name: String): void {
+    console.log(`Publish: ${mac}, ${name}`);
     this.mqttAdapter.publishName(mac, name);
   }
 

@@ -8,14 +8,16 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import {CollectionViewer, DataSource} from '@angular/cdk/collections';
-import {MqttAdapterService} from '../mqtt-adapter.service';
-import {BehaviorSubject, interval, Observable, Subscription} from 'rxjs';
-import {Observation, StoneEvent} from '../model/StoneEvent';
-import {SensorContactTable} from '../model/sensor-contact-table';
+import { MqttAdapterService } from '../mqtt-adapter.service';
+import { Observation, StoneEvent } from '../model/StoneEvent';
+import { SensorContactTable } from '../model/sensor-contact-table';
 import { IMqttMessage } from 'ngx-mqtt';
 import { GDataSource } from '../helpers/GDataSource';
+import { Injectable } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root',
+})
 export class SensorContactsDs extends GDataSource<SensorContactTable> {
 
     private static _data: SensorContactTable[] = [];
@@ -38,8 +40,8 @@ export class SensorContactsDs extends GDataSource<SensorContactTable> {
                 contact.subject = `${obs.mac}`;
             }
 
-            var element: SensorContactTable = (SensorContactsDs._data.find(element => element.subject === contact.subject));
-            if(element !== undefined){
+            const element: SensorContactTable = (SensorContactsDs._data.find(elem => elem.subject === contact.subject));
+            if (element !== undefined) {
                 element.timestamp = stmp;
                 return;
             }

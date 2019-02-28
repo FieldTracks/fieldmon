@@ -1,6 +1,9 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {MqttAdapterService} from '../../mqtt-adapter.service';
-import {Subscription} from 'rxjs';
+import { NamesDs } from './../../names/names-ds';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { MqttAdapterService } from '../../mqtt-adapter.service';
+import { Subscription } from 'rxjs';
+import { SensorContactsDs } from 'src/app/sensor-contacts/sensor-contacts-ds';
+import { StoneOverviewDs } from 'src/app/stone-overview/stone-overview-ds';
 
 @Component({
   selector: 'app-sidenav-list',
@@ -14,11 +17,11 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   private isAuth: boolean;
   private subscription: Subscription;
 
-  constructor(private mqttService: MqttAdapterService) {
-  }
+  constructor(private mqttService: MqttAdapterService, private names: NamesDs,
+    private contacts: SensorContactsDs, private overview: StoneOverviewDs) { }
 
   ngOnDestroy() {
-    if(this.subscription){
+    if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
@@ -37,5 +40,10 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   logout() {
       this.mqttService.logout();
       this.sidebarTooggle.emit();
+      this.names.disconnect(null);
+      this.contacts.disconnect(null);
+      this.overview.disconnect(null);
+      sessionStorage.removeItem('password');
+      sessionStorage.removeItem('username');
   }
 }

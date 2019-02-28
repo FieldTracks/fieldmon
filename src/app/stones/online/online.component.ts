@@ -1,8 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MqttAdapterService} from '../../mqtt-adapter.service';
-import {StoneOverviewDs} from '../../stone-overview/stone-overview-ds';
-import {DataSource} from '@angular/cdk/typings/esm5/collections';
-import {StoneInTable} from '../../model/stone-in-table';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { StoneOverviewDs } from '../../stone-overview/stone-overview-ds';
+import { NamesDs } from 'src/app/names/names-ds';
+import { SensorContactsDs } from 'src/app/sensor-contacts/sensor-contacts-ds';
 
 @Component({
   selector: 'app-online',
@@ -11,22 +10,22 @@ import {StoneInTable} from '../../model/stone-in-table';
 })
 export class OnlineComponent implements OnInit, OnDestroy {
 
-  datasource: DataSource<StoneInTable>;
-
   displayedColumns = ['major', 'minor', 'comment', 'age', 'lastSeen'];
 
-  constructor(private mqttAdapter: MqttAdapterService) {
-    this.datasource = new StoneOverviewDs(mqttAdapter);
+  // a and b are only injected so they are initialized on login
+  constructor(private datasource: StoneOverviewDs, private a: NamesDs, private b: SensorContactsDs) {
+    datasource.emit();
+    a.connect(null);
+    b.connect(null);
   }
 
 
   ngOnInit() {
-    console.log("Init");
+    console.log('Init');
   }
 
   ngOnDestroy() {
-    this.datasource.disconnect(null);
-    console.log("Destroy");
+    console.log('Destroy');
   }
 
 }

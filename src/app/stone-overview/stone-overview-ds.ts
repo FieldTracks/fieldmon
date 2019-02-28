@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 /*
 This file is part of fieldmon - (C) The Fieldtracks Project
 
@@ -8,15 +9,15 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import {CollectionViewer, DataSource} from '@angular/cdk/collections';
-import {StoneInTable} from '../model/stone-in-table';
-import {MqttAdapterService} from '../mqtt-adapter.service';
-import {StoneEvent} from '../model/StoneEvent';
-import {EventEmitter} from '@angular/core';
-import {BehaviorSubject, interval, Observable, Subscription} from 'rxjs';
+import { StoneInTable } from '../model/stone-in-table';
+import { MqttAdapterService } from '../mqtt-adapter.service';
+import { StoneEvent } from '../model/StoneEvent';
 import { IMqttMessage } from 'ngx-mqtt';
 import { GDataSource } from '../helpers/GDataSource';
 
+@Injectable({
+  providedIn: 'root'
+})
 export class StoneOverviewDs extends GDataSource<StoneInTable> {
 
   private static stones: StoneInTable [] = [];

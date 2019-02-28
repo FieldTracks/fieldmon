@@ -23,7 +23,7 @@ export class SensorContactsDs extends GDataSource<SensorContactTable> {
     private static _data: SensorContactTable[] = [];
 
     constructor(protected mqttService: MqttAdapterService) {
-        super('/JellingStone/#', SensorContactsDs._data);
+        super('JellingStone/#', SensorContactsDs._data);
     }
 
     protected parseMessage(message: IMqttMessage) {

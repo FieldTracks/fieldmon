@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MqttAdapterService} from '../../mqtt-adapter.service';
 import {StoneInTable} from '../../model/stone-in-table';
 import { Subscription} from 'rxjs';
-import {AggregatedStone} from '../../model/aggregated-stones/aggregated-stone';
+import {AggregatedStone} from '../../model/aggregated/aggregated-stone';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 
 @Component({
@@ -14,7 +14,7 @@ export class OnlineComponent implements OnInit, OnDestroy {
 
   datasource = new MatTableDataSource<StoneInTable>();
 
-  displayedColumns = ['major', 'minor', 'comment', 'age', 'lastSeen'];
+  displayedColumns = ['major', 'minor', 'age', 'lastSeen', 'comment'];
 
   pageSizeOptions = [5, 10, 0];
 
@@ -37,7 +37,7 @@ export class OnlineComponent implements OnInit, OnDestroy {
         if (mac) {
           const aStone: AggregatedStone = map[mac];
           newList.push(new StoneInTable(
-            aStone.comment, aStone.uuid, aStone.major, aStone.minor, new Date(aStone.last_seen)));
+            aStone.comment, aStone.uuid, aStone.major, aStone.minor, new Date(aStone.last_seen * 1000)));
         }
       }
       this.pageSizeOptions = [5, 10, newList.length];

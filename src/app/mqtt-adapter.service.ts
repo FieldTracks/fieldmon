@@ -6,7 +6,8 @@ import {Router} from '@angular/router';
 import {StoneConfiguration} from './model/StoneConfiguration';
 import {map} from 'rxjs/operators';
 import {FlashtoolStatus} from './model/flashtool/flashtool-status';
-import {AggregatedStone} from './model/aggregated-stones/aggregated-stone';
+import {AggregatedStone, AggregatedStoneSensorContact} from './model/aggregated/aggregated-stone';
+import {AggregatedGraph, AggregatedGraphLink, AggregatedGraphNode} from './model/aggregated/aggregated-graph';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -110,6 +111,29 @@ export class MqttAdapterService {
     ));
   }
 
+  public aggregatedGraphSubject(): Observable<AggregatedGraph> {
+    return this.aggregatedStonesSubject().pipe(map(stoneMap => {
+      const links: AggregatedGraphLink[] = [];
+      const nodes: AggregatedGraphNode[] = [];
+      // Collect nodes and links
+      for (const mac in stoneMap) {
+        if (mac) {
+          const stone: AggregatedStone = stoneMap[mac];
+          if (nodes.filter((n) => n.id === mac).length === 0) {
+            nodes.push({id: mac});
+          }
+          stone.contacts.forEach( (contact) => {
+            const link = {source: mac, target: contact.mac, rssi: contact.rssi_avg, timestamp: new Date(stone.last_seen * 1000)};
+            links.push(link);
+          });
+        }
+      }
+      return  {
+        links: links,
+        nodes: nodes,
+      };
+    }));
+  }
 
   public flashToolSubject(): Observable<FlashtoolStatus> {
     return this.mqttService.observe('flashtool/status/#').pipe(map(

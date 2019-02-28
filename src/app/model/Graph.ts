@@ -10,7 +10,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import {ageC} from '../helpers/age-helper';
 import {StoneEvent} from './StoneEvent';
-import {AggregatedStone} from './aggregated-stones/aggregated-stone';
+import {AggregatedStone} from './aggregated/aggregated-stone';
 
 export class GraphNode {
   id: string;

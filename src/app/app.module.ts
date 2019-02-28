@@ -27,7 +27,6 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { FlashtoolComponent } from './stones/flashtool/flashtool.component';
 import { OnlineComponent } from './stones/online/online.component';
-import { MatDialogModule } from '@angular/material';
 import { NamesDialogComponent } from './names/names-dialog';
 
 @NgModule({
@@ -51,7 +50,6 @@ import { NamesDialogComponent } from './names/names-dialog';
     LoginModule,
     AppRoutingModule,
     MaterialModule,
-    MatDialogModule,
     FormsModule,
     ReactiveFormsModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS)

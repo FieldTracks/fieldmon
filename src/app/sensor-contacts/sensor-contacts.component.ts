@@ -10,6 +10,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import { Component, OnInit } from '@angular/core';
 import { SensorContactsDs } from './sensor-contacts-ds';
+import {HeaderBarService} from '../header-bar.service';
 
 @Component({
   selector: 'app-sensor-contacts',
@@ -20,10 +21,9 @@ export class SensorContactsComponent implements OnInit {
 
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
 
-  constructor(private datasource: SensorContactsDs) { }
-
+  constructor(private datasource: SensorContactsDs, private titleService: HeaderBarService) { }
 
   ngOnInit() {
+    this.titleService.currentConfiguration.next({sectionTitle: 'Sensor Contacts', showSearch: true});
   }
-
 }

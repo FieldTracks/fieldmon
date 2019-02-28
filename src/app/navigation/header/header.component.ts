@@ -8,28 +8,47 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {EventEmitter} from '@angular/core';
 import {Output} from '@angular/core';
+import {Title} from '@angular/platform-browser';
+import {HeaderBarConfiguration, HeaderBarService} from '../../header-bar.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
+  private config: HeaderBarConfiguration;
 
-  constructor() { }
+  private subscription: Subscription;
+
+  constructor(private titleService: HeaderBarService) { }
 
   @Output()
   sidebarTooggle = new EventEmitter();
 
-  ngOnInit() {
+  ngOnInit(): void {
+      this.subscription = this.titleService.currentConfiguration.subscribe( (conf) => {
+          this.config = conf;
+        }
+      );
   }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   onToggle() {
     this.sidebarTooggle.emit();
   }
 
+  onRefresh() {
+    this.titleService.refresh.next();
+  }
+  onSearch() {
+    this.titleService.search.next();
+  }
 }

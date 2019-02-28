@@ -27,7 +27,7 @@ export class StoneOverviewDs extends GDataSource<StoneInTable> {
   }
 
   protected parseMessage(message: IMqttMessage) {
-    const sE: StoneEvent = JSON.parse(message.payload.toString());
+    /*const sE: StoneEvent = JSON.parse(message.payload.toString());
 
     for (const s of StoneOverviewDs.stones) {
       if (s.uuid === sE.uuid && s.major === sE.major && s.minor === sE.minor) {
@@ -38,5 +38,6 @@ export class StoneOverviewDs extends GDataSource<StoneInTable> {
     }
     const stone: StoneInTable = new StoneInTable(sE.comment, sE.uuid, sE.major, sE.minor, sE.timestamp);
     StoneOverviewDs.stones.push(stone);
+    */
   }
 }

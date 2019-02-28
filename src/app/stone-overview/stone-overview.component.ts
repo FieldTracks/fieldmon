@@ -9,6 +9,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 
  */
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import {HeaderBarService} from '../header-bar.service';
 
 
 @Component({
@@ -18,9 +19,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class StoneOverviewComponent implements OnInit {
 
-  constructor() { }
+  constructor(private titleService: HeaderBarService) { }
 
   ngOnInit() {
+    this.titleService.currentConfiguration.next({sectionTitle: 'Stones'});
   }
 
 }

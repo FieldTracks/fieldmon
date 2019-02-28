@@ -5,6 +5,19 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <div>Field Monitor</div>
+ <div fxHide.xs fxLayoutAlign="flex-start">
+    Field Monitor -&nbsp;
+  </div>
+  <div fxFlex fxLayout fxLayoutAlign="flex-start">
+    <span fxLayoutAlign="end">{{ config.sectionTitle }}</span>
+  </div>
+  <div fxFlex fxLayout fxLayoutAlign="flex-end">
+    <button (click)="onSearch()" *ngIf="config.showSearch" mat-icon-button>
+      <mat-icon>search</mat-icon>
+    </button>
+    <button (click)="onRefresh()" *ngIf="config.showRefresh" mat-icon-button>
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
 
 </mat-toolbar>

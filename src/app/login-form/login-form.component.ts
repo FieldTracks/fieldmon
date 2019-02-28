@@ -15,6 +15,7 @@ import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {MqttConnectionState} from 'ngx-mqtt';
+import {HeaderBarService} from '../header-bar.service';
 
 @Component({
   selector: 'app-login-form',
@@ -32,10 +33,11 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   private connectionProblem: boolean;
 
 
-  constructor(private router: Router, private mqttService: MqttAdapterService) {
+  constructor(private router: Router, private mqttService: MqttAdapterService, private titleService: HeaderBarService) {
   }
 
   ngOnInit() {
+    this.titleService.currentConfiguration.next({sectionTitle: 'Login'});
     this.broker = environment.mqtt_broker;
     this.showSpinner = false;
   }

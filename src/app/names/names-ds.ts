@@ -12,7 +12,11 @@ import {MqttAdapterService} from '../mqtt-adapter.service';
 import {Names} from '../model/Names';
 import { IMqttMessage } from 'ngx-mqtt';
 import { GDataSource } from '../helpers/GDataSource';
+import { Injectable } from '@angular/core';
 
+@Injectable({
+  providedIn: 'root'
+})
 export class NamesDs extends GDataSource<Names> {
 
     private static data: Names[] = [];
@@ -32,7 +36,6 @@ export class NamesDs extends GDataSource<Names> {
 
         const stones: Names[] = [];
         Object.getOwnPropertyNames(data).forEach((name: string) => {
-            console.log(name);
             const stone: Names = new Names();
             stone.Mac = name;
             stone.Major = data[name]['major'];

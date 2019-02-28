@@ -18,19 +18,22 @@
   <!-- Name Column -->
   <ng-container matColumnDef="reception">
     <th mat-header-cell *matHeaderCellDef> Reception </th>
-    <td mat-cell *matCellDef="let subject" [style.background-color]="subject.Color">{{subject.RSSI}} </td>
+    <td mat-cell *matCellDef="let subject" [style.background-color]="subject.Color">
+      <a mat-list-item>
+        <mat-icon>signal_cellular_4_bar</mat-icon>
+    </a> </td>
   </ng-container>
 
   <!-- Weight Column -->
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef> ID </th>
-    <td mat-cell *matCellDef="let subject" [style.background-color]="subject.Color"> <div *ngIf="!subject.Mac; else mac">{{subject.Major}} / {{subject.Minor}}</div> <ng-template #mac>{{subject.Mac}}</ng-template> </td>
+    <td mat-cell *matCellDef="let subject" [style.background-color]="subject.Color"> <div *ngIf="!subject.Mac; else mac">{{subject.Major}} / {{subject.Minor}}</div> <ng-template #mac>{{subject.Mac}}</ng-template> &nbsp;&nbsp;&nbsp;<mat-icon *ngIf="subject.UUID !== ownUUID">warning</mat-icon></td>
   </ng-container>
 
   <!-- Symbol Column -->
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let subject" [style.background-color]="subject.Color"> <div *ngIf="!subject.ShowEditnameField" [style.white-space]="'nowrap'"><div *ngIf="subject.Name === undefined || subject.Name === ''; else name">-  <button (click)="subject.ShowEditnameField = !subject.ShowEditnameField">Edit</button></div> <ng-template #name>{{subject.Name}}  <button (click)="subject.ShowEditnameField = !subject.ShowEditnameField">Edit</button></ng-template> </div> <div *ngIf="subject.ShowEditnameField" ><input [(ngModel)]="subject.Name" (focus)="setFocused(subject.Mac)" (focusout)="setFocused('')"><button (click)="publishName(subject.Mac, subject.Name); subject.ShowEditnameField = !subject.ShowEditnameField">Submit</button></div></td>
+    <td mat-cell *matCellDef="let subject" [style.background-color]="subject.Color"> <div *ngIf="!subject.ShowEditnameField" [style.white-space]="'nowrap'"><div *ngIf="subject.Name === undefined || subject.Name === ''; else name">-  <button (click)="openDialog(subject)">Edit</button></div> <ng-template #name>{{subject.Name}}  <button (click)="openDialog(subject)">Edit</button></ng-template> </div> <div *ngIf="subject.ShowEditnameField" ><input [(ngModel)]="subject.Name" (focus)="setFocused(subject.Mac)" (focusout)="setFocused('')"><button (click)="publishName(subject.Mac, subject.Name); subject.ShowEditnameField = !subject.ShowEditnameField">Submit</button></div></td>
   </ng-container>
 
   <!-- Symbol Column -->

@@ -8,34 +8,22 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import {DataSource} from '@angular/cdk/collections';
-import {MqttAdapterService} from '../mqtt-adapter.service';
-import {SensorContactTable} from '../model/sensor-contact-table';
-import {SensorContactsDs} from './sensor-contacts-ds';
-import { GDataSource } from '../helpers/GDataSource';
+import { Component, OnInit } from '@angular/core';
+import { SensorContactsDs } from './sensor-contacts-ds';
 
 @Component({
   selector: 'app-sensor-contacts',
   templateUrl: './sensor-contacts.component.html',
   styleUrls: ['./sensor-contacts.component.css']
 })
-export class SensorContactsComponent implements OnInit, OnDestroy {
-
-  datasource: GDataSource<SensorContactTable>;
+export class SensorContactsComponent implements OnInit {
 
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
 
-  constructor(private mqttAdapter: MqttAdapterService) {
-    this.datasource = new SensorContactsDs(mqttAdapter);
-  }
+  constructor(private datasource: SensorContactsDs) { }
 
 
   ngOnInit() {
-  }
-
-  ngOnDestroy(){
-    this.datasource.disconnect(null);
   }
 
 }

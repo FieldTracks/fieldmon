@@ -1,18 +1,9 @@
-<<<<<<< HEAD
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MqttAdapterService} from '../../mqtt-adapter.service';
-import {StoneOverviewDs} from '../../stone-overview/stone-overview-ds';
-import {DataSource} from '@angular/cdk/typings/esm5/collections';
 import {StoneInTable} from '../../model/stone-in-table';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import { Subscription} from 'rxjs';
 import {AggregatedStone} from '../../model/aggregated-stones/aggregated-stone';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-=======
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { StoneOverviewDs } from '../../stone-overview/stone-overview-ds';
-import { NamesDs } from 'src/app/names/names-ds';
-import { SensorContactsDs } from 'src/app/sensor-contacts/sensor-contacts-ds';
->>>>>>> fb3eaaca41cc2a8f3603c2ea47da16dd629ac4c5
 
 @Component({
   selector: 'app-online',
@@ -21,7 +12,6 @@ import { SensorContactsDs } from 'src/app/sensor-contacts/sensor-contacts-ds';
 })
 export class OnlineComponent implements OnInit, OnDestroy {
 
-<<<<<<< HEAD
   datasource = new MatTableDataSource<StoneInTable>();
 
   displayedColumns = ['major', 'minor', 'comment', 'age', 'lastSeen'];
@@ -45,7 +35,7 @@ export class OnlineComponent implements OnInit, OnDestroy {
       const newList: StoneInTable[] = [];
       for (const mac in map) {
         if (mac) {
-          const aStone: AggregatedStone = map[mac];#
+          const aStone: AggregatedStone = map[mac];
           newList.push(new StoneInTable(
             aStone.comment, aStone.uuid, aStone.major, aStone.minor, new Date(aStone.last_seen)));
         }

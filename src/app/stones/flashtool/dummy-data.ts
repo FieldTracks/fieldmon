@@ -1,6 +1,6 @@
 import {StoneConfiguration} from '../../model/StoneConfiguration';
 import {from, Observable} from 'rxjs';
-import {FlashtoolStatus} from '../../model/flashtool-status';
+import {FlashtoolStatus} from '../../model/flashtool/flashtool-status';
 
 export class DummyData {
 

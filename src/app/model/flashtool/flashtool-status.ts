@@ -1,4 +1,4 @@
-import {StoneConfiguration} from './StoneConfiguration';
+import {StoneConfiguration} from '../StoneConfiguration';
 
 export interface FlashtoolStatus {
   event: 'connected' | 'disconnected';

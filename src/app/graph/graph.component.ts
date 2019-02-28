@@ -8,12 +8,13 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-import {AfterContentInit, Component, OnInit} from '@angular/core';
+import {AfterContentInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {Graph} from '../model/Graph';
 import {D3Widget} from './d3-widget';
-import {interval} from 'rxjs';
+import {interval, Subscription} from 'rxjs';
 import {StoneEvent} from '../model/StoneEvent';
+import {AggregatedStone} from '../model/aggregated-stones/aggregated-stone';
 
 
 @Component({
@@ -21,8 +22,9 @@ import {StoneEvent} from '../model/StoneEvent';
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnInit, AfterContentInit {
+export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
   private d3Widget = new D3Widget();
+  private subscription: Subscription;
 
   constructor(private mqttService: MqttAdapterService) {
 
@@ -30,16 +32,14 @@ export class GraphComponent implements OnInit, AfterContentInit {
 
   /** Subscribe to event **/
   ngOnInit(): void {
-    /*this.mqttService.subscribe().subscribe((v) => {
-      console.log('Got stone event', v);
-      D3Widget.graph.addOrUdpateGraph(v);
-
+    this.subscription = this.mqttService.aggregatedStonesSubject().subscribe((stoneMap) => {
+      D3Widget.graph.addOrUdpateGraphFromMap(stoneMap);
     });
 
-    // Take care of initial load
-    MqttAdapterService.stoneStatus().forEach( (sE: StoneEvent) => {
-      D3Widget.graph.addOrUdpateGraph(sE);
-    });*/
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   /**

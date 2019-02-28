@@ -14,7 +14,7 @@ import {ageC} from '../helpers/age-helper';
 export class StoneInTable {
   comment: string;
 
-  constructor(comment: string, uuid: String, major: String, minor: String, lastSeen: string) {
+  constructor(comment: string, uuid: string, major: number, minor: number, lastSeen: Date) {
     this.comment = comment;
     this.uuid = uuid;
     this.major = major;
@@ -24,11 +24,11 @@ export class StoneInTable {
 
 
   uuid: String;
-  major: String;
-  minor: String;
-  lastSeen: string;
+  major: number;
+  minor: number;
+  lastSeen: Date;
 
   get age() {
-    return ageC(this.lastSeen);
+    return ageC(this.lastSeen.toISOString());
   }
 }

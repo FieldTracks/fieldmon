@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {IMqttMessage, IMqttServiceOptions, MqttConnectionState, MqttService} from 'ngx-mqtt';
 import {environment} from './../environments/environment';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {StoneConfiguration} from './model/StoneConfiguration';
 import {map} from 'rxjs/operators';
-import {FlashtoolStatus} from './model/flashtool-status';
+import {FlashtoolStatus} from './model/flashtool/flashtool-status';
+import {AggregatedStone} from './model/aggregated-stones/aggregated-stone';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -100,6 +101,15 @@ export class MqttAdapterService {
       stone: sc
     })).subscribe().unsubscribe();
   }
+
+  public aggregatedStonesSubject(): Observable<Map<string, AggregatedStone>> {
+    return this.mqttService.observe('Aggregated/Stones').pipe(map(
+      (message: IMqttMessage) => {
+        return JSON.parse(message.payload.toString());
+      }
+    ));
+  }
+
 
   public flashToolSubject(): Observable<FlashtoolStatus> {
     return this.mqttService.observe('flashtool/status/#').pipe(map(

@@ -10,7 +10,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MatButtonModule, MatTableModule, MatToolbarModule} from '@angular/material';
+import {MatButtonModule, MatPaginatorModule, MatSortModule, MatTableModule, MatToolbarModule} from '@angular/material';
 import { MatCardModule, MatInputModule, MatSidenavModule} from '@angular/material';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -27,7 +27,7 @@ import { MatIconModule, MatListModule, MatTabsModule} from '@angular/material';
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule],
+            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -37,7 +37,7 @@ import { MatIconModule, MatListModule, MatTabsModule} from '@angular/material';
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule],
+            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule],
   declarations: []
 })
 export class MaterialModule { }

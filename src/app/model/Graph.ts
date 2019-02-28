@@ -10,6 +10,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import {ageC} from '../helpers/age-helper';
 import {StoneEvent} from './StoneEvent';
+import {AggregatedStone} from './aggregated-stones/aggregated-stone';
 
 export class GraphNode {
   id: string;
@@ -121,6 +122,33 @@ export class Graph {
       // Update link
       this.addOrUpdateLink(sensorNode, subjectNode, obs.avg, obs.remoteRssi, sE.timestamp);
     }
+  }
+
+  /**
+   * Update the graph based with all data in a stone event.
+   * @param {StoneEvent} sE
+   */
+  addOrUdpateGraphFromMap(map: Map<string, AggregatedStone>) {
+    for (const mac in map) {
+      if (mac) {
+        const stone = map[mac];
+        // Adding sensor-Node Or update last seen
+        const sensorNode = this.addOrUpdateNode(stone.uuid, stone.major.toString(), stone.minor.toString(), stone.last_seen, stone.comment);
+
+        // Go through observations
+        for (const obs of stone.contacts) {
+          const subjectId = this.nodeId(obs.uuid, obs.major.toString(), obs.minor.toString());
+
+          // Update node
+          const subjectNode = this.addOrUpdateNode(obs.uuid, obs.major.toString(), obs.minor.toString(), sensorNode.lastseen, null);
+
+          // Update link
+          this.addOrUpdateLink(sensorNode, subjectNode, obs.rssi_avg, obs.rssi_tx, sensorNode.lastseen);
+      }
+
+      }
+    }
+
   }
 
   /**

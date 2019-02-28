@@ -1,0 +1,15 @@
+export class ForceNode {
+  index?: any;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  fx?: number;
+  fy?: number;
+}
+export class ForceLink {
+  source: Node;
+  target: Node;
+  index?: any;
+  rssi?: number;
+}

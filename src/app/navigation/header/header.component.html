@@ -12,12 +12,19 @@
     <span fxLayoutAlign="end">{{ config.sectionTitle }}</span>
   </div>
   <div fxFlex fxLayout fxLayoutAlign="flex-end">
-    <button (click)="onSearch()" *ngIf="config.showSearch" mat-icon-button>
+    <button (click)="onSearchToggle()" *ngIf="config && config.showSearch" mat-icon-button>
       <mat-icon>search</mat-icon>
     </button>
-    <button (click)="onRefresh()" *ngIf="config.showRefresh" mat-icon-button>
-      <mat-icon>refresh</mat-icon>
+    <div *ngIf="config.showRefresh && refreshActive" [className]="syncClass" >
+      <button (click)="onDisableRefresh()" mat-icon-button>
+        <mat-icon >sync</mat-icon>
+      </button>
+
+    </div>
+
+    <button *ngIf="config.showRefresh && !refreshActive" (click)="onEnableRefresh()" mat-icon-button>
+      <mat-icon>sync_disabled</mat-icon>
     </button>
   </div>
-
 </mat-toolbar>
+

@@ -6,21 +6,18 @@ import {BehaviorSubject, Subject} from 'rxjs';
 })
 export class HeaderBarService {
 
-  currentConfiguration: BehaviorSubject<HeaderBarConfiguration>;
+  currentConfiguration = new BehaviorSubject<HeaderBarConfiguration>({sectionTitle: ''});
 
-  refresh: Subject<void>;
+  refreshingEnabled = new BehaviorSubject<boolean>(false);
 
-  search: Subject<void>;
-
+  search = new Subject();
 
   constructor() {
-    this.currentConfiguration = new BehaviorSubject(null);
-    this.refresh = new Subject();
-    this.search = new Subject();
   }
 }
 export interface HeaderBarConfiguration {
   sectionTitle: string;
   showSearch?: boolean;
   showRefresh?: boolean;
+  rotateRefreshOneTime?: boolean;
 }

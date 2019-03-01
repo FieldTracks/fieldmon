@@ -3,11 +3,19 @@
     <app-sidenav-list (sidebarTooggle)="sidenav.close()"></app-sidenav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-header (sidebarTooggle)="sidenav.toggle()"></app-header>
+    <app-header (sidebarTooggle)="sidenav.toggle()" (searchToggle)="showToggle = !showToggle"></app-header>
     <mat-drawer-container class="example-container">
       <mat-drawer mode="side" opened fxHide.lt-sm><app-sidenav-list></app-sidenav-list></mat-drawer>
       <mat-drawer-content>
         <main>
+          <div  fxLayout="row" fxLayoutAlign="end" *ngIf="showToggle">
+          <mat-form-field #search>
+            <span matPrefix>
+              <mat-icon>search</mat-icon>
+            </span>
+            <input matInput name="search" class="search_input">
+          </mat-form-field>
+        </div>
           <router-outlet></router-outlet>
 
         </main>

@@ -10,3 +10,7 @@ a:hover, a:active {
   padding: 0;
   margin: 0;
 }
+.sync{
+  transform: rotate(360deg);
+  transition: all 1s ease-in-out;
+}

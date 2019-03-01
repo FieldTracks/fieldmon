@@ -13,7 +13,7 @@ import {EventEmitter} from '@angular/core';
 import {Output} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {HeaderBarConfiguration, HeaderBarService} from '../../header-bar.service';
-import {Subscription} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -21,34 +21,60 @@ import {Subscription} from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  private config: HeaderBarConfiguration;
+  private config: HeaderBarConfiguration = {sectionTitle: ''};
 
   private subscription: Subscription;
+  private refreshActive: boolean;
+  private refreshSubscription: Subscription;
 
-  constructor(private titleService: HeaderBarService) { }
+
+  constructor(private headerBarService: HeaderBarService) { }
+
+  syncClass = '';
 
   @Output()
   sidebarTooggle = new EventEmitter();
 
+  @Output()
+  searchToggle = new EventEmitter();
+
+
   ngOnInit(): void {
-      this.subscription = this.titleService.currentConfiguration.subscribe( (conf) => {
+      this.subscription = this.headerBarService.currentConfiguration.subscribe( (conf) => {
           this.config = conf;
+          if (conf.rotateRefreshOneTime) {
+            this.blinkSync();
+          }
         }
       );
+      this.refreshSubscription = this.headerBarService.refreshingEnabled.subscribe((value) => {
+        this.refreshActive = value;
+      });
+  }
+
+  private blinkSync() {
+    this.syncClass = 'sync';
+    setTimeout( () => this.syncClass = '', 1000);
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.refreshSubscription.unsubscribe();
   }
 
   onToggle() {
     this.sidebarTooggle.emit();
   }
 
-  onRefresh() {
-    this.titleService.refresh.next();
+  onSearchToggle() {
+    this.searchToggle.emit();
   }
-  onSearch() {
-    this.titleService.search.next();
+
+  onEnableRefresh() {
+    this.headerBarService.refreshingEnabled.next(true);
+  }
+
+  onDisableRefresh() {
+    this.headerBarService.refreshingEnabled.next(false);
   }
 }

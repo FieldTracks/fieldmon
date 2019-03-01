@@ -10,7 +10,14 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {MatButtonModule, MatPaginatorModule, MatSortModule, MatTableModule, MatToolbarModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatPaginatorModule,
+  MatSortModule,
+  MatTableModule,
+  MatToolbarModule
+} from '@angular/material';
 import { MatCardModule, MatInputModule, MatSidenavModule} from '@angular/material';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -27,7 +34,7 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule} from '@an
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule, MatDialogModule],
+            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatButtonToggleModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -37,7 +44,7 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule} from '@an
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule, MatDialogModule],
+            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatButtonToggleModule],
   declarations: []
 })
 export class MaterialModule { }

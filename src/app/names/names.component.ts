@@ -24,7 +24,7 @@ import {Subscription} from 'rxjs';
   templateUrl: './names.component.html',
   styleUrls: ['./names.component.css'],
 })
-export class NamesComponent implements OnInit,OnDestroy {
+export class NamesComponent implements OnInit {
 
   public readonly ownUUID = '';
   private _refresh: boolean;
@@ -32,7 +32,7 @@ export class NamesComponent implements OnInit,OnDestroy {
   private namesDialogRef: MatDialogRef<NamesDialogComponent>;
   private refreshSubscription: Subscription;
 
-  constructor(private mqttAdapter: MqttAdapterService, private datasource: NamesDs, private dialog: MatDialog, private titleService: HeaderBarService) {
+  constructor(private mqttAdapter: MqttAdapterService, private datasource: NamesDs, private dialog: MatDialog, private headerBarService: HeaderBarService) {
     this._refresh = true;
   }
 
@@ -49,15 +49,15 @@ export class NamesComponent implements OnInit,OnDestroy {
     NamesDs.focus = mac;
   }
 
-  ngOnDestroy(): void {
-    this.refreshSubscription.unsubscribe();
-  }
 
   ngOnInit() {
-    this.titleService.currentConfiguration.next({sectionTitle: 'Names', showRefresh: true, showSearch: true});
-    this.refreshSubscription = this.titleService.refresh.subscribe(() => {
-      this.datasource.emit();
-    });
+    this.headerBarService.refreshingEnabled.next(true);
+    this.headerBarService.currentConfiguration.next(
+      {sectionTitle: 'Names', showRefresh: true, showSearch: true});
+    setTimeout( () => {
+      this.headerBarService.currentConfiguration.next(
+        {sectionTitle: 'Names', showRefresh: true, showSearch: true, rotateRefreshOneTime: true});
+    }, 1000);
   }
 
   private openDialog(subject: Names) {

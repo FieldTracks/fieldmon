@@ -55,9 +55,8 @@ export class NamesComponent implements OnInit {
     this.headerBarService.currentConfiguration.next(
       {sectionTitle: 'Names', showRefresh: true, showSearch: true});
     setTimeout( () => {
-      this.headerBarService.currentConfiguration.next(
-        {sectionTitle: 'Names', showRefresh: true, showSearch: true, rotateRefreshOneTime: true});
-    }, 1000);
+      this.headerBarService.rotateRefreshButton.next();
+    }, 2000);
   }
 
   private openDialog(subject: Names) {

@@ -27,6 +27,7 @@ export class FlashtoolModel {
 
   public edit() {
     this.uiEditing = true;
+    this.uiLocked = false;
   }
 
   public lockUi() {

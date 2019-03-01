@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private refreshActive: boolean;
   private refreshSubscription: Subscription;
+  private rotateRefreshButtonSubscription: Subscription;
 
 
   constructor(private headerBarService: HeaderBarService) { }
@@ -42,11 +43,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
       this.subscription = this.headerBarService.currentConfiguration.subscribe( (conf) => {
           this.config = conf;
-          if (conf.rotateRefreshOneTime) {
-            this.blinkSync();
-          }
         }
       );
+      this.rotateRefreshButtonSubscription = this.headerBarService.rotateRefreshButton.subscribe( () => this.blinkSync());
+
       this.refreshSubscription = this.headerBarService.refreshingEnabled.subscribe((value) => {
         this.refreshActive = value;
       });
@@ -60,6 +60,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.refreshSubscription.unsubscribe();
+    this.rotateRefreshButtonSubscription.unsubscribe();
   }
 
   onToggle() {

@@ -10,7 +10,7 @@ export class HeaderBarService {
 
   refreshingEnabled = new BehaviorSubject<boolean>(false);
 
-  search = new Subject();
+  rotateRefreshButton = new Subject();
 
   constructor() {
   }
@@ -19,5 +19,4 @@ export interface HeaderBarConfiguration {
   sectionTitle: string;
   showSearch?: boolean;
   showRefresh?: boolean;
-  rotateRefreshOneTime?: boolean;
 }

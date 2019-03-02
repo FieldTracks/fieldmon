@@ -40,9 +40,6 @@ export class MqttAdapterService {
     sessionStorage.setItem('password', password);
 
     MQTT_SERVICE_OPTIONS.username = sessionStorage.getItem('username');
-    MQTT_SERVICE_OPTIONS.password = '';
-    console.log('Connecting to', MQTT_SERVICE_OPTIONS);
-
     MQTT_SERVICE_OPTIONS.password = sessionStorage.getItem('password');
 
     try {

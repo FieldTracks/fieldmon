@@ -32,7 +32,7 @@ export class NamesComponent implements OnInit {
   private namesDialogRef: MatDialogRef<NamesDialogComponent>;
   private refreshSubscription: Subscription;
 
-  constructor(private mqttAdapter: MqttAdapterService, private datasource: NamesDs, private dialog: MatDialog, private headerBarService: HeaderBarService) {
+  constructor(private mqttAdapter: MqttAdapterService, public datasource: NamesDs, private dialog: MatDialog, private headerBarService: HeaderBarService) {
     this._refresh = true;
   }
 

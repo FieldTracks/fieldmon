@@ -21,17 +21,18 @@ import {BehaviorSubject, Subscription} from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  private config: HeaderBarConfiguration = {sectionTitle: ''};
+
+  refreshActive: boolean;
+  config: HeaderBarConfiguration = {sectionTitle: ''};
+  syncClass = '';
+
 
   private subscription: Subscription;
-  private refreshActive: boolean;
   private refreshSubscription: Subscription;
   private rotateRefreshButtonSubscription: Subscription;
 
-
   constructor(private headerBarService: HeaderBarService) { }
 
-  syncClass = '';
 
   @Output()
   sidebarTooggle = new EventEmitter();

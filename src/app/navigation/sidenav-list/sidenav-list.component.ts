@@ -14,7 +14,9 @@ export class SidenavListComponent implements OnInit, OnDestroy {
 
   @Output('sidebarTooggle')
   sidebarTooggle = new EventEmitter<void>();
-  private isAuth: boolean;
+
+  isAuth: boolean;
+
   private subscription: Subscription;
 
   constructor(private mqttService: MqttAdapterService, private names: NamesDs,

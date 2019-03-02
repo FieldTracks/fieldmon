@@ -21,7 +21,7 @@ export class SensorContactsComponent implements OnInit {
 
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
 
-  constructor(private datasource: SensorContactsDs, private titleService: HeaderBarService) { }
+  constructor(public datasource: SensorContactsDs, private titleService: HeaderBarService) { }
 
   ngOnInit() {
     this.titleService.currentConfiguration.next({sectionTitle: 'Sensor Contacts', showSearch: true});

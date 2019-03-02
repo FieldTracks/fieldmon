@@ -1,12 +1,9 @@
 /*
 This file is part of fieldmon - (C) The Fieldtracks Project
-
     fieldmon is distributed under the civilian open source license (COSLi).
     Military usage is forbidden.
-
     You should have received a copy of COLi along with fieldmon.
     If not, please contact info@fieldtracks.org
-
  */
 import {AfterContentInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {MqttAdapterService} from '../mqtt-adapter.service';
@@ -14,9 +11,6 @@ import {Graph} from '../model/Graph';
 import {D3Widget} from './d3-widget';
 import {interval, Subscription} from 'rxjs';
 import {StoneEvent} from '../model/StoneEvent';
-import {AggregatedStone} from '../model/aggregated/aggregated-stone';
-import {SensorContactsDs} from '../sensor-contacts/sensor-contacts-ds';
-import {HeaderBarService} from '../header-bar.service';
 
 
 @Component({
@@ -28,16 +22,17 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
   private d3Widget = new D3Widget();
   private subscription: Subscription;
 
-  constructor(private mqttService: MqttAdapterService, private titleService: HeaderBarService) {
+  constructor(private mqttService: MqttAdapterService) {
+
   }
 
-  /** Subscribe to event **/
+  /** Subscribe to event */
   ngOnInit(): void {
-    this.titleService.currentConfiguration.next({sectionTitle: 'Graph'});
-    this.subscription = this.mqttService.aggregatedStonesSubject().subscribe((stoneMap) => {
-      D3Widget.graph.addOrUdpateGraphFromMap(stoneMap);
+    // Take care of initial load
+    this.subscription = this.mqttService.stoneEventSubject().subscribe((sE) => {
+      console.log('Got StoneEvent:', sE);
+      D3Widget.graph.addOrUdpateGraph(sE);
     });
-
   }
 
   ngOnDestroy(): void {
@@ -47,11 +42,11 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
   /**
    * Do not update the graph, befor all components are loaded.
    * Then do so every 2 seconds
-   **/
+   */
   ngAfterContentInit(): void {
     this.d3Widget.run();
     interval(5000).subscribe( () => {
-      this.d3Widget.updateGraph();
+        this.d3Widget.updateGraph();
       }
     );
 
@@ -60,3 +55,4 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
 
 
 }
+

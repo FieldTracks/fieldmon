@@ -8,6 +8,7 @@ import {map} from 'rxjs/operators';
 import {FlashtoolStatus} from './model/flashtool/flashtool-status';
 import {AggregatedStone, AggregatedStoneSensorContact} from './model/aggregated/aggregated-stone';
 import {AggregatedGraph, AggregatedGraphLink, AggregatedGraphNode} from './model/aggregated/aggregated-graph';
+import {StoneEvent} from './model/StoneEvent';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -115,17 +116,24 @@ export class MqttAdapterService {
     return this.aggregatedStonesSubject().pipe(map(stoneMap => {
       const links: AggregatedGraphLink[] = [];
       const nodes: AggregatedGraphNode[] = [];
+      const nodeDict: AggregatedGraphNode[] = [];
+
       // Collect nodes and links
       for (const mac in stoneMap) {
         if (mac) {
+          nodeDict[mac] = {id: mac};
+          nodes.push(nodeDict[mac]);
+        }
+      }
+      for (const mac in stoneMap) {
+        if (mac) {
           const stone: AggregatedStone = stoneMap[mac];
-          if (nodes.filter((n) => n.id === mac).length === 0) {
-            nodes.push({id: mac});
-          }
           stone.contacts.forEach( (contact) => {
-            const link = {source: mac, target: contact.mac, rssi: contact.rssi_avg, timestamp: new Date(stone.last_seen * 1000)};
+            const link = {source: nodes[mac], target: nodes[contact.mac], rssi: contact.rssi_avg,
+              timestamp: new Date(stone.last_seen * 1000)};
             links.push(link);
           });
+
         }
       }
       return  {
@@ -133,6 +141,15 @@ export class MqttAdapterService {
         nodes: nodes,
       };
     }));
+  }
+
+  public stoneEventSubject(): Observable<StoneEvent> {
+    return this.mqttService.observe('JellingStone/#').pipe(map(
+      (message: IMqttMessage) => {
+        return JSON.parse(message.payload.toString());
+      }
+    ));
+
   }
 
   public flashToolSubject(): Observable<FlashtoolStatus> {

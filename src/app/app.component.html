@@ -13,7 +13,7 @@
             <span matPrefix>
               <mat-icon>search</mat-icon>
             </span>
-            <input matInput name="search" class="search_input">
+            <input matInput name="search" (keydown)="updateSearch()" [(ngModel)]="searchString" class="search_input">
           </mat-form-field>
         </div>
           <router-outlet></router-outlet>

@@ -21,7 +21,11 @@ export class NamesDialogComponent implements OnInit {
     });
   }
 
-  submit(form) {
-    this.dialogRef.close(`${form.value.name}`);
+  submit() {
+    this.dialogRef.close(`${this.form.value.name}`);
+  }
+
+  cancle() {
+    this.dialogRef.close(null);
   }
 }

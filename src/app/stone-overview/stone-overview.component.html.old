@@ -1,9 +1,0 @@
-<mat-tab-group>
-  <mat-tab label="Online">
-    <h2>Online</h2>
-  </mat-tab>
-  <mat-table label="Flash & Configure">
-    <app-flashtool></app-flashtool>
-  </mat-table>
-</mat-tab-group>
-

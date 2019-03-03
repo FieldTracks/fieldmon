@@ -69,6 +69,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSearchToggle() {
+    this.headerBarService.searchEntered.emit('');
     this.searchToggle.emit();
   }
 

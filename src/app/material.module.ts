@@ -16,13 +16,14 @@ import {
   MatPaginatorModule,
   MatSortModule,
   MatTableModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatTooltipModule
 } from '@angular/material';
-import { MatCardModule, MatInputModule, MatSidenavModule} from '@angular/material';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule} from '@angular/material';
+import { MatCardModule, MatInputModule, MatSidenavModule } from '@angular/material';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@angular/material';
 
 @NgModule({
   imports: [MatTableModule,
@@ -34,7 +35,15 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule} from '@an
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatButtonToggleModule],
+            MatSidenavModule,
+            MatIconModule,
+            MatListModule,
+            MatTabsModule,
+            MatPaginatorModule,
+            MatSortModule,
+            MatDialogModule,
+            MatButtonToggleModule,
+            MatTooltipModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -44,7 +53,15 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule} from '@an
             MatProgressSpinnerModule,
             MatGridListModule,
             FlexLayoutModule,
-            MatSidenavModule, MatIconModule, MatListModule, MatTabsModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatButtonToggleModule],
+            MatSidenavModule,
+            MatIconModule,
+            MatListModule,
+            MatTabsModule,
+            MatPaginatorModule,
+            MatSortModule,
+            MatDialogModule,
+            MatButtonToggleModule,
+            MatTooltipModule],
   declarations: []
 })
 export class MaterialModule { }

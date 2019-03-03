@@ -12,6 +12,8 @@ export class HeaderBarService {
 
   rotateRefreshButton = new Subject();
 
+  searchEntered = new EventEmitter();
+
   constructor() {
   }
 }

@@ -13,20 +13,13 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 export class OnlineComponent implements OnInit, OnDestroy {
 
   datasource = new MatTableDataSource<StoneInTable>();
-
   displayedColumns = ['major', 'minor', 'age', 'lastSeen', 'comment'];
-
   pageSizeOptions = [5, 10, 0];
-
   private subscription: Subscription;
-
-  privateprivate;
-  filter: string;
+  private filter: string;
 
 
-  constructor(private mqttAdapter: MqttAdapterService) {
-    // this.datasource = new StoneOverviewDs(mqttAdapter);
-  }
+  constructor(private mqttAdapter: MqttAdapterService) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

@@ -1,9 +1,6 @@
-import { NamesDs } from './../../names/names-ds';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MqttAdapterService } from '../../mqtt-adapter.service';
 import { Subscription } from 'rxjs';
-import { SensorContactsDs } from 'src/app/sensor-contacts/sensor-contacts-ds';
-
 
 @Component({
   selector: 'app-sidenav-list',
@@ -19,8 +16,7 @@ export class SidenavListComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(private mqttService: MqttAdapterService, private names: NamesDs,
-    private contacts: SensorContactsDs) { }
+  constructor(private mqttService: MqttAdapterService) { }
 
   ngOnDestroy() {
     if (this.subscription) {
@@ -42,8 +38,6 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   logout() {
       this.mqttService.logout();
       this.sidebarTooggle.emit();
-      this.names.disconnect(null);
-      this.contacts.disconnect(null);
       sessionStorage.removeItem('password');
       sessionStorage.removeItem('username');
   }

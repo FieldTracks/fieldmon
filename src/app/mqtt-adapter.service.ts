@@ -9,6 +9,7 @@ import {FlashtoolStatus} from './model/flashtool/flashtool-status';
 import {AggregatedStone, AggregatedStoneSensorContact} from './model/aggregated/aggregated-stone';
 import {AggregatedGraph, AggregatedGraphLink, AggregatedGraphNode} from './model/aggregated/aggregated-graph';
 import {StoneEvent} from './model/StoneEvent';
+import { AggregatedName } from './model/aggregated/aggregated-name';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -106,6 +107,14 @@ export class MqttAdapterService {
 
   public aggregatedStonesSubject(): Observable<Map<string, AggregatedStone>> {
     return this.mqttService.observe('Aggregated/Stones').pipe(map(
+      (message: IMqttMessage) => {
+        return JSON.parse(message.payload.toString());
+      }
+    ));
+  }
+
+  public aggregatedNamesSubject(): Observable<Map<string, AggregatedName>> {
+    return this.mqttService.observe('Aggregated/Names').pipe(map(
       (message: IMqttMessage) => {
         return JSON.parse(message.payload.toString());
       }

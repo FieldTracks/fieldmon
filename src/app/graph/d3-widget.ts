@@ -1,9 +1,7 @@
 import * as d3 from 'd3';
-import {Graph} from '../model/Graph';
+import {GraphNG} from './graph.model';
 
 export class D3Widget {
-
-  static graph: Graph = new Graph();
 
   static forceSimulation: any;
 
@@ -30,7 +28,7 @@ export class D3Widget {
 
     forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
 
-    // Drag and Drop for shaing the nodes
+    // Drag and Drop for shaing the nodeMap
     d3.select(canvas)
       .call(d3.drag()
         .container(canvas)
@@ -94,14 +92,11 @@ export class D3Widget {
     };
   }
 
-  /**
-   * Updating the graph. Exepecting > 10 messages per second, the widet must called it in sane intervals
-   */
-  updateGraph(): void {
-    D3Widget.forceSimulationLinks = D3Widget.graph.codedLinks();
+  updateGraphNg(g: GraphNG): void {
+    D3Widget.forceSimulationLinks = g.links;
     console.log('Links:', D3Widget.forceSimulationLinks );
-    D3Widget.forceSimulationNodes = D3Widget.graph.codedNodes();
-    const nodes = D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
-    const links = D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
+    D3Widget.forceSimulationNodes = g.nodes;
+    D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
+    D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
   }
 }

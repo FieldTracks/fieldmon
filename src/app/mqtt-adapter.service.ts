@@ -123,31 +123,38 @@ export class MqttAdapterService {
 
   public aggregatedGraphSubject(): Observable<AggregatedGraph> {
     return this.aggregatedStonesSubject().pipe(map(stoneMap => {
+      const nodeMap = new Map<string, AggregatedGraphNode>();
       const links: AggregatedGraphLink[] = [];
-      const nodes: AggregatedGraphNode[] = [];
-      const nodeDict: AggregatedGraphNode[] = [];
 
-      // Collect nodes and links
+      // Build node database
       for (const mac in stoneMap) {
         if (mac) {
-          nodeDict[mac] = {id: mac};
-          nodes.push(nodeDict[mac]);
-        }
-      }
-      for (const mac in stoneMap) {
-        if (mac) {
-          const stone: AggregatedStone = stoneMap[mac];
-          stone.contacts.forEach( (contact) => {
-            const link = {source: nodes[mac], target: nodes[contact.mac], rssi: contact.rssi_avg,
-              timestamp: new Date(stone.last_seen * 1000)};
-            links.push(link);
+          nodeMap.set(mac, {id: mac});
+          stoneMap[mac].contacts.forEach( (contact) => {
+            nodeMap.set(contact.mac, {id: contact.mac});
           });
-
         }
       }
+
+      // Build link database
+      for (const mac in stoneMap) {
+        if (mac) {
+          const stone = stoneMap[mac];
+          stone.contacts.forEach( (contact) => {
+            links.push(
+              {source: mac, target: contact.mac, rssi: contact.rssi_avg, timestamp: new Date(stone.last_seen * 1000)});
+          });
+        }
+      }
+
+      console.log('Returned links:', links);
+      console.log('Returned nodeMap:',  Array.from(nodeMap.values()));
+
+
+      // Collect nodeMap and links
       return  {
         links: links,
-        nodes: nodes,
+        nodes: Array.from(nodeMap.values())
       };
     }));
   }

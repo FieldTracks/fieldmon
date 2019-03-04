@@ -7,10 +7,9 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import {AfterContentInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {MqttAdapterService} from '../mqtt-adapter.service';
-import {Graph} from '../model/Graph';
 import {D3Widget} from './d3-widget';
-import {interval, Subscription} from 'rxjs';
-import {StoneEvent} from '../model/StoneEvent';
+import {Subscription} from 'rxjs';
+import {GraphNG} from './graph.model';
 
 
 @Component({
@@ -22,21 +21,21 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
   private d3Widget = new D3Widget();
   private subscription: Subscription;
 
+  private graph = new GraphNG();
+
   constructor(private mqttService: MqttAdapterService) {
 
   }
 
-  /** Subscribe to event */
+
   ngOnInit(): void {
-    // Take care of initial load
-    this.subscription = this.mqttService.stoneEventSubject().subscribe((sE) => {
-      console.log('Got StoneEvent:', sE);
-      D3Widget.graph.addOrUdpateGraph(sE);
-    });
+
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   /**
@@ -45,11 +44,10 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
    */
   ngAfterContentInit(): void {
     this.d3Widget.run();
-    interval(5000).subscribe( () => {
-        this.d3Widget.updateGraph();
-      }
-    );
-
+    this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
+      this.graph.updateData(ag);
+      this.d3Widget.updateGraphNg(this.graph);
+    });
   }
 
 

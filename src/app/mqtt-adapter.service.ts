@@ -77,9 +77,6 @@ export class MqttAdapterService {
   }
 
   public publishName(mac: String, name: String): void {
-    if (!name) {
-      return;
-    }
     this.mqttService.publish('NameUpdate', JSON.stringify({
       'mac': mac,
       'name': name,

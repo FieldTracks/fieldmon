@@ -18,6 +18,7 @@ import { HeaderBarService } from '../header-bar.service';
 import { Subscription } from 'rxjs';
 import { NameInTable } from '../model/name-in-table';
 import { AggregatedStone } from '../model/aggregated/aggregated-stone';
+import { callNgModuleLifecycle } from '@angular/core/src/view/ng_module';
 
 @Component({
   selector: 'app-names',
@@ -64,9 +65,13 @@ export class NamesComponent implements OnInit, OnDestroy {
       const newList: NameInTable[] = [];
       for (const mac in map) {
         if (mac) {
+          const index = this.data.findIndex((value) => {
+            return value.mac === mac;
+          });
+          const name = index !== -1 ? this.data[index].name : null;
           const stone: AggregatedStone = map[mac];
           const rssi: number = Math.max.apply(null, stone.contacts.map((value) => value.rssi_avg, 10));
-          newList.push(new NameInTable(mac, stone.major, stone.minor, stone.uuid, rssi, stone.comment, null));
+          newList.push(new NameInTable(mac, stone.major, stone.minor, stone.uuid, rssi, stone.comment, name));
         }
       }
       this.data = newList;
@@ -130,12 +135,14 @@ export class NamesComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.namesDialogRef.afterClosed().pipe(filter(name => name !== null)).subscribe(name => {
+    const subscription = this.namesDialogRef.afterClosed().pipe(filter(name => name !== null)).subscribe(name => {
       this.publishName(subject.mac, name);
       subject.name = name;
     });
 
-    this.namesDialogRef.afterClosed().subscribe(() => {
+    const closeSubscription = this.namesDialogRef.afterClosed().subscribe(() => {
+      subscription.unsubscribe();
+      closeSubscription.unsubscribe();
       this.namesDialogRef = null;
     });
   }

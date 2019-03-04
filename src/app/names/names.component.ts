@@ -131,7 +131,8 @@ export class NamesComponent implements OnInit, OnDestroy {
     this.namesDialogRef = this.dialog.open(NamesDialogComponent, {
       hasBackdrop: false,
       data: {
-        name: subject.name
+        name: subject.name,
+        mac: subject.mac
       }
     });
 

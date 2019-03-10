@@ -5,18 +5,20 @@ export class GraphNG {
   nodes: D3Node[] = [];
 
   updateData(aggregatedGraph: AggregatedGraph) {
+    const now = new Date().getTime();
     aggregatedGraph.nodes.forEach( (node) => {
       if (!this.findNodeByMac(node.id) ) {
         this.nodes.push({name: node.id, id: node.id, group: 1});
       }
     });
+    this.links = [];
     aggregatedGraph.links.forEach( (link) => {
-      console.log('Condition', link.source, link.target);
-      const graphLink = this.links.find((d3l) => (d3l.source.id === link.source && d3l.target.id === link.target));
-      if (graphLink) {
-        graphLink.value = link.rssi + 200; // dbM to positive range
-      } else {
-        this.links.push({source: this.findNodeByMac(link.source), target: this.findNodeByMac(link.target), value: link.rssi + 200});
+     const isInPast = (now - link.timestamp.getTime() > 30000);
+     if (!isInPast) {
+        this.links.push({source: this.findNodeByMac(link.source),
+          target: this.findNodeByMac(link.target),
+          value: link.rssi + 200,
+        });
       }
     });
   }

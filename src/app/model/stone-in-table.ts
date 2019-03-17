@@ -13,13 +13,15 @@ import {ageC} from '../helpers/age-helper';
 
 export class StoneInTable {
   comment: string;
+  private name: string;
 
-  constructor(comment: string, uuid: string, major: number, minor: number, lastSeen: Date) {
+  constructor(comment: string, uuid: string, major: number, minor: number, lastSeen: Date, name: string) {
     this.comment = comment;
     this.uuid = uuid;
     this.major = major;
     this.minor = minor;
     this.lastSeen = lastSeen;
+    this.name = name;
   }
 
 

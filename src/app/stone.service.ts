@@ -22,27 +22,12 @@ export class StoneService implements OnDestroy {
     this.stoneEventSubscription = mqttServer.stoneEventSubject().subscribe((sE) => {
       return this.handleStoneEvent(sE);
     });
-
-    // @ts-ignore
     this.nameEventSubscription = mqttServer.aggregatedNamesSubject().subscribe((nE) => {
       // @ts-ignore
       return this.handleNameEvent(nE);
     });
 
   }
-
-  public deviceData (mac: string): Observable<AggregatedDevice> {
-    return this.knownDevices.pipe(
-      map( (devices) => devices[mac])
-    );
-  }
-
-  public name (mac: string): Observable<string> {
-    return this.names.pipe(
-      map( (an) => an[mac].name)
-    );
-  }
-
   ngOnDestroy(): void {
     if (this.stoneEventSubscription) {
       this.stoneEventSubscription.unsubscribe();

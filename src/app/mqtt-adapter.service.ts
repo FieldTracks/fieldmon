@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {IMqttMessage, IMqttServiceOptions, MqttConnectionState, MqttService} from 'ngx-mqtt';
 import {environment} from './../environments/environment';
 import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
@@ -10,6 +10,7 @@ import {AggregatedStone, AggregatedStoneSensorContact} from './model/aggregated/
 import {AggregatedGraph, AggregatedGraphLink, AggregatedGraphNode} from './model/aggregated/aggregated-graph';
 import {StoneEvent} from './model/StoneEvent';
 import { AggregatedName } from './model/aggregated/aggregated-name';
+import {AggregatedDevice} from './model/aggregated/aggregated-devices';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -25,6 +26,8 @@ export class MqttAdapterService {
 
   private mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
   private loginSubscript: Subscription;
+
+  private aggregatedDevices: BehaviorSubject<AggregatedDevice[]>;
 
 
   authChange = new BehaviorSubject<boolean>(false);
@@ -144,10 +147,6 @@ export class MqttAdapterService {
         }
       }
 
-      console.log('Returned links:', links);
-      console.log('Returned nodeMap:',  Array.from(nodeMap.values()));
-
-
       // Collect nodeMap and links
       return  {
         links: links,
@@ -159,7 +158,7 @@ export class MqttAdapterService {
   public stoneEventSubject(): Observable<StoneEvent> {
     return this.mqttService.observe('JellingStone/#').pipe(map(
       (message: IMqttMessage) => {
-        return JSON.parse(message.payload.toString());
+        return {...JSON.parse(message.payload.toString()), mac: message.topic.replace('JellingStone/', '')};
       }
     ));
 

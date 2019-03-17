@@ -19,6 +19,7 @@ import { Subscription } from 'rxjs';
 import { NameInTable } from '../model/name-in-table';
 import { AggregatedStone } from '../model/aggregated/aggregated-stone';
 import { callNgModuleLifecycle } from '@angular/core/src/view/ng_module';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-names',
@@ -27,7 +28,7 @@ import { callNgModuleLifecycle } from '@angular/core/src/view/ng_module';
 })
 export class NamesComponent implements OnInit, OnDestroy {
 
-  public readonly ownUUID = 'fd:a5:06:93:a4:e2:4f:b1:af:cf:c6:eb:07:64:78:25';
+  public readonly ownUUID = environment.uuid;
   private refresh: boolean;
   displayedColumns = ['type', 'reception', 'id', 'name', 'hardware', 'note'];
   private namesDialogRef: MatDialogRef<NamesDialogComponent>;

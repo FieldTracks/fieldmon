@@ -4,11 +4,11 @@ export class GraphNG {
   links: D3Link[] = [];
   nodes: D3Node[] = [];
 
-  updateData(aggregatedGraph: AggregatedGraph) {
+  updateData(aggregatedGraph: AggregatedGraph, names: string[]) {
     const now = new Date().getTime();
     aggregatedGraph.nodes.forEach( (node) => {
       if (!this.findNodeByMac(node.id) ) {
-        this.nodes.push({name: node.id, id: node.id, group: 1});
+        this.nodes.push({name: names[node.id] || node.id, id: node.id, group: 1});
       }
     });
     this.links = [];

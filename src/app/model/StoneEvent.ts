@@ -8,38 +8,31 @@ This file is part of fieldmon - (C) The Fieldtracks Project
     If not, please contact info@fieldtracks.org
 
  */
-export class Observation {
+export interface Observation {
   min: number;
   max: number;
   avg: number;
   remoteRssi: number;
-  major: string;
-  minor: string;
+  major: number;
+  minor: number;
   uuid: string;
   mac: string;
 
 }
 
-export class AggregatedData {
 
-}
-
-export class StoneEvent {
+export interface StoneEvent {
   comment: string;
   uuid: string;
-  major: string;
-  minor: string;
-  timestamp: string;
+  major: number;
+  minor: number;
+  timestamp: Date;
+  interval: number;
   data: Observation [];
   mac: string;
 
-  /**
-   * Static due to JSON.parse
-   * @param {StoneEvent} se
-   * @returns {string}
-   */
-  static stoneId(se: StoneEvent) {
-    return `${se.uuid}-${se.major}-${se.minor}`;
-  }
 }
 
+export function stoneId(se: StoneEvent) {
+  return `${se.uuid}-${se.major}-${se.minor}`;
+}

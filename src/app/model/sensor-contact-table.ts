@@ -14,10 +14,10 @@ export class SensorContactTable {
   subject: string;
   stone: string;
   rssi: string;
-  timestamp: string;
+  timestamp: Date;
 
   get age() {
-    return ageC(this.timestamp);
+    return ageC('' + this.timestamp);
 
   }
 }

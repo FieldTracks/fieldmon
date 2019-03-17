@@ -12,12 +12,10 @@
 
   <!-- Name Column -->
   <ng-container matColumnDef="reception">
-    <th mat-header-cell mat-sort-header *matHeaderCellDef> Reception </th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef><mat-icon>signal_cellular_null</mat-icon></th>
     <td mat-cell *matCellDef="let subject">
-      <img *ngIf="showSignalStrength(subject.rssi, 1);" src="assets/svg/signal_cellular_1_bar.svg">
-      <img *ngIf="showSignalStrength(subject.rssi, 2);" src="assets/svg/signal_cellular_2_bar.svg">
-      <img *ngIf="showSignalStrength(subject.rssi, 3);" src="assets/svg/signal_cellular_3_bar.svg">
-      <img *ngIf="showSignalStrength(subject.rssi, 4);" src="assets/svg/signal_cellular_4_bar.svg">
+      <mat-icon>signal_cellular_1_bar</mat-icon>
+
     </td>
   </ng-container>
 

@@ -10,6 +10,7 @@ import {MqttAdapterService} from '../mqtt-adapter.service';
 import {D3Widget} from './d3-widget';
 import {Subscription} from 'rxjs';
 import {GraphNG} from './graph.model';
+import {StoneService} from '../stone.service';
 
 
 @Component({
@@ -23,7 +24,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
 
   private graph = new GraphNG();
 
-  constructor(private mqttService: MqttAdapterService) {
+  constructor(private mqttService: MqttAdapterService, private stoneService: StoneService) {
 
   }
 
@@ -45,7 +46,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
   ngAfterContentInit(): void {
     this.d3Widget.run();
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
-      this.graph.updateData(ag);
+      this.graph.updateData(ag, this.stoneService.names.getValue());
       this.d3Widget.updateGraphNg(this.graph);
     });
   }

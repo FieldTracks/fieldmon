@@ -28,6 +28,15 @@ export class StoneService implements OnDestroy {
     });
 
   }
+
+  public info(mac: string): AggregatedDevice {
+    return this.knownDevices.getValue()[mac];
+  }
+
+  public name(mac: string): string {
+    return this.names.getValue()[mac];
+  }
+
   ngOnDestroy(): void {
     if (this.stoneEventSubscription) {
       this.stoneEventSubscription.unsubscribe();

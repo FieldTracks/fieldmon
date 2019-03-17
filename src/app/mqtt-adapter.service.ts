@@ -29,7 +29,6 @@ export class MqttAdapterService {
 
   private aggregatedDevices: BehaviorSubject<AggregatedDevice[]>;
 
-
   authChange = new BehaviorSubject<boolean>(false);
 
 

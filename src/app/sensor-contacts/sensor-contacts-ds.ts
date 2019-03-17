@@ -33,7 +33,7 @@ export class SensorContactsDs extends GDataSource<SensorContactTable> {
         const stmp = stoneEvent.timestamp;
 
         stoneEvent.data.forEach( (obs: Observation) => {
-            const contact = new SensorContactTable();
+            const contact = new SensorContactTable(obs.mac, stoneEvent.mac);
             if (obs.minor) {
                 contact.subject = `${obs.major} / ${obs.minor} / ${obs.uuid}`;
             } else {

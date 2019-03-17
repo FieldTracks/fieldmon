@@ -16,6 +16,12 @@ export class SensorContactTable {
   rssi: string;
   timestamp: Date;
 
+  constructor(public mac: string, public observer: string) {
+
+  }
+
+
+
   get age() {
     return ageC('' + this.timestamp);
 

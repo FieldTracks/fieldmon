@@ -22,13 +22,14 @@ import { callNgModuleLifecycle } from '@angular/core/src/view/ng_module';
 import {environment} from '../../environments/environment';
 import {StoneService} from '../stone.service';
 import {AggregatedDevice} from '../model/aggregated/aggregated-devices';
+import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
 
 @Component({
   selector: 'app-names',
   templateUrl: './names.component.html',
   styleUrls: ['./names.component.css'],
 })
-export class NamesComponent implements OnInit, OnDestroy {
+export class NamesComponent implements OnInit, OnDestroy, HeaderAware {
 
   private readonly ownUUID = environment.uuid;
 
@@ -48,16 +49,12 @@ export class NamesComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   ngOnInit() {
-    this.headerBarService.currentConfiguration.next(
-      {sectionTitle: 'Names', showRefresh: true, showSearch: true});
-
-    this.headerBarService.refreshingEnabled.next(true);
+    this.headerBarService.refreshEnabled(true);
 
     this.refreshButtonSubscription =  this.headerBarService.refreshingEnabled.subscribe(refresh => {
       this.refreshEnabled(refresh);
     });
 
-    console.log('init at', new Date());
     this.stonesSubscription = this.stoneService.knownDevices.subscribe( (devs) => {
 
       const newData = [];
@@ -125,5 +122,9 @@ export class NamesComponent implements OnInit, OnDestroy {
       this.datasource.data = this.data;
     }
 
+  }
+
+  fieldmonHeader(): HeaderBarConfiguration {
+    return {sectionTitle: 'Names', showSearch: true, showRefresh: true};
   }
 }

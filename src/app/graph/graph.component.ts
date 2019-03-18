@@ -11,6 +11,7 @@ import {D3Widget} from './d3-widget';
 import {Subscription} from 'rxjs';
 import {GraphNG} from './graph.model';
 import {StoneService} from '../stone.service';
+import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
 
 
 @Component({
@@ -18,7 +19,7 @@ import {StoneService} from '../stone.service';
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
+export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, HeaderAware {
   private d3Widget = new D3Widget();
   private subscription: Subscription;
 
@@ -49,6 +50,10 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy {
       this.graph.updateData(ag, this.stoneService.names.getValue());
       this.d3Widget.updateGraphNg(this.graph);
     });
+  }
+
+  fieldmonHeader(): HeaderBarConfiguration {
+    return {sectionTitle: 'Graph', showRefresh: true, showSearch: true};
   }
 
 

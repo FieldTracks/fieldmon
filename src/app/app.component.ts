@@ -1,6 +1,7 @@
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HeaderBarService } from './header-bar.service';
+import {HeaderAware} from './helpers/header-aware';
 
 @Component({
   selector: 'app-root',
@@ -31,5 +32,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  routerOutletActivated(component: any) {
+    let config = {sectionTitle: ''}
+    if (component.fieldmonHeader) {
+      config = component.fieldmonHeader();
+    }
+    this.headerBarService.updateConfiguration(config);
   }
 }

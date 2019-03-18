@@ -17,13 +17,14 @@ import { MqttAdapterService } from '../mqtt-adapter.service';
 import { StoneEvent, Observation } from '../model/StoneEvent';
 import { SensorContactTable } from '../model/sensor-contact-table';
 import {StoneService} from '../stone.service';
+import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
 
 @Component({
   selector: 'app-sensor-contacts',
   templateUrl: './sensor-contacts.component.html',
   styleUrls: ['./sensor-contacts.component.css']
 })
-export class SensorContactsComponent implements OnInit, OnDestroy {
+export class SensorContactsComponent implements OnInit, OnDestroy, HeaderAware {
 
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
   datasource = new MatTableDataSource<SensorContactTable>();
@@ -37,7 +38,6 @@ export class SensorContactsComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   ngOnInit() {
-    this.titleService.currentConfiguration.next({sectionTitle: 'Contacts'});
     this.datasource = new MatTableDataSource(this.contacts);
     this.datasource.sort = this.sort;
     this.datasource.filter = this.filter;
@@ -90,5 +90,9 @@ export class SensorContactsComponent implements OnInit, OnDestroy {
       this.datasource.data = this.contacts;
     });
 
+  }
+
+  fieldmonHeader(): HeaderBarConfiguration {
+    return {sectionTitle: 'Contacts'};
   }
 }

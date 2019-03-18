@@ -9,21 +9,27 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 
  */
 export class NameInTable {
-  mac: string;
-  major: number;
-  minor: number;
-  uuid: string;
-  rssi: number;
-  comment: string;
-  name?: string;
 
-  constructor(mac: string, major: number, minor: number, uuid: string, rssi: number, comment: string, name?: string) {
-    this.mac = mac;
-    this.major = major;
-    this.minor = minor;
-    this.uuid = uuid;
-    this.name = name;
-    this.rssi = rssi;
-    this.comment = comment;
+
+  constructor(public mac: string, public major: number, public minor: number,
+              public uuid: string, public comment: string, public name?: string, public interval?: number) {
+
+  }
+
+  id_str(): string {
+    if (this.uuid) {
+      return `${this.major}, ${this.minor}`;
+    }
+    return this.mac;
+  }
+
+  hardware_str(): string {
+   if (this.interval) {
+      return 'developer_board';
+    } else if (this.uuid) {
+      return 'wifi_tethering';
+    } else {
+      return 'bluetooth';
+    }
   }
 }

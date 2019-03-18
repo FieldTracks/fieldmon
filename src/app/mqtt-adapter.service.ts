@@ -27,8 +27,6 @@ export class MqttAdapterService {
   private mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
   private loginSubscript: Subscription;
 
-  private aggregatedDevices: BehaviorSubject<AggregatedDevice[]>;
-
   authChange = new BehaviorSubject<boolean>(false);
 
 
@@ -115,7 +113,14 @@ export class MqttAdapterService {
   public aggregatedNamesSubject(): Observable<Map<string, AggregatedName>> {
     return this.mqttService.observe('Aggregated/Names').pipe(map(
       (message: IMqttMessage) => {
-        return JSON.parse(message.payload.toString());
+        const parsed = new Map<string, AggregatedName>();
+        const result = JSON.parse(message.payload.toString());
+        for (const mac in result) {
+          if (mac) {
+            parsed.set(mac, result[mac]);
+          }
+        }
+        return parsed;
       }
     ));
   }

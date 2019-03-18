@@ -14,11 +14,11 @@ export class StoneService implements OnDestroy {
   private stoneEventSubscription: Subscription;
   private nameEventSubscription: Subscription;
 
-  knownDevices: BehaviorSubject<AggregatedDevice[]>;
-  names: BehaviorSubject<string[]> = new BehaviorSubject([]);
+  knownDevices: BehaviorSubject<Map<string, AggregatedDevice>>;
+  names: BehaviorSubject<Map<string, string>> = new BehaviorSubject(new Map());
 
   constructor(mqttServer: MqttAdapterService) {
-    this.knownDevices =  new BehaviorSubject([]);
+    this.knownDevices =  new BehaviorSubject(new Map());
     this.stoneEventSubscription = mqttServer.stoneEventSubject().subscribe((sE) => {
       return this.handleStoneEvent(sE);
     });
@@ -30,11 +30,11 @@ export class StoneService implements OnDestroy {
   }
 
   public info(mac: string): AggregatedDevice {
-    return this.knownDevices.getValue()[mac];
+    return this.knownDevices.getValue().get(mac);
   }
 
   public name(mac: string): string {
-    return this.names.getValue()[mac];
+    return this.names.getValue().get(mac);
   }
 
   ngOnDestroy(): void {
@@ -47,35 +47,34 @@ export class StoneService implements OnDestroy {
   }
 
   private handleStoneEvent(sE: StoneEvent) {
-    const current: AggregatedDevice[] = [...this.knownDevices.getValue()];
-    current[sE.mac] = {...sE};
+    // const current: AggregatedDevice[] = [...this.knownDevices.getValue()];
+    const newMap = new Map(this.knownDevices.getValue());
+    newMap.set(sE.mac, {...sE});
+
     sE.data.forEach( (observation) => {
-      const device = current[observation.mac];
+      const device = newMap.get(observation.mac);
       if (device) {
         device.timestamp = sE.timestamp;
         device.major = observation.major;
         device.minor = observation.minor;
         device.uuid = observation.uuid;
       } else {
-        current[observation.mac] = {
+        newMap.set(observation.mac, {
           timestamp: sE.timestamp,
           major: observation.major,
           minor: observation.minor,
           uuid : observation.uuid
-        };
+        });
       }
     });
-    this.knownDevices.next(current);
+    this.knownDevices.next(newMap);
   }
 
-  private handleNameEvent(n: AggregatedName[]) {
-    const newNames: string[] = [];
-    for (const mac in n) {
-      if (mac) {
-        newNames[mac] = n[mac].name;
-      }
-    }
-    console.log('Emitting new names', newNames);
+  private handleNameEvent(n: Map<string, AggregatedName>) {
+    const newNames = new Map<string, string>();
+    n.forEach( (name, mac) => {
+      newNames.set(mac, name.name);
+    })
     this.names.next(newNames);
   }
 }

@@ -10,19 +10,16 @@
     <td mat-cell *matCellDef="let subject"></td>
   </ng-container>
 
-  <!-- Name Column -->
-  <ng-container matColumnDef="reception">
-    <th mat-header-cell mat-sort-header *matHeaderCellDef><mat-icon>signal_cellular_null</mat-icon></th>
-    <td mat-cell *matCellDef="let subject">
-      <mat-icon>signal_cellular_1_bar</mat-icon>
-
-    </td>
-  </ng-container>
-
   <!-- Weight Column -->
   <ng-container matColumnDef="id">
     <th mat-header-cell mat-sort-header *matHeaderCellDef> ID </th>
-    <td mat-cell *matCellDef="let subject"> <div *ngIf="!subject.mac; else mac">{{subject.major}} / {{subject.minor}}</div> <ng-template #mac>{{subject.mac}}</ng-template> &nbsp;&nbsp;&nbsp;<mat-icon matTooltip="This device is registered for an other network" style="font-size: small;" *ngIf="subject.uuid !== ownUUID">warning</mat-icon></td>
+    <td mat-cell *matCellDef="let subject">
+      <mat-icon style="font-size: small;">{{subject.hardware_str()}}</mat-icon>
+      {{ subject.id_str() }}
+      <span *ngIf="subject.uuid" fxHide.xs>({{ subject.mac }})</span>
+      &nbsp;&nbsp;&nbsp;
+
+      <mat-icon matTooltip="This device is registered for an other network" style="font-size: small;" *ngIf="subject.uuid && subject.uuid !== ownUUID">warning</mat-icon></td>
   </ng-container>
 
   <!-- Symbol Column -->
@@ -30,20 +27,12 @@
     <th mat-header-cell mat-sort-header *matHeaderCellDef> Name </th>
     <td mat-cell *matCellDef="let subject"> <div *ngIf="!subject.name || subject.name === ''; else name" >-&nbsp;<mat-icon style="font-size: small;" (click)="openDialog(subject)">edit</mat-icon></div><ng-template #name>{{subject.name}}&nbsp;<mat-icon style="font-size: small;" (click)="openDialog(subject)">edit</mat-icon></ng-template></td>
   </ng-container>
-
-  <!-- Symbol Column -->
-  <ng-container matColumnDef="hardware">
-    <th mat-header-cell mat-sort-header *matHeaderCellDef> Hardware </th>
-    <td mat-cell *matCellDef="let subject"></td>
-  </ng-container>
-
-  <ng-container matColumnDef="note">
-    <th mat-header-cell mat-sort-header *matHeaderCellDef> Note </th>
-    <td mat-cell *matCellDef="let subject"> <div *ngIf="subject.uuid !== ownUUID; else comment">UUID: {{subject.uuid}}</div><ng-template #comment>Comment: {{subject.comment}}</ng-template> </td>
+  <ng-container matColumnDef="note" >
+    <th fxHide.lt-md mat-header-cell mat-sort-header *matHeaderCellDef> Note </th>
+    <td fxHide.lt-md mat-cell *matCellDef="let subject"> <div *ngIf="subject.uuid && subject.uuid !== ownUUID; else comment">UUID: {{subject.uuid}}</div><ng-template #comment>{{subject.comment}}</ng-template> </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 </table>
-<mat-paginator #paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>

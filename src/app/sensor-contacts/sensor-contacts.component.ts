@@ -28,7 +28,6 @@ export class SensorContactsComponent implements OnInit, OnDestroy {
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
   datasource = new MatTableDataSource<SensorContactTable>();
   private contacts: SensorContactTable[] = [];
-  private pageSizeOptions = [5, 10, 0];
   private subscription: Subscription;
   private filter: string;
   private refreshSubscription: Subscription;
@@ -38,9 +37,8 @@ export class SensorContactsComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   ngOnInit() {
-    this.pageSizeOptions = [5, 10, this.contacts.length];
+    this.titleService.currentConfiguration.next({sectionTitle: 'Contacts'});
     this.datasource = new MatTableDataSource(this.contacts);
-    this.datasource.paginator = this.paginator;
     this.datasource.sort = this.sort;
     this.datasource.filter = this.filter;
 
@@ -69,7 +67,6 @@ export class SensorContactsComponent implements OnInit, OnDestroy {
 
   private subject(obs: Observation): string {
     const name = this.stoneService.name(obs.mac);
-    console.log('Got name:', name);
     if (name) {
       return name;
     } else if (obs.minor) {

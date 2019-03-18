@@ -94,7 +94,6 @@ export class D3Widget {
 
   updateGraphNg(g: GraphNG): void {
     D3Widget.forceSimulationLinks = g.links;
-    console.log('Links:', D3Widget.forceSimulationLinks );
     D3Widget.forceSimulationNodes = g.nodes;
     D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
     D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);

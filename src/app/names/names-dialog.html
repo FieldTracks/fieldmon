@@ -1,5 +1,8 @@
 <form [formGroup]="form">
-  <h1 mat-dialog-title>Set Name<br>{{data.mac}}</h1>
+  <h1 mat-dialog-title>Set Name:<br> <mat-icon style="font-size: 18px">{{data.subject.hardware_str()}}</mat-icon>&nbsp;{{data.subject.id_str()}}
+  <span *ngIf="data.subject.uuid"><br/>{{data.subject.mac}}</span>
+
+  </h1>
   <mat-dialog-content>
     <mat-form-field>
       <input matInput formControlName="name" placeholder="Enter Name">

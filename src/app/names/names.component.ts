@@ -93,8 +93,8 @@ export class NamesComponent implements OnInit, OnDestroy, HeaderAware {
     this.namesDialogRef = this.dialog.open(NamesDialogComponent, {
       hasBackdrop: false,
       data: {
+        subject: subject,
         name: subject.name,
-        mac: subject.mac
       }
     });
 

@@ -23,6 +23,13 @@ export class NameInTable {
     return this.mac;
   }
 
+  id_str_ext(): string {
+    if (this.uuid) {
+      return `${this.major}, ${this.minor}\n(${this.mac})`;
+    }
+    return this.mac;
+  }
+
   hardware_str(): string {
    if (this.interval) {
       return 'developer_board';

@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HeaderBarService } from './header-bar.service';
 import {HeaderAware} from './helpers/header-aware';
 
@@ -15,6 +15,8 @@ export class AppComponent implements OnInit, OnDestroy {
   openSidenav = false;
   private subscription: Subscription;
   searchString: string;
+
+  @ViewChild('searchInput') searchField: ElementRef;
 
   constructor(private headerBarService: HeaderBarService) { }
 
@@ -40,5 +42,15 @@ export class AppComponent implements OnInit, OnDestroy {
       config = component.fieldmonHeader();
     }
     this.headerBarService.updateConfiguration(config);
+    this.showToggle = false;
+  }
+
+  toggleSearch() {
+    this.showToggle = !this.showToggle;
+    if (this.showToggle) {
+      setTimeout( () => // Hack (c.f. https://stackoverflow.com/questions/50006888/angular-5-set-focus-on-input-element)
+        this.searchField.nativeElement.focus()
+      , 0);
+    }
   }
 }

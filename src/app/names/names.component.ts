@@ -63,7 +63,6 @@ export class NamesComponent implements OnInit, OnDestroy, HeaderAware {
         newData.unshift(new NameInTable(mac, dev.major, dev.minor, dev.uuid, dev.comment, this.stoneService.name(mac), dev.interval));
       });
       this.data = newData;
-      this.datasource.data = newData;
       this.triggerRefresh();
 
     });

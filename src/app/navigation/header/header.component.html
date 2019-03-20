@@ -19,12 +19,21 @@
       <button (click)="onDisableRefresh()" mat-icon-button>
         <mat-icon >sync</mat-icon>
       </button>
-
     </div>
-
     <button *ngIf="config.showRefresh && !refreshActive" (click)="onEnableRefresh()" mat-icon-button>
       <mat-icon>sync_disabled</mat-icon>
     </button>
+    <button *ngIf="menuItems.length > 0" mat-icon-button  [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item  *ngFor="let item of menuItems" (click)="onMenuClick(item)">
+        <mat-icon>{{ item.icon}}</mat-icon>
+        <span>{{item.name}}</span>
+      </button>
+    </mat-menu>
+
   </div>
 </mat-toolbar>
 

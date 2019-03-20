@@ -12,8 +12,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {EventEmitter} from '@angular/core';
 import {Output} from '@angular/core';
 import {HeaderBarService} from '../../header-bar.service';
-import {Subscription} from 'rxjs';
-import {HeaderBarConfiguration} from '../../helpers/header-aware';
+import {BehaviorSubject, Subscription} from 'rxjs';
+import {HeaderBarConfiguration, MenuItem} from '../../helpers/fm-component';
 
 @Component({
   selector: 'app-header',
@@ -30,9 +30,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private refreshSubscription: Subscription;
   private rotateRefreshButtonSubscription: Subscription;
+  private menuItemSubscription: Subscription;
 
   constructor(private headerBarService: HeaderBarService) { }
 
+  menuItems: MenuItem[] = [];
 
   @Output()
   sidebarTooggle = new EventEmitter();
@@ -51,6 +53,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.refreshSubscription = this.headerBarService.refreshingEnabled.subscribe((value) => {
         this.refreshActive = value;
       });
+      this.menuItemSubscription = this.headerBarService.menu().subscribe( (items) => {
+        this.menuItems = items;
+      });
   }
 
   private blinkSync() {
@@ -59,9 +64,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-    this.refreshSubscription.unsubscribe();
-    this.rotateRefreshButtonSubscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+    if (this.menuItemSubscription) {
+      this.menuItemSubscription.unsubscribe();
+    }
+    if (this.rotateRefreshButtonSubscription) {
+      this.rotateRefreshButtonSubscription.unsubscribe();
+    }
+  }
+
+  onMenuClick(item: MenuItem) {
+    item.onClick();
   }
 
   onToggle() {

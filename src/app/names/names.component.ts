@@ -22,14 +22,14 @@ import { callNgModuleLifecycle } from '@angular/core/src/view/ng_module';
 import {environment} from '../../environments/environment';
 import {StoneService} from '../stone.service';
 import {AggregatedDevice} from '../model/aggregated/aggregated-devices';
-import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
+import {FmComponent, HeaderBarConfiguration} from '../helpers/fm-component';
 
 @Component({
   selector: 'app-names',
   templateUrl: './names.component.html',
   styleUrls: ['./names.component.css'],
 })
-export class NamesComponent implements OnInit, OnDestroy, HeaderAware {
+export class NamesComponent implements OnInit, OnDestroy, FmComponent {
 
   private readonly ownUUID = environment.uuid;
 
@@ -123,7 +123,7 @@ export class NamesComponent implements OnInit, OnDestroy, HeaderAware {
 
   }
 
-  fieldmonHeader(): HeaderBarConfiguration {
+  fmHeader(): HeaderBarConfiguration {
     return {sectionTitle: 'Names', showSearch: true, showRefresh: true};
   }
 }

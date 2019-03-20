@@ -17,14 +17,14 @@ import { MqttAdapterService } from '../mqtt-adapter.service';
 import { StoneEvent, Observation } from '../model/StoneEvent';
 import { SensorContactTable } from '../model/sensor-contact-table';
 import {StoneService} from '../stone.service';
-import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
+import {FmComponent, HeaderBarConfiguration} from '../helpers/fm-component';
 
 @Component({
   selector: 'app-sensor-contacts',
   templateUrl: './sensor-contacts.component.html',
   styleUrls: ['./sensor-contacts.component.css']
 })
-export class SensorContactsComponent implements OnInit, OnDestroy, HeaderAware {
+export class SensorContactsComponent implements OnInit, OnDestroy, FmComponent {
 
   displayedColumns = ['subject', 'stone', 'rssi', 'age', 'timestamp'];
   datasource = new MatTableDataSource<SensorContactTable>();
@@ -92,7 +92,7 @@ export class SensorContactsComponent implements OnInit, OnDestroy, HeaderAware {
 
   }
 
-  fieldmonHeader(): HeaderBarConfiguration {
+  fmHeader(): HeaderBarConfiguration {
     return {sectionTitle: 'Contacts'};
   }
 }

@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HeaderBarService } from './header-bar.service';
-import {HeaderAware} from './helpers/header-aware';
+import {FmComponent} from './helpers/fm-component';
 
 @Component({
   selector: 'app-root',
@@ -38,10 +38,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
   routerOutletActivated(component: any) {
     let config = {sectionTitle: ''}
-    if (component.fieldmonHeader) {
-      config = component.fieldmonHeader();
+    if (component.fmHeader) {
+      config = component.fmHeader();
     }
     this.headerBarService.updateConfiguration(config);
+    let items = [];
+    if (component.fmMenuItems) {
+      items = component.fmMenuItems();
+    }
+    this.headerBarService.setMenu(items);
     this.showToggle = false;
   }
 

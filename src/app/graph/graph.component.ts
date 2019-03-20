@@ -11,7 +11,7 @@ import {D3Widget} from './d3-widget';
 import {Subscription} from 'rxjs';
 import {GraphNG} from './graph.model';
 import {StoneService} from '../stone.service';
-import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
+import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
 
 
 @Component({
@@ -19,7 +19,7 @@ import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.css']
 })
-export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, HeaderAware {
+export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
   private d3Widget = new D3Widget();
   private subscription: Subscription;
 
@@ -52,8 +52,14 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, Head
     });
   }
 
-  fieldmonHeader(): HeaderBarConfiguration {
+  fmHeader(): HeaderBarConfiguration {
     return {sectionTitle: 'Graph', showRefresh: true, showSearch: true};
+  }
+
+  fmMenuItems(): MenuItem[] {
+    return [{name: 'Background', icon: 'layers', onClick: () => {
+        console.log('Select background Image');
+      }}];
   }
 
 

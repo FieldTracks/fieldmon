@@ -10,7 +10,7 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {HeaderBarService} from '../header-bar.service';
-import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
+import {FmComponent, HeaderBarConfiguration} from '../helpers/fm-component';
 
 
 @Component({
@@ -18,7 +18,7 @@ import {HeaderAware, HeaderBarConfiguration} from '../helpers/header-aware';
   templateUrl: './stone-overview.component.html',
   styleUrls: ['./stone-overview.component.css']
 })
-export class StoneOverviewComponent implements OnInit, HeaderAware {
+export class StoneOverviewComponent implements OnInit, FmComponent {
 
   constructor(private titleService: HeaderBarService) { }
 
@@ -26,7 +26,7 @@ export class StoneOverviewComponent implements OnInit, HeaderAware {
     this.titleService.currentConfiguration.next({sectionTitle: 'Stones'});
   }
 
-  fieldmonHeader(): HeaderBarConfiguration {
+  fmHeader(): HeaderBarConfiguration {
     return {sectionTitle: 'Stones'};
   }
 

@@ -12,7 +12,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   MatButtonModule,
-  MatButtonToggleModule,
+  MatButtonToggleModule, MatMenuModule,
   MatPaginatorModule,
   MatSortModule,
   MatTableModule,
@@ -43,7 +43,8 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@a
             MatSortModule,
             MatDialogModule,
             MatButtonToggleModule,
-            MatTooltipModule],
+            MatTooltipModule,
+            MatMenuModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -61,7 +62,8 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@a
             MatSortModule,
             MatDialogModule,
             MatButtonToggleModule,
-            MatTooltipModule],
+            MatTooltipModule,
+            MatMenuModule],
   declarations: []
 })
 export class MaterialModule { }

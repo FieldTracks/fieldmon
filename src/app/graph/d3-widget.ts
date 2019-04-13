@@ -53,42 +53,6 @@ export class D3Widget {
     this.initGraph();
   }
 
-  /**
-   * Tick event handler.
-   * Due to binding "this" to d3, we need a factory function returning an ordinary JavaScript function
-   * @param myContext
-   * @param width
-   * @param height
-   * @returns {() => void}
-   */
-  createTicked(myContext, width, height) {
-    const drawLink = function (d) {
-      myContext.moveTo(d.source.x, d.source.y);
-      myContext.lineTo(d.target.x, d.target.y);
-    };
-
-    const drawNode = function(d) {
-      myContext.moveTo(d.x + 3, d.y);
-      myContext.arc(d.x, d.y, 3, 0, 2 * Math.PI);
-      myContext.fillText(d.name, d.x, d.y + 12);
-    };
-
-    return function () {
-      myContext.clearRect(0, 0, width, height);
-
-      myContext.beginPath();
-      D3Widget.forceSimulationLinks.forEach(drawLink);
-      myContext.strokeStyle = '#aaa';
-      myContext.stroke();
-
-      myContext.beginPath();
-      D3Widget.forceSimulationNodes.forEach(drawNode);
-      myContext.fill();
-      myContext.strokeStyle = '#fff';
-      myContext.stroke();
-    };
-  }
-
   updateGraphNg(g: GraphNG): void {
     D3Widget.forceSimulation.stop();
     D3Widget.forceSimulationLinks = g.links;
@@ -158,10 +122,14 @@ export class D3Widget {
 
     function simulationUpdate() {
       D3Widget.context.save();
-
       D3Widget.context.clearRect(0, 0, D3Widget.width, D3Widget.height);
-      D3Widget.context.translate(D3Widget.transform.x, D3Widget.transform.y);
       D3Widget.context.scale(D3Widget.transform.k, D3Widget.transform.k);
+
+      var img = new Image();
+      img.src = "http://localhost:8080/deutschland-karte.jpg";
+      D3Widget.context.drawImage(img, 100, 100, 150, 110, 0, 0, 300, 220);
+
+      D3Widget.context.translate(D3Widget.transform.x, D3Widget.transform.y);
 
       D3Widget.context.beginPath();
       console.dir(D3Widget.forceSimulationLinks);

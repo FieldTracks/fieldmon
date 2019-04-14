@@ -1,0 +1,13 @@
+<div style="height: 100px">
+  <h1>{{this.data.node.name}}</h1>
+</div>
+<div style="display: grid;">
+  <div>
+      <label label-for="x">Position x:</label>
+      <input matInput readonly="true" type="number" name="x" id="x" [(ngModel)]="this.data.node.x" />
+      <label label-for="y">Position y:</label>
+      <input matInput readonly="true" type="number" name="y" id="y" [(ngModel)]="this.data.node.y" />
+      <label label-for="pinned">Pinned:</label>
+      <input type="checkbox" matCheckbox id="pinned" name="pinned" [(checked)]="this.data.node.fx || this.data.node.fy" color="primary" (click)="toggel();">
+    </div>
+</div>

@@ -17,7 +17,8 @@ import {
   MatSortModule,
   MatTableModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatBottomSheetModule
 } from '@angular/material';
 import { MatCardModule, MatInputModule, MatSidenavModule } from '@angular/material';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -44,7 +45,8 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@a
             MatDialogModule,
             MatButtonToggleModule,
             MatTooltipModule,
-            MatMenuModule],
+            MatMenuModule,
+            MatBottomSheetModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -63,7 +65,8 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@a
             MatDialogModule,
             MatButtonToggleModule,
             MatTooltipModule,
-            MatMenuModule],
+            MatMenuModule,
+            MatBottomSheetModule],
   declarations: []
 })
 export class MaterialModule { }

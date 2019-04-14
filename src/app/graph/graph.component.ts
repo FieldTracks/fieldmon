@@ -12,6 +12,7 @@ import {Subscription} from 'rxjs';
 import {GraphNG} from './graph.model';
 import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
+import { MatBottomSheet } from '@angular/material';
 
 
 @Component({
@@ -20,12 +21,12 @@ import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-compo
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
-  private d3Widget = new D3Widget();
+  private d3Widget = new D3Widget(this.bottomSheet);
   private subscription: Subscription;
 
   private graph = new GraphNG();
 
-  constructor(private mqttService: MqttAdapterService, private stoneService: StoneService) {
+  constructor(private mqttService: MqttAdapterService, private stoneService: StoneService, private bottomSheet: MatBottomSheet) {
 
   }
 

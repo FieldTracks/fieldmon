@@ -28,6 +28,7 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { FlashtoolComponent } from './stones/flashtool/flashtool.component';
 import { OnlineComponent } from './stones/online/online.component';
 import { NamesDialogComponent } from './names/names-dialog';
+import { NodeInfoComponent } from './graph/nodeinfo';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { NamesDialogComponent } from './names/names-dialog';
     FlashtoolComponent,
     OnlineComponent,
     NamesDialogComponent,
+    NodeInfoComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +58,7 @@ import { NamesDialogComponent } from './names/names-dialog';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [NamesDialogComponent]
+  entryComponents: [NamesDialogComponent, NodeInfoComponent]
 })
 export class AppModule {
 

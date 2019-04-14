@@ -13,8 +13,8 @@ export class GraphNG {
     });
     this.links = [];
     aggregatedGraph.links.forEach( (link) => {
-     const isInPast = (now - link.timestamp.getTime() > 30000);
-     if (!isInPast) {
+    const isInPast = (now - link.timestamp.getTime() > 30000);
+    if (!isInPast) {
         this.links.push({source: this.findNodeByMac(link.source),
           target: this.findNodeByMac(link.target),
           value: link.rssi + 200,

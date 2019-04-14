@@ -24,12 +24,12 @@ export class D3Widget {
   run() {
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    var w = window,
+    const w = window,
     d = document,
     e = d.documentElement,
     g = d.getElementsByTagName('app-graph')[0],
     x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+    y = w.innerHeight || e.clientHeight || g.clientHeight;
 
     const width = x;
     const height = y;
@@ -59,11 +59,11 @@ export class D3Widget {
       .style('opacity', 0);
 
     const simulation = d3.forceSimulation()
-                  .force('center', d3.forceCenter(width / 2, height / 2))
-                  .force('x', d3.forceX(width / 2).strength(0.1))
-                  .force('y', d3.forceY(height / 2).strength(0.1))
-                  .force('charge', d3.forceManyBody().strength(-50))
-                  .force('link', d3.forceLink().strength(1).id(function(d) { return d.id; }))
+                  //.force('center', d3.forceCenter(width / 2, height / 2))
+                  //.force('x', d3.forceX(width / 2).strength(0.1))
+                  //.force('y', d3.forceY(height / 2).strength(0.1))
+                  .force('charge', d3.forceManyBody().strength(-0.125))
+                  .force('link', d3.forceLink().distance(() => 50).strength((link) => { const x = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1); console.log(x, link.value); return x}).id(function(d) { return d.id; }))
                   .alphaTarget(0)
                   .alphaDecay(0.05);
 

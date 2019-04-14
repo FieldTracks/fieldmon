@@ -49,6 +49,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.d3Widget.run();
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
       this.graph.updateData(ag, this.stoneService.names.getValue());
+      console.dir(ag.links);
       this.d3Widget.updateGraphNg(this.graph);
     });
   }

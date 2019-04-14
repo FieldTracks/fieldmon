@@ -42,10 +42,10 @@ export class D3Widget {
     img.onerror = () => {
       setTimeout(() => {
         img.src = undefined;
-        img.src = 'http://localhost:8080/deutschland-karte.jpg';
+        img.src = '/assets/2019-04-14_172301.jpg';
       }, 5000);
     };
-    img.src = 'http://localhost:8080/deutschland-karte.jpg';
+    img.src = '/assets/2019-04-14_172301.jpg';
 
     const canvas = d3.select('#graphDiv').append('canvas')
       .attr('width', width + 'px')

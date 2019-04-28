@@ -14,6 +14,7 @@ import {Output} from '@angular/core';
 import {HeaderBarService} from '../../header-bar.service';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {HeaderBarConfiguration, MenuItem} from '../../helpers/fm-component';
+import {MatMenu} from '@angular/material';
 
 @Component({
   selector: 'app-header',
@@ -30,7 +31,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private refreshSubscription: Subscription;
   private rotateRefreshButtonSubscription: Subscription;
-  private menuItemSubscription: Subscription;
+  private matMenuSubscription: Subscription;
+  private matMenu: any;
+
 
   constructor(private headerBarService: HeaderBarService) { }
 
@@ -53,9 +56,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.refreshSubscription = this.headerBarService.refreshingEnabled.subscribe((value) => {
         this.refreshActive = value;
       });
-      this.menuItemSubscription = this.headerBarService.menu().subscribe( (items) => {
-        this.menuItems = items;
-      });
+    this.matMenuSubscription = this.headerBarService.matMenu.subscribe( (matMenu) => {
+      this.matMenu = matMenu;
+    });
+
   }
 
   private blinkSync() {
@@ -70,11 +74,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
-    if (this.menuItemSubscription) {
-      this.menuItemSubscription.unsubscribe();
-    }
     if (this.rotateRefreshButtonSubscription) {
       this.rotateRefreshButtonSubscription.unsubscribe();
+    }
+    if (this.matMenuSubscription) {
+      this.matMenuSubscription.unsubscribe();
     }
   }
 

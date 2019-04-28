@@ -50,7 +50,6 @@ export class StoneService implements OnDestroy {
     // const current: AggregatedDevice[] = [...this.knownDevices.getValue()];
     const newMap = new Map(this.knownDevices.getValue());
     newMap.set(sE.mac, {...sE});
-
     sE.data.forEach( (observation) => {
       const device = newMap.get(observation.mac);
       if (device) {

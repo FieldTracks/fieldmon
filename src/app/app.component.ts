@@ -2,6 +2,7 @@ import { Subscription } from 'rxjs';
 import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { HeaderBarService } from './header-bar.service';
 import {FmComponent} from './helpers/fm-component';
+import {MatMenu} from '@angular/material';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,8 @@ export class AppComponent implements OnInit, OnDestroy {
   searchString: string;
 
   @ViewChild('searchInput') searchField: ElementRef;
+
+  private menu: MatMenu;
 
   constructor(private headerBarService: HeaderBarService) { }
 
@@ -46,6 +49,12 @@ export class AppComponent implements OnInit, OnDestroy {
     if (component.fmMenuItems) {
       items = component.fmMenuItems();
     }
+    this.menu = null;
+    if (component.fmtMenu) {
+      this.menu = component.fmtMenu();
+    }
+    this.headerBarService.setMatMenu(this.menu);
+
     this.headerBarService.setMenu(items);
     this.showToggle = false;
   }

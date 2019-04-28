@@ -1,6 +1,7 @@
 import {EventEmitter, Injectable, Output} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {HeaderBarConfiguration, MenuItem} from './helpers/fm-component';
+import {MatMenu} from '@angular/material';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class HeaderBarService {
   rotateRefreshButton = new Subject();
 
   searchEntered = new EventEmitter();
+  matMenu = new Subject<MatMenu>();
 
   constructor() {
   }
@@ -36,5 +38,8 @@ export class HeaderBarService {
     return this.menuItems;
   }
 
+  setMatMenu(menu: MatMenu) {
+    this.matMenu.next(menu);
+  }
 }
 

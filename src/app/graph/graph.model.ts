@@ -17,7 +17,7 @@ export class GraphNG {
     if (!isInPast) {
         this.links.push({source: this.findNodeByMac(link.source),
           target: this.findNodeByMac(link.target),
-          value: link.rssi + 200,
+          value: link.rssi,
         });
       }
     });

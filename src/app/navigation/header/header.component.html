@@ -9,21 +9,21 @@
     Field Monitor -&nbsp;
   </div>
   <div fxFlex fxLayout fxLayoutAlign="flex-start">
-    <span fxLayoutAlign="end">{{ config.sectionTitle }}</span>
+    <span fxLayoutAlign="end">{{ (headerBarConfiguration | async).sectionTitle }}</span>
   </div>
   <div fxFlex fxLayout fxLayoutAlign="flex-end">
-    <button (click)="onSearchToggle()" *ngIf="config && config.showSearch" mat-icon-button>
+    <button (click)="onSearchToggle()" *ngIf="(headerBarConfiguration | async)?.showSearch" mat-icon-button>
       <mat-icon>search</mat-icon>
     </button>
-    <div *ngIf="config.showRefresh && refreshActive" [className]="syncClass" >
+    <div *ngIf="(headerBarConfiguration | async) && (refreshingEnabled | async)" [className]="syncClass" >
       <button (click)="onDisableRefresh()" mat-icon-button>
         <mat-icon >sync</mat-icon>
       </button>
     </div>
-    <button *ngIf="config.showRefresh && !refreshActive" (click)="onEnableRefresh()" mat-icon-button>
+    <button *ngIf="(headerBarConfiguration | async).showRefresh && !(refreshingEnabled | async)" (click)="onEnableRefresh()" mat-icon-button>
       <mat-icon>sync_disabled</mat-icon>
     </button>
-    <button *ngIf="matMenu" mat-icon-button  [matMenuTriggerFor]="matMenu">
+    <button *ngIf="matMenu" mat-icon-button [matMenuTriggerFor]="matMenu">
       <mat-icon>more_vert</mat-icon>
     </button>
 

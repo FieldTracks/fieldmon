@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterContentInit} from '@angular/core';
 import { HeaderBarService } from './header-bar.service';
 import {FmComponent} from './helpers/fm-component';
 import {MatMenu} from '@angular/material';
@@ -67,4 +67,5 @@ export class AppComponent implements OnInit, OnDestroy {
       , 0);
     }
   }
+
 }

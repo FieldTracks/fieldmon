@@ -22,6 +22,8 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
+    "angular-file-uploader": "^5.0.2",
+    "angular-material-fileupload": "^2.0.0",
     "core-js": "^2.5.4",
     "d3": "^5.7.0",
     "d3-drag": "^1.2.3",

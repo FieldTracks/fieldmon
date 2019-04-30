@@ -18,13 +18,14 @@ import {
   MatTableModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatBottomSheetModule
+  MatBottomSheetModule, MatSnackBarModule, MatProgressBarModule
 } from '@angular/material';
 import { MatCardModule, MatInputModule, MatSidenavModule } from '@angular/material';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@angular/material';
+import {MatFileUploadModule} from 'angular-material-fileupload';
 
 @NgModule({
   imports: [MatTableModule,
@@ -46,7 +47,10 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@a
             MatButtonToggleModule,
             MatTooltipModule,
             MatMenuModule,
-            MatBottomSheetModule],
+            MatBottomSheetModule,
+            MatFileUploadModule,
+            MatSnackBarModule,
+            MatProgressBarModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -66,7 +70,10 @@ import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@a
             MatButtonToggleModule,
             MatTooltipModule,
             MatMenuModule,
-            MatBottomSheetModule],
+            MatBottomSheetModule,
+            MatFileUploadModule,
+            MatSnackBarModule,
+            MatProgressBarModule],
   declarations: []
 })
 export class MaterialModule { }

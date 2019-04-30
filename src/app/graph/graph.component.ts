@@ -12,8 +12,13 @@ import {Subscription} from 'rxjs';
 import {GraphNG} from './graph.model';
 import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
-import {MatBottomSheet, MatMenu} from '@angular/material';
+import {MatBottomSheet, MatDialog, MatDialogRef, MatMenu, MatSnackBar} from '@angular/material';
 import {HeaderBarService} from '../header-bar.service';
+import {FileUploadDialogComponent} from './file-upload-dialog.component';
+import {NameInTable} from '../model/name-in-table';
+import {NamesDialogComponent} from '../names/names-dialog';
+import {filter} from 'rxjs/operators';
+import {FieldmonConfig} from '../model/configuration/fieldmon-config';
 
 
 @Component({
@@ -24,13 +29,23 @@ import {HeaderBarService} from '../header-bar.service';
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
   private d3Widget = new D3Widget(this.bottomSheet);
   private subscription: Subscription;
+  private configSubscription: Subscription;
+  private fieldmonConfig: FieldmonConfig;
+
+  private dialogRef: MatDialogRef<FileUploadDialogComponent>;
+
 
   @ViewChild('menu')
   private myMenu;
 
   private graph = new GraphNG();
 
-  constructor(private mqttService: MqttAdapterService, private stoneService: StoneService, private bottomSheet: MatBottomSheet, private headerBarService: HeaderBarService) {
+  constructor(private snackBar: MatSnackBar,
+              private mqttService: MqttAdapterService,
+              private stoneService: StoneService,
+              private bottomSheet: MatBottomSheet,
+              private headerBarService: HeaderBarService,
+              private dialog: MatDialog) {
 
   }
 
@@ -42,6 +57,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if(this.dialogRef) {
+      this.dialogRef.close();
     }
   }
 
@@ -57,17 +75,35 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
       console.dir(ag.links);
       this.d3Widget.updateGraphNg(this.graph);
     });
+    this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
+      this.fieldmonConfig = fmc;
+      D3Widget.background.src = fmc.backgroundImage;
+    });
   }
 
   fmHeader(): HeaderBarConfiguration {
     return {sectionTitle: 'Graph', showRefresh: true, showSearch: true};
   }
 
-  fmMenuItems(): MenuItem[] {
-    return [{name: 'Background', icon: 'layers', onClick: () => {
-        console.log('Select background Image');
-      }}];
-  }
+  openDialog() {
+    if (this.dialogRef) {
+      return;
+    }
+    this.dialogRef = this.dialog.open(FileUploadDialogComponent, {
+      hasBackdrop: false,
+    });
 
+    const subscription = this.dialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
+      this.mqttService.publishFieldmonConfig({
+          backgroundImage: image
+        });
+    });
+
+
+    const closeSubscription = this.dialogRef.afterClosed().subscribe(() => {
+      closeSubscription.unsubscribe();
+      this.dialogRef = null;
+    });
+  }
 }
 

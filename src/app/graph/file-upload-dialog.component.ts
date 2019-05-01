@@ -18,9 +18,9 @@ export class FileUploadDialogComponent implements OnInit, OnDestroy {
   uploadResponse = {status: '', message: '', filePath: ''};
 
   file: any;
-  private imgURL: string | ArrayBuffer;
-  private progress = this.webdavService.progress;
-  private uploading = false;
+  imgURL: string | ArrayBuffer;
+  progress = this.webdavService.progress;
+  uploading = false;
 
 
   private httpSubscription: Subscription;

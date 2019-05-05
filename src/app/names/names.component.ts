@@ -12,16 +12,12 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MqttAdapterService } from '../mqtt-adapter.service';
 import { MatDialog, MatDialogRef, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { NamesDialogComponent } from './names-dialog';
-import { AggregatedName } from '../model/aggregated/aggregated-name';
 import { filter } from 'rxjs/operators';
 import { HeaderBarService } from '../header-bar.service';
 import { Subscription } from 'rxjs';
 import { NameInTable } from '../model/name-in-table';
-import { AggregatedStone } from '../model/aggregated/aggregated-stone';
-import { callNgModuleLifecycle } from '@angular/core/src/view/ng_module';
 import {environment} from '../../environments/environment';
 import {StoneService} from '../stone.service';
-import {AggregatedDevice} from '../model/aggregated/aggregated-devices';
 import {FmComponent, HeaderBarConfiguration} from '../helpers/fm-component';
 
 @Component({
@@ -44,7 +40,10 @@ export class NamesComponent implements OnInit, OnDestroy, FmComponent {
   private filter: string;
   private stonesSubscription: Subscription;
 
-  constructor(private mqttAdapter: MqttAdapterService, private dialog: MatDialog, private headerBarService: HeaderBarService, private stoneService: StoneService) { }
+  constructor(private mqttAdapter: MqttAdapterService,
+              private dialog: MatDialog,
+              private headerBarService: HeaderBarService,
+              private stoneService: StoneService) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

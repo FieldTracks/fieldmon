@@ -29,6 +29,8 @@ import { FlashtoolComponent } from './stones/flashtool/flashtool.component';
 import { OnlineComponent } from './stones/online/online.component';
 import { NamesDialogComponent } from './names/names-dialog';
 import { NodeInfoComponent } from './graph/nodeinfo';
+import {FileUploadDialogComponent} from './graph/file-upload-dialog.component';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,7 @@ import { NodeInfoComponent } from './graph/nodeinfo';
     OnlineComponent,
     NamesDialogComponent,
     NodeInfoComponent,
+    FileUploadDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -53,12 +56,13 @@ import { NodeInfoComponent } from './graph/nodeinfo';
     AppRoutingModule,
     MaterialModule,
     FormsModule,
+    HttpClientModule,
     ReactiveFormsModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [NamesDialogComponent, NodeInfoComponent]
+  entryComponents: [NamesDialogComponent, NodeInfoComponent, FileUploadDialogComponent]
 })
 export class AppModule {
 

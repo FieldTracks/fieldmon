@@ -1,0 +1,25 @@
+  <h1 mat-dialog-title>Select Background Image</h1>
+  <mat-dialog-content fxLayout="column" fxLayoutAlign="center center">
+      <div *ngIf="error">
+        {{ error.message }}
+      </div>
+      <div *ngIf="imgURL">
+        <img [src]="imgURL" width="250" *ngIf="file">
+        <mat-progress-bar mode="determinate" [value]="progress | async"></mat-progress-bar>
+      </div>
+
+      <div *ngIf="uploadResponse.status === 'progress'">
+        <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+          {{uploadResponse.message}}%
+        </div>
+      </div>
+
+      <form [formGroup]="form">
+          <input type="file" hidden #imgFileInput name="upload" (change)="onFileChange($event)" accept="image/*" />
+      </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button [disabled]="!canSelect()" color="primary" (click)="imgFileInput.click()">Choose file</button>
+    <button mat-button [disabled]="!canUpload()" (click)="upload()" type="submit">Upload</button>
+    <button mat-button (click)="cancel()" type="button" mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

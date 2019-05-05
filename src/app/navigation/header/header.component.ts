@@ -12,8 +12,9 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {EventEmitter} from '@angular/core';
 import {Output} from '@angular/core';
 import {HeaderBarService} from '../../header-bar.service';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {BehaviorSubject, Subject, Subscription} from 'rxjs';
 import {HeaderBarConfiguration, MenuItem} from '../../helpers/fm-component';
+import {MatMenu} from '@angular/material';
 
 @Component({
   selector: 'app-header',
@@ -22,19 +23,17 @@ import {HeaderBarConfiguration, MenuItem} from '../../helpers/fm-component';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-  refreshActive: boolean;
-  config: HeaderBarConfiguration = {sectionTitle: ''};
   syncClass = '';
 
-
-  private subscription: Subscription;
-  private refreshSubscription: Subscription;
   private rotateRefreshButtonSubscription: Subscription;
-  private menuItemSubscription: Subscription;
+  private matMenuSubscription: Subscription;
+  private matMenu: any;
 
   constructor(private headerBarService: HeaderBarService) { }
 
-  menuItems: MenuItem[] = [];
+  headerBarConfiguration: Subject<HeaderBarConfiguration>;
+  refreshingEnabled: Subject<boolean>;
+  matMenuTest: Subject<MatMenu>;
 
   @Output()
   sidebarTooggle = new EventEmitter();
@@ -44,18 +43,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-      this.subscription = this.headerBarService.currentConfiguration.subscribe( (conf) => {
-          this.config = conf;
-        }
-      );
-      this.rotateRefreshButtonSubscription = this.headerBarService.rotateRefreshButton.subscribe( () => this.blinkSync());
+    this.headerBarConfiguration = this.headerBarService.currentConfiguration;
+    this.rotateRefreshButtonSubscription = this.headerBarService.rotateRefreshButton.subscribe( () => this.blinkSync());
+    this.refreshingEnabled = this.headerBarService.refreshingEnabled;
+    this.matMenuSubscription = this.headerBarService.matMenu.subscribe( (matMenu) => {
+      this.matMenu = matMenu;
+    });
 
-      this.refreshSubscription = this.headerBarService.refreshingEnabled.subscribe((value) => {
-        this.refreshActive = value;
-      });
-      this.menuItemSubscription = this.headerBarService.menu().subscribe( (items) => {
-        this.menuItems = items;
-      });
   }
 
   private blinkSync() {
@@ -64,17 +58,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    if (this.refreshSubscription) {
-      this.refreshSubscription.unsubscribe();
-    }
-    if (this.menuItemSubscription) {
-      this.menuItemSubscription.unsubscribe();
-    }
     if (this.rotateRefreshButtonSubscription) {
       this.rotateRefreshButtonSubscription.unsubscribe();
+    }
+    if (this.matMenuSubscription) {
+      this.matMenuSubscription.unsubscribe();
     }
   }
 

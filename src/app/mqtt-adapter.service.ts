@@ -11,6 +11,7 @@ import {AggregatedGraph, AggregatedGraphLink, AggregatedGraphNode} from './model
 import {StoneEvent} from './model/StoneEvent';
 import { AggregatedName } from './model/aggregated/aggregated-name';
 import {AggregatedDevice} from './model/aggregated/aggregated-devices';
+import {FieldmonConfig} from './model/configuration/fieldmon-config';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -175,6 +176,20 @@ export class MqttAdapterService {
       }
     ));
 
+  }
+
+
+  public fieldmonSubject(): Observable<FieldmonConfig> {
+    return this.mqttService.observe('fieldmon/config').pipe(map(
+      (message: IMqttMessage) => {
+        return JSON.parse(message.payload.toString());
+      }
+    ));
+  }
+
+  public publishFieldmonConfig(config: FieldmonConfig): void {
+    this.mqttService.publish('fieldmon/config', JSON.stringify(config), {qos: 1, retain: true})
+      .subscribe().unsubscribe();
   }
 
 

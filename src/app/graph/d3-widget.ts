@@ -5,6 +5,8 @@ import { NodeInfoComponent } from './nodeinfo';
 
 export class D3Widget {
 
+  constructor(private bottomSheet: MatBottomSheet) { }
+
   static forceSimulation: any;
 
   static forceSimulationNodes = [];
@@ -19,7 +21,16 @@ export class D3Widget {
 
   static background: HTMLImageElement;
 
-  constructor(private bottomSheet: MatBottomSheet) { }
+  static backgroundUrl = '/assets/2019-04-14_172301.jpg';
+
+
+  static imageURL(backgroundImage: string) {
+    this.backgroundUrl = backgroundImage;
+    D3Widget.background.src = backgroundImage;
+
+
+  }
+
 
   run() {
     document.addEventListener('contextmenu', event => event.preventDefault());
@@ -42,10 +53,10 @@ export class D3Widget {
     img.onerror = () => {
       setTimeout(() => {
         img.src = undefined;
-        img.src = '/assets/2019-04-14_172301.jpg';
+        img.src = D3Widget.backgroundUrl;
       }, 5000);
     };
-    img.src = '/assets/2019-04-14_172301.jpg';
+    img.src = D3Widget.backgroundUrl;
 
     const canvas = d3.select('#graphDiv').append('canvas')
       .attr('width', width + 'px')
@@ -59,11 +70,11 @@ export class D3Widget {
       .style('opacity', 0);
 
     const simulation = d3.forceSimulation()
-                  //.force('center', d3.forceCenter(width / 2, height / 2))
-                  //.force('x', d3.forceX(width / 2).strength(0.1))
-                  //.force('y', d3.forceY(height / 2).strength(0.1))
+                  // .force('center', d3.forceCenter(width / 2, height / 2))
+                  // .force('x', d3.forceX(width / 2).strength(0.1))
+                  // .force('y', d3.forceY(height / 2).strength(0.1))
                   .force('charge', d3.forceManyBody().strength(-0.125))
-                  .force('link', d3.forceLink().distance(() => 50).strength((link) => { const x = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1); console.log(x, link.value); return x}).id(function(d) { return d.id; }))
+                  .force('link', d3.forceLink().distance(() => 50).strength((link) => { const x = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1); console.log(x, link.value); return x; }).id(function(d) { return d.id; }))
                   .alphaTarget(0)
                   .alphaDecay(0.05);
 
@@ -84,17 +95,17 @@ export class D3Widget {
     D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
     D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
     D3Widget.forceSimulation.alpha(1).restart();
-    D3Widget.forceSimulation.resume();
+    // D3Widget.forceSimulation.resume();
   }
 
   initGraph() {
     const zoomed = () => {
       D3Widget.transform = d3.event.transform;
       this.simulationUpdate();
-    }
+    };
 
     const dragsubject = () => {
-      var i,
+      let i,
       x = D3Widget.transform.invertX(d3.event.x),
       y = D3Widget.transform.invertY(d3.event.y),
       dx,
@@ -133,7 +144,7 @@ export class D3Widget {
     const dragended = () => {
       if (!d3.event.active) { D3Widget.forceSimulation.alphaTarget(0); }
       if (d3.event.subject.click) {
-        if(!d3.event.subject.fixed) {
+        if (!d3.event.subject.fixed) {
           d3.event.subject.fx = undefined;
           d3.event.subject.fy = undefined;
         }
@@ -190,4 +201,6 @@ export class D3Widget {
       D3Widget.context.restore();
       // transform = d3.zoomIdentity;
   }
+
+
 }

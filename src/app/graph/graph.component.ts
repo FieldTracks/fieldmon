@@ -77,7 +77,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
-      D3Widget.background.src = fmc.backgroundImage;
+      D3Widget.imageURL(fmc.backgroundImage);
+
     });
   }
 

@@ -22,17 +22,17 @@ export class FlashtoolComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    // this.stoneSubscription = this.mqttService.flashToolSubject().subscribe( (status) => {
-    new DummyData().flashToolSubject().subscribe( (status) => {
+    this.stoneSubscription = this.mqttService.flashToolSubject().subscribe( (status) => {
+    // new DummyData().flashToolSubject().subscribe( (status) => {
       // Handle disconnect
       if (status.event === 'disconnected') {
-        return this.stones = this.stones.filter( (s) => s.object.mac !== status.stoneConfiguration.mac);
+        return this.stones = this.stones.filter( (s) => s.object.mac !== status.stone.mac);
       } else {
-       const stone = this.stones.find( (s) =>  s.object.mac === status.stoneConfiguration.mac);
+       const stone = this.stones.find( (s) =>  s.object.mac === status.stone.mac);
         if (stone) {
-          stone.object = status.stoneConfiguration;
+          stone.object = status.stone;
         } else {
-          this.stones.push(new FlashtoolModel(status.stoneConfiguration));
+          this.stones.push(new FlashtoolModel(status.stone));
         }
       }
     });

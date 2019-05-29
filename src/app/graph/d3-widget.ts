@@ -27,8 +27,6 @@ export class D3Widget {
   static imageURL(backgroundImage: string) {
     this.backgroundUrl = backgroundImage;
     D3Widget.background.src = backgroundImage;
-
-
   }
 
 

@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private rotateRefreshButtonSubscription: Subscription;
   private matMenuSubscription: Subscription;
-  private matMenu: any;
+  matMenu: any;
 
   constructor(private headerBarService: HeaderBarService) { }
 

@@ -34,6 +34,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   private d3Widget = new D3Widget(this.bottomSheet, this.graph);
   private subscription: Subscription;
   private configSubscription: Subscription;
+  private positionChangeSubscription: Subscription;
   private fieldmonConfig: FieldmonConfig;
 
   private dialogRef: MatDialogRef<FileUploadDialogComponent>;
@@ -53,7 +54,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
 
   ngOnInit(): void {
-
+    this.positionChangeSubscription = this.graph.manualPositionChange.subscribe(n => {
+      console.dir(n);
+    });
   }
 
   ngOnDestroy(): void {
@@ -62,6 +65,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     }
     if(this.dialogRef) {
       this.dialogRef.close();
+    }
+    if(this.positionChangeSubscription) {
+      this.positionChangeSubscription.unsubscribe();
     }
   }
 

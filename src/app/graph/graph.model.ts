@@ -1,16 +1,18 @@
+import { Subject } from 'rxjs';
 import {AggregatedGraph} from '../model/aggregated/aggregated-graph';
 
 export class GraphNG {
   links: D3Link[] = [];
-  nodes: D3Node[] = [];
-  background: HTMLImageElement = new Image();
+  readonly nodes: D3Node[] = [];
+  readonly background: HTMLImageElement = new Image();
+  readonly manualPositionChange = new Subject<D3Node>();
 
   constructor() {
     this.background.onerror = () => {
       setTimeout(() => {
         const url = this.background.src;
         this.background.src = undefined;
-        this.background.src = url; // The url need to be reset, so the image ca refetch
+        this.background.src = url; // The url need to be reset, so the image can bes refetch
       }, 5000);
     };
   }
@@ -52,4 +54,7 @@ export interface D3Node {
   group: 1;
   x?: number;
   y?: number;
+  fx?: number;
+  fy?: number;
+  fixed?: boolean;
 }

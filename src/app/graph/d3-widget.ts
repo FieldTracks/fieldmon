@@ -129,16 +129,18 @@ export class D3Widget {
       if (!d3.event.active) { D3Widget.forceSimulation.alphaTarget(0); }
       if (d3.event.subject.click) {
         if (!d3.event.subject.fixed) {
+          // This will prevent the node to be pinned when shortly clicked
           d3.event.subject.fx = undefined;
           d3.event.subject.fy = undefined;
         }
         this.bottomSheet.open(NodeInfoComponent, {
-          data: { width: D3Widget.width, node: d3.event.subject },
+          data: { width: D3Widget.width, node: d3.event.subject, graph: D3Widget.graph },
         });
       } else {
         d3.event.subject.fx = D3Widget.transform.invertX(d3.event.x);
         d3.event.subject.fy = D3Widget.transform.invertY(d3.event.y);
         d3.event.subject.fixed = true;
+        D3Widget.graph.manualPositionChange.next(d3.event.subject);
       }
     };
 

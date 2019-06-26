@@ -50,4 +50,6 @@ export interface D3Node {
   name: string;
   id: string;
   group: 1;
+  x?: number;
+  y?: number;
 }

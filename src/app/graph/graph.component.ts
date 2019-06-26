@@ -30,7 +30,8 @@ import {FieldmonConfig} from '../model/configuration/fieldmon-config';
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
-  private d3Widget = new D3Widget(this.bottomSheet);
+  private graph = new GraphNG();
+  private d3Widget = new D3Widget(this.bottomSheet, this.graph);
   private subscription: Subscription;
   private configSubscription: Subscription;
   private fieldmonConfig: FieldmonConfig;
@@ -40,8 +41,6 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
   @ViewChild('menu', { static: true })
   private myMenu;
-
-  private graph = new GraphNG();
 
   constructor(private snackBar: MatSnackBar,
               private mqttService: MqttAdapterService,
@@ -72,11 +71,11 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
    */
   ngAfterContentInit(): void {
     this.headerBarService.setMatMenu(this.myMenu);
-    this.d3Widget.run(this.graph);
+    this.d3Widget.run();
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
       this.graph.updateData(ag, this.stoneService.names.getValue());
       console.dir(ag.links);
-      this.d3Widget.updateGraphNg(this.graph);
+      this.d3Widget.refresh();
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;

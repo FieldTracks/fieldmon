@@ -5,12 +5,11 @@ import { NodeInfoComponent } from './nodeinfo';
 
 export class D3Widget {
 
-  constructor(private bottomSheet: MatBottomSheet) { }
+  constructor(private bottomSheet: MatBottomSheet, graph: GraphNG) {
+    D3Widget.graph = graph;
+  }
 
   static forceSimulation: any;
-
-  static forceSimulationNodes = [];
-  static forceSimulationLinks = [];
 
   static transform: any;
   static canvas: any;
@@ -19,22 +18,13 @@ export class D3Widget {
   static width: number;
   static height: number;
 
-  /*static background: HTMLImageElement;
-
-  static backgroundUrl = '/assets/2019-04-14_172301.jpg';
-
-
-  static imageURL(backgroundImage: string) {
-    this.backgroundUrl = backgroundImage;
-    D3Widget.background.src = backgroundImage;
-  }*/
-
   static graph: GraphNG;
 
 
-  run(graph: GraphNG) {
-    D3Widget.graph = graph;
-
+  /**
+   * Used to start the simulation. Has to be called once in the beginning
+   */
+  run() {
     document.addEventListener('contextmenu', event => event.preventDefault());
 
     const w = window,
@@ -47,12 +37,9 @@ export class D3Widget {
     const width = x;
     const height = y;
 
-    // const img = new Image();
     D3Widget.graph.background.onload = () => {
-      this.simulationUpdate();
+      this.redrawCanvas();
     };
-    /**/
-    //img.src = D3Widget.backgroundUrl;
 
     const canvas = d3.select('#graphDiv').append('canvas')
       .attr('width', width + 'px')
@@ -66,9 +53,6 @@ export class D3Widget {
       .style('opacity', 0);
 
     const simulation = d3.forceSimulation()
-                  // .force('center', d3.forceCenter(width / 2, height / 2))
-                  // .force('x', d3.forceX(width / 2).strength(0.1))
-                  // .force('y', d3.forceY(height / 2).strength(0.1))
                   .force('charge', d3.forceManyBody().strength(-0.125))
                   .force('link', d3.forceLink().distance(() => 50).strength((link) => { const x = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1); console.log(x, link.value); return x; }).id(function(d) { return d.id; }))
                   .alphaTarget(0)
@@ -84,20 +68,24 @@ export class D3Widget {
     this.initGraph();
   }
 
-  updateGraphNg(g: GraphNG): void {
+  /**
+   * Take changed node or link data in the model to account. Has to be called each time the data changes
+   */
+  refresh(): void {
     D3Widget.forceSimulation.stop();
-    D3Widget.forceSimulationLinks = g.links;
-    D3Widget.forceSimulationNodes = g.nodes;
-    D3Widget.forceSimulation.nodes(D3Widget.forceSimulationNodes);
-    D3Widget.forceSimulation.force('link').links(D3Widget.forceSimulationLinks);
+    D3Widget.forceSimulation.nodes(D3Widget.graph.nodes);
+    D3Widget.forceSimulation.force('link').links(D3Widget.graph.links);
     D3Widget.forceSimulation.alpha(1).restart();
-    // D3Widget.forceSimulation.resume();
+    this.redrawCanvas();
   }
 
-  initGraph() {
+  /**
+   * Register callback functions
+   */
+  private initGraph() {
     const zoomed = () => {
       D3Widget.transform = d3.event.transform;
-      this.simulationUpdate();
+      this.redrawCanvas();
     };
 
     const dragsubject = () => {
@@ -106,8 +94,8 @@ export class D3Widget {
       y = D3Widget.transform.invertY(d3.event.y),
       dx,
       dy;
-      for (i = D3Widget.forceSimulationNodes.length - 1; i >= 0; --i) {
-        const node = D3Widget.forceSimulationNodes[i];
+      for (i = D3Widget.graph.nodes.length - 1; i >= 0; --i) {
+        const node = D3Widget.graph.nodes[i];
         dx = x - node.x;
         dy = y - node.y;
 
@@ -160,13 +148,13 @@ export class D3Widget {
 
 
     D3Widget.forceSimulation.nodes(D3Widget.context)
-              .on('tick', this.simulationUpdate);
+              .on('tick', this.redrawCanvas);
 
     D3Widget.forceSimulation.force('link')
               .links(D3Widget.context);
   }
 
-  private simulationUpdate() {
+  private redrawCanvas() {
     D3Widget.context.save();
     D3Widget.context.clearRect(0, 0, D3Widget.width, D3Widget.height);
     D3Widget.context.translate(D3Widget.transform.x, D3Widget.transform.y);
@@ -177,7 +165,7 @@ export class D3Widget {
     }
 
     D3Widget.context.beginPath();
-    D3Widget.forceSimulationLinks.forEach(function(d) {
+    D3Widget.graph.links.forEach(function(d) {
       D3Widget.context.moveTo(d.source.x, d.source.y);
       D3Widget.context.lineTo(d.target.x, d.target.y);
     });
@@ -185,7 +173,7 @@ export class D3Widget {
     D3Widget.context.stroke();
 
       // Draw the nodes
-      D3Widget.forceSimulationNodes.forEach(function(d, i) {
+      D3Widget.graph.nodes.forEach(function(d, i) {
 
         D3Widget.context.beginPath();
         D3Widget.context.moveTo(d.x + 3, d.y);
@@ -195,7 +183,6 @@ export class D3Widget {
       });
 
       D3Widget.context.restore();
-      // transform = d3.zoomIdentity;
   }
 
 

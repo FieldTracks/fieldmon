@@ -1,3 +1,4 @@
+import { WebdavService } from './../webdav.service';
 /*
 This file is part of fieldmon - (C) The Fieldtracks Project
     fieldmon is distributed under the civilian open source license (COSLi).
@@ -48,7 +49,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private stoneService: StoneService,
               private bottomSheet: MatBottomSheet,
               private headerBarService: HeaderBarService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private webdav: WebdavService) {
 
   }
 
@@ -85,7 +87,12 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
-      this.graph.background.src = fmc.backgroundImage;
+      if (this.graph.background.src !== fmc.backgroundImage) {
+        this.webdav.get(fmc.backgroundImage).subscribe(() => {
+          console.log('Request complete');
+          this.graph.background.src = fmc.backgroundImage;
+        });
+      }
       console.dir(fmc.fixedNodes);
       this.graph.onRemoteNodeChange(fmc.fixedNodes);
       this.d3Widget.refresh();

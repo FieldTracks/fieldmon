@@ -20,7 +20,7 @@ export class GraphNG {
   }
 
   onLocalNodeChange(node: D3Node) {
-    if (node.fixed){
+    if (node.fixed) {
       this.fixedNodes.set(node.id, node);
     } else {
       this.fixedNodes.delete(node.id);

@@ -72,7 +72,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
    */
   ngAfterContentInit(): void {
     this.headerBarService.setMatMenu(this.myMenu);
-    this.d3Widget.run();
+    this.d3Widget.run(this.graph);
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
       this.graph.updateData(ag, this.stoneService.names.getValue());
       console.dir(ag.links);
@@ -80,7 +80,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
-      D3Widget.imageURL(fmc.backgroundImage);
+      this.graph.background.src = fmc.backgroundImage;
 
     });
   }

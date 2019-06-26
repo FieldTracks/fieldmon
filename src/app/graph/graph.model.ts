@@ -3,6 +3,17 @@ import {AggregatedGraph} from '../model/aggregated/aggregated-graph';
 export class GraphNG {
   links: D3Link[] = [];
   nodes: D3Node[] = [];
+  background: HTMLImageElement = new Image();
+
+  constructor() {
+    this.background.onerror = () => {
+      setTimeout(() => {
+        const url = this.background.src;
+        this.background.src = undefined;
+        this.background.src = url; // The url need to be reset, so the image ca refetch
+      }, 5000);
+    };
+  }
 
   updateData(aggregatedGraph: AggregatedGraph, names: Map<string, string>) {
     const now = new Date().getTime();

@@ -19,7 +19,7 @@ export class D3Widget {
   static width: number;
   static height: number;
 
-  static background: HTMLImageElement;
+  /*static background: HTMLImageElement;
 
   static backgroundUrl = '/assets/2019-04-14_172301.jpg';
 
@@ -27,10 +27,14 @@ export class D3Widget {
   static imageURL(backgroundImage: string) {
     this.backgroundUrl = backgroundImage;
     D3Widget.background.src = backgroundImage;
-  }
+  }*/
+
+  static graph: GraphNG;
 
 
-  run() {
+  run(graph: GraphNG) {
+    D3Widget.graph = graph;
+
     document.addEventListener('contextmenu', event => event.preventDefault());
 
     const w = window,
@@ -43,18 +47,12 @@ export class D3Widget {
     const width = x;
     const height = y;
 
-    const img = new Image();
-    img.onload = () => {
-      D3Widget.background = img;
+    // const img = new Image();
+    D3Widget.graph.background.onload = () => {
       this.simulationUpdate();
     };
-    img.onerror = () => {
-      setTimeout(() => {
-        img.src = undefined;
-        img.src = D3Widget.backgroundUrl;
-      }, 5000);
-    };
-    img.src = D3Widget.backgroundUrl;
+    /**/
+    //img.src = D3Widget.backgroundUrl;
 
     const canvas = d3.select('#graphDiv').append('canvas')
       .attr('width', width + 'px')
@@ -174,8 +172,8 @@ export class D3Widget {
     D3Widget.context.translate(D3Widget.transform.x, D3Widget.transform.y);
     D3Widget.context.scale(D3Widget.transform.k, D3Widget.transform.k);
 
-    if (D3Widget.background) {
-      D3Widget.context.drawImage(D3Widget.background, 0, 0);
+    if (D3Widget.graph.background) {
+      D3Widget.context.drawImage(D3Widget.graph.background, 0, 0);
     }
 
     D3Widget.context.beginPath();

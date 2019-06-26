@@ -14,7 +14,7 @@ import {Output} from '@angular/core';
 import {HeaderBarService} from '../../header-bar.service';
 import {BehaviorSubject, Subject, Subscription} from 'rxjs';
 import {HeaderBarConfiguration, MenuItem} from '../../helpers/fm-component';
-import {MatMenu} from '@angular/material';
+import { MatMenu } from '@angular/material/menu';
 
 @Component({
   selector: 'app-header',
@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private rotateRefreshButtonSubscription: Subscription;
   private matMenuSubscription: Subscription;
-  private matMenu: any;
+  matMenu: any;
 
   constructor(private headerBarService: HeaderBarService) { }
 

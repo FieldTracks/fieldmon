@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import {GraphNG} from './graph.model';
-import { MatBottomSheet } from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { NodeInfoComponent } from './nodeinfo';
 
 export class D3Widget {
@@ -27,8 +27,6 @@ export class D3Widget {
   static imageURL(backgroundImage: string) {
     this.backgroundUrl = backgroundImage;
     D3Widget.background.src = backgroundImage;
-
-
   }
 
 

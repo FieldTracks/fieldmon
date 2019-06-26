@@ -3,7 +3,9 @@ import {MqttAdapterService} from '../../mqtt-adapter.service';
 import {StoneInTable} from '../../model/stone-in-table';
 import { Subscription} from 'rxjs';
 import {AggregatedStone} from '../../model/aggregated/aggregated-stone';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {StoneService} from '../../stone.service';
 
 @Component({
@@ -22,8 +24,8 @@ export class OnlineComponent implements OnInit, OnDestroy {
 
   constructor(private mqttAdapter: MqttAdapterService, private stoneService: StoneService) { }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   ngOnInit() {
     this.subscription = this.mqttAdapter.aggregatedStonesSubject().subscribe( (map) => {
       const newList: StoneInTable[] = [];

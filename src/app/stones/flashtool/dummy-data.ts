@@ -63,7 +63,7 @@ export class DummyData {
     this.data.forEach( (sc) => {
       const current = new DummyFlashToolStatus();
       current.event = 'connected';
-      current.stoneConfiguration = sc;
+      current.stone = sc;
       status.push(current);
     });
     return from(status);
@@ -72,7 +72,7 @@ export class DummyData {
 }
 export class DummyFlashToolStatus implements FlashtoolStatus {
   event: 'connected' | 'disconnected';
-  stoneConfiguration: StoneConfiguration;
+  stone: StoneConfiguration;
 }
 
 

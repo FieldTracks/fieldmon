@@ -10,22 +10,27 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  MatButtonModule,
-  MatButtonToggleModule, MatMenuModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatTableModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatBottomSheetModule, MatSnackBarModule, MatProgressBarModule
-} from '@angular/material';
-import { MatCardModule, MatInputModule, MatSidenavModule } from '@angular/material';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatIconModule, MatListModule, MatTabsModule, MatDialogModule } from '@angular/material';
-import {MatFileUploadModule} from 'angular-material-fileupload';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   imports: [MatTableModule,
@@ -48,7 +53,7 @@ import {MatFileUploadModule} from 'angular-material-fileupload';
             MatTooltipModule,
             MatMenuModule,
             MatBottomSheetModule,
-            MatFileUploadModule,
+//            MatFileUploadModule,
             MatSnackBarModule,
             MatProgressBarModule],
   exports: [MatTableModule,
@@ -71,7 +76,7 @@ import {MatFileUploadModule} from 'angular-material-fileupload';
             MatTooltipModule,
             MatMenuModule,
             MatBottomSheetModule,
-            MatFileUploadModule,
+//            MatFileUploadModule,
             MatSnackBarModule,
             MatProgressBarModule],
   declarations: []

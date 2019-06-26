@@ -12,7 +12,9 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { HeaderBarService } from '../header-bar.service';
 import {interval, Observable, Subscription} from 'rxjs';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { MqttAdapterService } from '../mqtt-adapter.service';
 import { StoneEvent, Observation } from '../model/StoneEvent';
 import { SensorContactTable } from '../model/sensor-contact-table';
@@ -35,8 +37,8 @@ export class SensorContactsComponent implements OnInit, OnDestroy, FmComponent {
 
   constructor(private mqttAdapter: MqttAdapterService, private titleService: HeaderBarService, private stoneService: StoneService) { }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   ngOnInit() {
     this.datasource = new MatTableDataSource(this.contacts);
     this.datasource.sort = this.sort;

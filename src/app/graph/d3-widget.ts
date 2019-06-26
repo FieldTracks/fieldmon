@@ -140,7 +140,7 @@ export class D3Widget {
         d3.event.subject.fx = D3Widget.transform.invertX(d3.event.x);
         d3.event.subject.fy = D3Widget.transform.invertY(d3.event.y);
         d3.event.subject.fixed = true;
-        D3Widget.graph.manualPositionChange.next(d3.event.subject);
+        D3Widget.graph.onLocalNodeChange(d3.event.subject);
       }
     };
 

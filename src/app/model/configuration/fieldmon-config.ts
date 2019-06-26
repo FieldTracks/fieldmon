@@ -1,3 +1,6 @@
+import { D3Node } from "src/app/graph/graph.model";
+
 export interface FieldmonConfig {
- backgroundImage?: string;
+  backgroundImage?: string;
+  fixedNodes?: D3Node[];
 }

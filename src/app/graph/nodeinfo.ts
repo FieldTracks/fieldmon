@@ -19,6 +19,6 @@ export class NodeInfoComponent {
       this.data.node.fy = this.data.node.y;
       this.data.node.fixed = true;
     }
-    this.data.graph.manualPositionChange.next(this.data.node);
+    this.data.graph.onLocalNodeChange(this.data.node);
   }
 }

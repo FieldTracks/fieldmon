@@ -1,3 +1,4 @@
+import { D3Node } from './graph.model';
 import { Subject } from 'rxjs';
 import {AggregatedGraph} from '../model/aggregated/aggregated-graph';
 
@@ -6,6 +7,7 @@ export class GraphNG {
   readonly nodes: D3Node[] = [];
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
+  readonly fixedNodes = new Map<String, D3Node>();
 
   constructor() {
     this.background.onerror = () => {
@@ -15,6 +17,45 @@ export class GraphNG {
         this.background.src = url; // The url need to be reset, so the image can bes refetch
       }, 5000);
     };
+  }
+
+  onLocalNodeChange(node: D3Node) {
+    if (node.fixed){
+      this.fixedNodes.set(node.id, node);
+    } else {
+      this.fixedNodes.delete(node.id);
+    }
+    this.manualPositionChange.next(node);
+  }
+
+  onRemoteNodeChange(nodes: D3Node[]) {
+    const map = new Map();
+
+    nodes.forEach((n) => map.set(n.id, n));
+
+    this.fixedNodes.forEach((value, key) => {
+      const localNode = this.findNodeByMac(value.id);
+
+      if (!map.has(key)) {
+        this.fixedNodes.delete(key);
+
+        localNode.fixed = false;
+        localNode.fx = undefined;
+        localNode.fy = undefined;
+      }
+    });
+
+    map.forEach((value, key) => {
+      const localNode = this.findNodeByMac(value.id);
+
+      if(!this.fixedNodes.has(key)) {
+        this.fixedNodes.set(key, localNode);
+      }
+
+      localNode.fixed = true;
+      localNode.fx = value.fx;
+      localNode.fy = value.fy;
+    })
   }
 
   updateData(aggregatedGraph: AggregatedGraph, names: Map<string, string>) {

@@ -9,7 +9,7 @@ import {AfterContentInit, Component, OnDestroy, OnInit, ViewChild} from '@angula
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {D3Widget} from './d3-widget';
 import {Subscription} from 'rxjs';
-import {GraphNG} from './graph.model';
+import {GraphNG, D3Node} from './graph.model';
 import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -54,8 +54,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
 
   ngOnInit(): void {
-    this.positionChangeSubscription = this.graph.manualPositionChange.subscribe(n => {
-      console.dir(n);
+    this.positionChangeSubscription = this.graph.manualPositionChange.subscribe(() => {
+      this.pulishConfig();
     });
   }
 
@@ -86,7 +86,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
       this.graph.background.src = fmc.backgroundImage;
-
+      console.dir(fmc.fixedNodes);
+      this.graph.onRemoteNodeChange(fmc.fixedNodes);
+      this.d3Widget.refresh();
     });
   }
 
@@ -103,15 +105,21 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
 
     const subscription = this.dialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
-      this.mqttService.publishFieldmonConfig({
-          backgroundImage: image
-        });
+      this.graph.background.src = image;
+      this.pulishConfig();
     });
 
 
     const closeSubscription = this.dialogRef.afterClosed().subscribe(() => {
       closeSubscription.unsubscribe();
       this.dialogRef = null;
+    });
+  }
+
+  private pulishConfig() {
+    this.mqttService.publishFieldmonConfig({
+      backgroundImage: this.graph.background.src,
+      fixedNodes: Array.from(this.graph.fixedNodes.values())
     });
   }
 }

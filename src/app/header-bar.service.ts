@@ -1,7 +1,7 @@
 import {EventEmitter, Injectable, Output} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {HeaderBarConfiguration, MenuItem} from './helpers/fm-component';
-import {MatMenu} from '@angular/material';
+import { MatMenu } from '@angular/material/menu';
 
 @Injectable({
   providedIn: 'root'

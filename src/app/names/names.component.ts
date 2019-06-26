@@ -10,7 +10,10 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MqttAdapterService } from '../mqtt-adapter.service';
-import { MatDialog, MatDialogRef, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { NamesDialogComponent } from './names-dialog';
 import { filter } from 'rxjs/operators';
 import { HeaderBarService } from '../header-bar.service';
@@ -45,8 +48,8 @@ export class NamesComponent implements OnInit, OnDestroy, FmComponent {
               private headerBarService: HeaderBarService,
               private stoneService: StoneService) { }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   ngOnInit() {
     this.headerBarService.refreshEnabled(true);
 

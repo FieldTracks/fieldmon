@@ -12,7 +12,10 @@ import {Subscription} from 'rxjs';
 import {GraphNG} from './graph.model';
 import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
-import {MatBottomSheet, MatDialog, MatDialogRef, MatMenu, MatSnackBar} from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatMenu } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {HeaderBarService} from '../header-bar.service';
 import {FileUploadDialogComponent} from './file-upload-dialog.component';
 import {NameInTable} from '../model/name-in-table';
@@ -35,7 +38,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   private dialogRef: MatDialogRef<FileUploadDialogComponent>;
 
 
-  @ViewChild('menu')
+  @ViewChild('menu', { static: true })
   private myMenu;
 
   private graph = new GraphNG();

@@ -2,7 +2,7 @@ import {Component, Inject, Injectable, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {catchError, map, mergeMap, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {WebdavService} from '../webdav.service';
 import {HttpEventType} from '@angular/common/http';
 

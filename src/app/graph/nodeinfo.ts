@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from "@angular/material";
+import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from "@angular/material/bottom-sheet";
 
 // [style.width.px]="this.data.width * 0.8"
 

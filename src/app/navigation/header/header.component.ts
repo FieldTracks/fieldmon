@@ -14,7 +14,7 @@ import {Output} from '@angular/core';
 import {HeaderBarService} from '../../header-bar.service';
 import {BehaviorSubject, Subject, Subscription} from 'rxjs';
 import {HeaderBarConfiguration, MenuItem} from '../../helpers/fm-component';
-import {MatMenu} from '@angular/material';
+import { MatMenu } from '@angular/material/menu';
 
 @Component({
   selector: 'app-header',

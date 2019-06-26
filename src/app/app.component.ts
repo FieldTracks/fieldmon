@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs';
 import {Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterContentInit} from '@angular/core';
 import { HeaderBarService } from './header-bar.service';
 import {FmComponent} from './helpers/fm-component';
-import {MatMenu} from '@angular/material';
+import { MatMenu } from '@angular/material/menu';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   searchString: string;
 
-  @ViewChild('searchInput') searchField: ElementRef;
+  @ViewChild('searchInput', { static: false }) searchField: ElementRef;
 
   private menu: MatMenu;
 

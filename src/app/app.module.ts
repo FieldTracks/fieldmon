@@ -31,6 +31,7 @@ import { NamesDialogComponent } from './names/names-dialog';
 import { NodeInfoComponent } from './graph/nodeinfo';
 import {FileUploadDialogComponent} from './graph/file-upload-dialog.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HttpAuthInterceptor} from './helpers/http-auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,9 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
     ReactiveFormsModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
   entryComponents: [NamesDialogComponent, NodeInfoComponent, FileUploadDialogComponent]
 })

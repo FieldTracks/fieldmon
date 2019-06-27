@@ -17,14 +17,9 @@ export class WebdavService {
     const fn = filename;
     console.log('Uploading...,', fn);
     const webDavUrl = `https://${environment.mqtt_broker}/webdav/${Date.now()}-${fn}`;
-    const token = `${sessionStorage.getItem('username')}:${sessionStorage.getItem('password')}`;
-
-    const headers = new HttpHeaders();
-    headers.append('Authorization', `Basic ${btoa(token)}`);
 
    const req = new HttpRequest('PUT', webDavUrl, data, {
      reportProgress: true,
-     headers: headers,
      withCredentials: true
     });
     return this.httpClient.request(req).pipe(

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, ɵinitServicesIfNeeded} from '@angular/core';
 import {HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpRequest} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
@@ -15,12 +15,10 @@ export class WebdavService {
 
   put(filename: string, data: any): Observable<any> {
     const fn = filename;
-    console.log('Uploading...,', fn);
     const webDavUrl = `https://${environment.mqtt_broker}/webdav/${Date.now()}-${fn}`;
 
    const req = new HttpRequest('PUT', webDavUrl, data, {
-     reportProgress: true,
-     withCredentials: true
+     reportProgress: true
     });
     return this.httpClient.request(req).pipe(
       tap( (event) => {
@@ -39,29 +37,9 @@ export class WebdavService {
 
   }
 
-  get(filename: string): Observable<any> {
-    const fn = filename;
-    const webDavUrl = `https://${environment.mqtt_broker}/webdav/${Date.now()}-${fn}`;
-    const token = `${sessionStorage.getItem('username')}:${sessionStorage.getItem('password')}`;
-
-    const headers = new HttpHeaders();
-    headers.append('Authorization', `Basic ${btoa(token)}`);
-
-    const req = new HttpRequest('GET', webDavUrl, {}, {
-      headers: headers,
-      withCredentials: true
-    });
-    return this.httpClient.request(req).pipe(
-      map( (event) => {
-        if (HttpEventType.Response === event.type ) {
-          return {
-            type: HttpEventType.Response,
-            webDavUrl: webDavUrl
-          };
-        }
-      })
-    );
+  getAsObjectUrl(filename: string): Observable<string> {
+    return this.httpClient.get(filename, {responseType: 'blob'})
+      .pipe(map(e => URL.createObjectURL(e)));
   }
-
 }
 

@@ -31,8 +31,8 @@ import {FieldmonConfig} from '../model/configuration/fieldmon-config';
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
-  private graph = new GraphNG();
-  private d3Widget = new D3Widget(this.bottomSheet, this.graph);
+  private graph: GraphNG;
+  private d3Widget: D3Widget;
   private subscription: Subscription;
   private configSubscription: Subscription;
   private positionChangeSubscription: Subscription;
@@ -51,6 +51,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private headerBarService: HeaderBarService,
               private dialog: MatDialog,
               private webdav: WebdavService) {
+    this.graph = new GraphNG(webdav);
+    this.d3Widget = new D3Widget(this.bottomSheet, this.graph);
 
   }
 
@@ -65,10 +67,10 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    if(this.dialogRef) {
+    if (this.dialogRef) {
       this.dialogRef.close();
     }
-    if(this.positionChangeSubscription) {
+    if (this.positionChangeSubscription) {
       this.positionChangeSubscription.unsubscribe();
     }
   }
@@ -87,11 +89,16 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
-      if (this.graph.background.src !== fmc.backgroundImage) {
-        this.webdav.get(fmc.backgroundImage).subscribe(() => {
-          console.log('Request complete');
-          this.graph.background.src = fmc.backgroundImage;
-        });
+      console.log('Updating config data. Backgrund URL is:', fmc.backgroundImage )
+      if (this.graph.backgroundUrl !== fmc.backgroundImage) {
+        this.graph.backgroundUrl = fmc.backgroundImage;
+        // this.webdav.get(fmc.backgroundImage).subscribe((result) => {
+        //  const data = new Uint8Array(result.response);
+        //  const raw = String.fromCharCode.apply(null, data);
+        //  const base64 = btoa(raw);
+        //  this.graph.background.src = 'data:image;base64,' + base64;
+        //  console.log('Got image', base64);
+        // });
       }
       console.dir(fmc.fixedNodes);
       this.graph.onRemoteNodeChange(fmc.fixedNodes);
@@ -112,7 +119,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
 
     const subscription = this.dialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
-      this.graph.background.src = image;
+      this.graph.backgroundUrl = image;
       this.pulishConfig();
     });
 
@@ -125,7 +132,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
   private pulishConfig() {
     this.mqttService.publishFieldmonConfig({
-      backgroundImage: this.graph.background.src,
+      backgroundImage: this.graph.backgroundUrl,
       fixedNodes: Array.from(this.graph.fixedNodes.values())
     });
   }

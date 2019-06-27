@@ -1,6 +1,7 @@
 import { D3Node } from './graph.model';
 import { Subject } from 'rxjs';
 import {AggregatedGraph} from '../model/aggregated/aggregated-graph';
+import {WebdavService} from '../webdav.service';
 
 export class GraphNG {
   links: D3Link[] = [];
@@ -8,8 +9,21 @@ export class GraphNG {
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
   readonly fixedNodes = new Map<String, D3Node>();
+  _backgroundUrl: string;
 
-  constructor() {
+  set backgroundUrl(url: string) {
+    this._backgroundUrl = url;
+    this.webdavService.getAsObjectUrl(url).subscribe( (image) => {
+      console.log('Image src is', image);
+      this.background.src = image;
+    });
+  }
+
+  get backgroundUrl() {
+    return this._backgroundUrl;
+  }
+
+  constructor(private webdavService: WebdavService) {
     this.background.onerror = () => {
       setTimeout(() => {
         const url = this.background.src;
@@ -48,14 +62,14 @@ export class GraphNG {
     map.forEach((value, key) => {
       const localNode = this.findNodeByMac(value.id);
 
-      if(!this.fixedNodes.has(key)) {
+      if (!this.fixedNodes.has(key)) {
         this.fixedNodes.set(key, localNode);
       }
 
       localNode.fixed = true;
       localNode.fx = value.fx;
       localNode.fy = value.fy;
-    })
+    });
   }
 
   updateData(aggregatedGraph: AggregatedGraph, names: Map<string, string>) {

@@ -37,6 +37,7 @@ export class D3Widget {
     const width = x;
     const height = y;
 
+
     D3Widget.graph.background.onload = () => {
       this.redrawCanvas();
     };

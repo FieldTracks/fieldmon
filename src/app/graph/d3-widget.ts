@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import {GraphNG} from './graph.model';
+import {D3Node, GraphNG} from './graph.model';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { NodeInfoComponent } from './nodeinfo';
 
@@ -20,6 +20,13 @@ export class D3Widget {
 
   static graph: GraphNG;
 
+  static getNodeColor(node: D3Node) {
+    if (node.fixed) {
+      return '#F00';
+    } else {
+      return '#00F';
+    }
+  }
 
   /**
    * Used to start the simulation. Has to be called once in the beginning
@@ -159,6 +166,7 @@ export class D3Widget {
 
   private redrawCanvas() {
     D3Widget.context.save();
+    D3Widget.context.fillStyle = '#000';
     D3Widget.context.clearRect(0, 0, D3Widget.width, D3Widget.height);
     D3Widget.context.translate(D3Widget.transform.x, D3Widget.transform.y);
     D3Widget.context.scale(D3Widget.transform.k, D3Widget.transform.k);
@@ -174,19 +182,22 @@ export class D3Widget {
     });
     D3Widget.context.strokeStyle = '#aaa';
     D3Widget.context.stroke();
-
       // Draw the nodes
       D3Widget.graph.nodes.forEach(function(d, i) {
-
+        D3Widget.context.fillStyle = D3Widget.getNodeColor(d);
         D3Widget.context.beginPath();
         D3Widget.context.moveTo(d.x + 3, d.y);
-        D3Widget.context.arc(d.x, d.y, 3, 0, 2 * Math.PI);
+        D3Widget.context.arc(d.x, d.y, 5, 0, 2 * Math.PI);
+        D3Widget.context.fill();
+        D3Widget.context.beginPath();
+        D3Widget.context.fillStyle = '#000';
         D3Widget.context.fillText(d.name, d.x, d.y + 12);
         D3Widget.context.fill();
       });
 
       D3Widget.context.restore();
   }
+
 
 
 }

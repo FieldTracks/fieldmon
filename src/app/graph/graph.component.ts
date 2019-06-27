@@ -1,3 +1,4 @@
+import { WebdavService } from './../webdav.service';
 /*
 This file is part of fieldmon - (C) The Fieldtracks Project
     fieldmon is distributed under the civilian open source license (COSLi).
@@ -9,7 +10,7 @@ import {AfterContentInit, Component, OnDestroy, OnInit, ViewChild} from '@angula
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {D3Widget} from './d3-widget';
 import {Subscription} from 'rxjs';
-import {GraphNG} from './graph.model';
+import {GraphNG, D3Node} from './graph.model';
 import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -30,9 +31,11 @@ import {FieldmonConfig} from '../model/configuration/fieldmon-config';
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
-  private d3Widget = new D3Widget(this.bottomSheet);
+  private graph = new GraphNG();
+  private d3Widget = new D3Widget(this.bottomSheet, this.graph);
   private subscription: Subscription;
   private configSubscription: Subscription;
+  private positionChangeSubscription: Subscription;
   private fieldmonConfig: FieldmonConfig;
 
   private dialogRef: MatDialogRef<FileUploadDialogComponent>;
@@ -41,20 +44,21 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   @ViewChild('menu', { static: true })
   private myMenu;
 
-  private graph = new GraphNG();
-
   constructor(private snackBar: MatSnackBar,
               private mqttService: MqttAdapterService,
               private stoneService: StoneService,
               private bottomSheet: MatBottomSheet,
               private headerBarService: HeaderBarService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private webdav: WebdavService) {
 
   }
 
 
   ngOnInit(): void {
-
+    this.positionChangeSubscription = this.graph.manualPositionChange.subscribe(() => {
+      this.pulishConfig();
+    });
   }
 
   ngOnDestroy(): void {
@@ -63,6 +67,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     }
     if(this.dialogRef) {
       this.dialogRef.close();
+    }
+    if(this.positionChangeSubscription) {
+      this.positionChangeSubscription.unsubscribe();
     }
   }
 
@@ -76,12 +83,19 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
       this.graph.updateData(ag, this.stoneService.names.getValue());
       console.dir(ag.links);
-      this.d3Widget.updateGraphNg(this.graph);
+      this.d3Widget.refresh();
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
-      D3Widget.imageURL(fmc.backgroundImage);
-
+      if (this.graph.background.src !== fmc.backgroundImage) {
+        this.webdav.get(fmc.backgroundImage).subscribe(() => {
+          console.log('Request complete');
+          this.graph.background.src = fmc.backgroundImage;
+        });
+      }
+      console.dir(fmc.fixedNodes);
+      this.graph.onRemoteNodeChange(fmc.fixedNodes);
+      this.d3Widget.refresh();
     });
   }
 
@@ -98,15 +112,21 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
 
     const subscription = this.dialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
-      this.mqttService.publishFieldmonConfig({
-          backgroundImage: image
-        });
+      this.graph.background.src = image;
+      this.pulishConfig();
     });
 
 
     const closeSubscription = this.dialogRef.afterClosed().subscribe(() => {
       closeSubscription.unsubscribe();
       this.dialogRef = null;
+    });
+  }
+
+  private pulishConfig() {
+    this.mqttService.publishFieldmonConfig({
+      backgroundImage: this.graph.background.src,
+      fixedNodes: Array.from(this.graph.fixedNodes.values())
     });
   }
 }

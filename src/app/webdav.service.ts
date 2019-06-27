@@ -39,5 +39,29 @@ export class WebdavService {
 
   }
 
+  get(filename: string): Observable<any> {
+    const fn = filename;
+    const webDavUrl = `https://${environment.mqtt_broker}/webdav/${Date.now()}-${fn}`;
+    const token = `${sessionStorage.getItem('username')}:${sessionStorage.getItem('password')}`;
+
+    const headers = new HttpHeaders();
+    headers.append('Authorization', `Basic ${btoa(token)}`);
+
+    const req = new HttpRequest('GET', webDavUrl, {}, {
+      headers: headers,
+      withCredentials: true
+    });
+    return this.httpClient.request(req).pipe(
+      map( (event) => {
+        if (HttpEventType.Response === event.type ) {
+          return {
+            type: HttpEventType.Response,
+            webDavUrl: webDavUrl
+          };
+        }
+      })
+    );
+  }
+
 }
 

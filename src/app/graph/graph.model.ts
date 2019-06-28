@@ -8,7 +8,7 @@ export class GraphNG {
   readonly nodes: D3Node[] = [];
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
-  readonly fixedNodes = new Map<String, D3Node>();
+  readonly fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
   _backgroundUrl: string;
 
   set backgroundUrl(url: string) {
@@ -42,14 +42,27 @@ export class GraphNG {
   }
 
   onRemoteNodeChange(nodes: D3Node[]) {
-    const map = new Map();
+    const map = new Map<string, D3Node>();
 
     if (nodes) {
-      nodes.forEach((n) => map.set(n.id, n));
+
+      nodes.forEach((value) => {
+        map.set(value.id, value);
+
+        let localNode = this.fixedNodes.get(value.id);
+
+        if (!localNode) {
+          localNode = this.findNodeByMac(value.id);
+          this.fixedNodes.set(value.id, localNode);
+        }
+
+        localNode.fixed = true;
+        localNode.fx = value.fx;
+        localNode.fy = value.fy;
+      });
     }
 
     this.fixedNodes.forEach((value, key) => {
-      // const localNode = this.findNodeByMac(value.id);
 
       if (!map.has(key)) {
         this.fixedNodes.delete(key);
@@ -60,17 +73,7 @@ export class GraphNG {
       }
     });
 
-    map.forEach((value, key) => {
-      const localNode = this.findNodeByMac(value.id);
 
-      if (!this.fixedNodes.has(key)) {
-        this.fixedNodes.set(key, localNode);
-      }
-
-      localNode.fixed = true;
-      localNode.fx = value.fx;
-      localNode.fy = value.fy;
-    });
   }
 
   updateData(aggregatedGraph: AggregatedGraph, names: Map<string, string>) {

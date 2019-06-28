@@ -14,7 +14,6 @@ export class GraphNG {
   set backgroundUrl(url: string) {
     this._backgroundUrl = url;
     this.webdavService.getAsObjectUrl(url).subscribe( (image) => {
-      console.log('Image src is', image);
       this.background.src = image;
     });
   }
@@ -45,17 +44,19 @@ export class GraphNG {
   onRemoteNodeChange(nodes: D3Node[]) {
     const map = new Map();
 
-    nodes.forEach((n) => map.set(n.id, n));
+    if (nodes) {
+      nodes.forEach((n) => map.set(n.id, n));
+    }
 
     this.fixedNodes.forEach((value, key) => {
-      const localNode = this.findNodeByMac(value.id);
+      // const localNode = this.findNodeByMac(value.id);
 
       if (!map.has(key)) {
         this.fixedNodes.delete(key);
 
-        localNode.fixed = false;
-        localNode.fx = undefined;
-        localNode.fy = undefined;
+        value.fixed = false;
+        value.fx = undefined;
+        value.fy = undefined;
       }
     });
 

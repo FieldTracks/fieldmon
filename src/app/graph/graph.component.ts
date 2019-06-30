@@ -84,23 +84,13 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.d3Widget.run();
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
       this.graph.updateData(ag, this.stoneService.names.getValue());
-      console.dir(ag.links);
       this.d3Widget.refresh();
     });
     this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
-      console.log('Updating config data. Backgrund URL is:', fmc.backgroundImage )
       if (this.graph.backgroundUrl !== fmc.backgroundImage) {
         this.graph.backgroundUrl = fmc.backgroundImage;
-        // this.webdav.get(fmc.backgroundImage).subscribe((result) => {
-        //  const data = new Uint8Array(result.response);
-        //  const raw = String.fromCharCode.apply(null, data);
-        //  const base64 = btoa(raw);
-        //  this.graph.background.src = 'data:image;base64,' + base64;
-        //  console.log('Got image', base64);
-        // });
       }
-      console.dir(fmc.fixedNodes);
       this.graph.onRemoteNodeChange(fmc.fixedNodes);
       this.d3Widget.refresh();
     });

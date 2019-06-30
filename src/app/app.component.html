@@ -4,9 +4,6 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <app-header (sidebarTooggle)="sidenav.toggle()" (searchToggle)="toggleSearch()"></app-header>
-    <mat-drawer-container class="example-container">
-      <mat-drawer mode="side" opened fxHide.lt-sm><app-sidenav-list></app-sidenav-list></mat-drawer>
-      <mat-drawer-content>
         <main>
           <div  fxLayout="row" fxLayoutAlign="end" *ngIf="showToggle">
           <mat-form-field #search>
@@ -19,10 +16,6 @@
           <router-outlet (activate)='routerOutletActivated($event)'></router-outlet>
 
         </main>
-      </mat-drawer-content>
-    </mat-drawer-container>
-
-
   </mat-sidenav-content>
 </mat-sidenav-container>
 

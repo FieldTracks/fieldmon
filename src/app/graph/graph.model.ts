@@ -47,18 +47,21 @@ export class GraphNG {
     if (nodes) {
 
       nodes.forEach((value) => {
-        map.set(value.id, value);
+        if (value) {
+          map.set(value.id, value);
 
-        let localNode = this.fixedNodes.get(value.id);
+          let localNode = this.fixedNodes.get(value.id);
 
-        if (!localNode) {
-          localNode = this.findNodeByMac(value.id);
-          this.fixedNodes.set(value.id, localNode);
+          if (!localNode) {
+            localNode = this.findNodeByMac(value.id);
+            this.fixedNodes.set(value.id, localNode);
+          }
+
+          localNode.fixed = true;
+          localNode.fx = value.fx;
+          localNode.fy = value.fy;
+
         }
-
-        localNode.fixed = true;
-        localNode.fx = value.fx;
-        localNode.fy = value.fy;
       });
     }
 

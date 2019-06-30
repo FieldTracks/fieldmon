@@ -38,9 +38,10 @@ export class D3Widget {
     d = document,
     e = d.documentElement,
     g = d.getElementsByTagName('app-graph')[0],
-    x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight || e.clientHeight || g.clientHeight;
+    x = w.innerWidth,
+    y = window.innerHeight - 75;
 
+    const graphAppSize = document.getElementsByTagName('app-graph')[0].clientHeight;
     const width = x;
     const height = y;
 
@@ -49,10 +50,18 @@ export class D3Widget {
       this.redrawCanvas();
     };
 
-    const canvas = d3.select('#graphDiv').append('canvas')
+    const canvasElem = d3.select('#graphDiv').append('canvas')
       .attr('width', width + 'px')
       .attr('height', height + 'px')
-      .node();
+    const canvas =  canvasElem.node();
+
+    window.addEventListener('resize', () => {
+      console.log('Resizing to:', window.innerWidth, window.innerHeight - 75 );
+      canvasElem
+        .attr('width', window.innerWidth + 'px')
+        .attr('height', window.innerHeight - 75 + 'px');
+      this.redrawCanvas();
+    });
 
     const context = canvas.getContext('2d');
 

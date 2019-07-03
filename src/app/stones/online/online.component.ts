@@ -34,7 +34,7 @@ export class OnlineComponent implements OnInit, OnDestroy {
           const aStone: AggregatedStone = map[mac];
           const name = this.stoneService.name(mac);
           newList.push(new StoneInTable(
-            aStone.comment, aStone.uuid, aStone.major, aStone.minor, new Date(aStone.last_seen * 1000), name));
+            aStone.comment, aStone.uuid, aStone.major, aStone.minor, aStone.timestamp, name));
         }
       }
       this.pageSizeOptions = [5, 10, newList.length];

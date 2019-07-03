@@ -2,7 +2,7 @@ export interface AggregatedStone {
   uuid?: string;
   comment?: string;
   contacts?: AggregatedStoneSensorContact[];
-  timestamp: Date;
+  timestamp: string;
   minor?: number;
   major?: number;
 }

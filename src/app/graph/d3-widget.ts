@@ -52,7 +52,7 @@ export class D3Widget {
 
     const canvasElem = d3.select('#graphDiv').append('canvas')
       .attr('width', width + 'px')
-      .attr('height', height + 'px')
+      .attr('height', height + 'px');
     const canvas =  canvasElem.node();
 
     window.addEventListener('resize', () => {
@@ -71,11 +71,16 @@ export class D3Widget {
 
     const simulation = d3.forceSimulation()
                   .force('charge', d3.forceManyBody().strength(-0.125))
-                  .force('link', d3.forceLink().distance(() => 50).strength((link) => { const x = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1); console.log(x, link.value); return x; }).id(function(d) { return d.id; }))
+                  .force('link', d3.forceLink().distance(() => 50)
+                    .strength((link) => { const linkStrenght = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1);
+                    console.log(linkStrenght, link.value); return linkStrenght; }).id(function(d) { return d.id; }))
                   .alphaTarget(0)
                   .alphaDecay(0.05);
 
     D3Widget.transform = d3.zoomIdentity;
+    D3Widget.transform.x = width / 2;
+    D3Widget.transform.y = height / 2;
+
     D3Widget.context = context;
     D3Widget.canvas = canvas;
     D3Widget.forceSimulation = simulation;
@@ -181,7 +186,8 @@ export class D3Widget {
     D3Widget.context.scale(D3Widget.transform.k, D3Widget.transform.k);
 
     if (D3Widget.graph.background) {
-      D3Widget.context.drawImage(D3Widget.graph.background, 0, 0);
+      D3Widget.context.drawImage(D3Widget.graph.background, 0 - (D3Widget.graph.background.width / 2),
+        0 - (D3Widget.graph.background.height / 2));
     }
 
     D3Widget.context.beginPath();

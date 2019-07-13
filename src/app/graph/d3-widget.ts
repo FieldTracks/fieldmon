@@ -167,7 +167,7 @@ export class D3Widget {
 
 
     D3Widget.forceSimulation.nodes(D3Widget.context)
-              .on('tick', this.redrawCanvas);
+              .on('tick', () => this.refresh() );
 
     D3Widget.forceSimulation.force('link')
               .links(D3Widget.context);

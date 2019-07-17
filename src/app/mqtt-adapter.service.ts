@@ -4,7 +4,7 @@ import {environment} from './../environments/environment';
 import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {StoneConfiguration} from './model/StoneConfiguration';
-import {map} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {FlashtoolStatus} from './model/flashtool/flashtool-status';
 import {AggregatedStone, AggregatedStoneSensorContact} from './model/aggregated/aggregated-stone';
 import {AggregatedGraph, AggregatedGraphLink, AggregatedGraphNode} from './model/aggregated/aggregated-graph';
@@ -49,7 +49,7 @@ export class MqttAdapterService {
     } catch (err) {
       // Ignore error - we just disconnect.
     }
-    console.log('Connecting');
+    console.log('Connecting', MQTT_SERVICE_OPTIONS.hostname, MQTT_SERVICE_OPTIONS.port, MQTT_SERVICE_OPTIONS.protocol, MQTT_SERVICE_OPTIONS.username);
 
     this.loginSubscript = this.mqttService.state.subscribe((status) => {
       if (status === MqttConnectionState.CONNECTED) {
@@ -170,7 +170,11 @@ export class MqttAdapterService {
   }
 
   public flashToolSubject(): Observable<FlashtoolStatus> {
-    return this.mqttService.observe('flashtool/status/#').pipe(map(
+    return this.mqttService.observe('flashtool/status/#').pipe(filter(
+      (message: IMqttMessage) => {
+        return message.payload.toString() !== '';
+      }
+    )).pipe(map(
       (message: IMqttMessage) => {
         return JSON.parse(message.payload.toString());
       }

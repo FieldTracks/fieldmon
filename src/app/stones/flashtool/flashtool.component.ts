@@ -31,6 +31,7 @@ export class FlashtoolComponent implements OnInit, OnDestroy {
        const stone = this.stones.find( (s) =>  s.object.mac === status.stone.mac);
         if (stone) {
           stone.object = status.stone;
+          stone.unlockUi();
         } else {
           this.stones.push(new FlashtoolModel(status.stone));
         }

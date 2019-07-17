@@ -73,7 +73,7 @@ export class D3Widget {
                   .force('charge', d3.forceManyBody().strength(-0.125))
                   .force('link', d3.forceLink().distance(() => 50)
                     .strength((link) => { const linkStrenght = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1);
-                    console.log(linkStrenght, link.value); return linkStrenght; }).id(function(d) { return d.id; }))
+                    return linkStrenght; }).id(function(d) { return d.id; }))
                   .alphaTarget(0)
                   .alphaDecay(0.05);
 

@@ -73,6 +73,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     if (this.positionChangeSubscription) {
       this.positionChangeSubscription.unsubscribe();
     }
+    if(this.configSubscription) {
+      this.configSubscription.unsubscribe();
+    }
   }
 
   /**

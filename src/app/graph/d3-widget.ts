@@ -60,7 +60,9 @@ export class D3Widget {
       canvasElem
         .attr('width', window.innerWidth + 'px')
         .attr('height', window.innerHeight - 75 + 'px');
-      this.redrawCanvas();
+      D3Widget.width = window.innerWidth;
+      D3Widget.height = window.innerHeight - 75;
+      this.refresh();
     });
 
     const context = canvas.getContext('2d');

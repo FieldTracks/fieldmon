@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Graph Settings</h1>
+<mat-dialog-content>
+  <div *ngIf="error">
+    {{ error.message }}
+  </div>
+  <form [formGroup]="formGroup" fxLayout="column" fxLayoutAlign="center left">
+    <!-- <input type="file" hidden #imgFileInput name="upload" (change)="onFileChange($event)" accept="image/*" /> -->
+    <mat-form-field>
+      <mat-label>Min RSSI [dBm]</mat-label>
+      <input matInput placeholder="-70" formControlName="minRssi" required>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label> Max link age [seconds]</mat-label>
+      <input matInput placeholder="20" formControlName="maxLinkAgeSeconds" required>
+      <mat-hint>seconds</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+  <button mat-button type="button" type="submit">Ok</button>
+</mat-dialog-actions>

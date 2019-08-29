@@ -74,7 +74,9 @@ export class D3Widget {
     const simulation = d3.forceSimulation()
                   .force('charge', d3.forceManyBody().strength(-0.125))
                   .force('link', d3.forceLink().distance(() => 50)
-                    .strength((link) => { const linkStrenght = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1);
+                    .strength((link) => {
+                      // @ts-ignore
+                      const linkStrenght = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1);
                     return linkStrenght; }).id(function(d) { return d.id; }))
                   .alphaTarget(0)
                   .alphaDecay(0.05);
@@ -193,6 +195,7 @@ export class D3Widget {
     }
 
     D3Widget.context.beginPath();
+    // @ts-ignore
     D3Widget.graph.links.forEach(function(d) {
       D3Widget.context.moveTo(d.source.x, d.source.y);
       D3Widget.context.lineTo(d.target.x, d.target.y);
@@ -200,7 +203,8 @@ export class D3Widget {
     D3Widget.context.strokeStyle = '#aaa';
     D3Widget.context.stroke();
       // Draw the nodes
-      D3Widget.graph.nodes.forEach(function(d, i) {
+      // @ts-ignore
+    D3Widget.graph.nodes.forEach(function(d, i) {
         D3Widget.context.fillStyle = D3Widget.getNodeColor(d);
         D3Widget.context.beginPath();
         D3Widget.context.moveTo(d.x + 3, d.y);

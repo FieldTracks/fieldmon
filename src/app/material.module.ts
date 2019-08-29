@@ -31,6 +31,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
+import {MatCheckboxModule} from '@angular/material';
 
 @NgModule({
   imports: [MatTableModule,
@@ -55,6 +56,7 @@ import { MatTabsModule } from '@angular/material/tabs';
             MatBottomSheetModule,
 //            MatFileUploadModule,
             MatSnackBarModule,
+            MatCheckboxModule,
             MatProgressBarModule],
   exports: [MatTableModule,
             CommonModule,
@@ -77,7 +79,9 @@ import { MatTabsModule } from '@angular/material/tabs';
             MatMenuModule,
             MatBottomSheetModule,
 //            MatFileUploadModule,
-            MatSnackBarModule,
+    MatCheckboxModule,
+
+    MatSnackBarModule,
             MatProgressBarModule],
   declarations: []
 })

@@ -23,6 +23,7 @@ import {NameInTable} from '../model/name-in-table';
 import {NamesDialogComponent} from '../names/names-dialog';
 import {filter} from 'rxjs/operators';
 import {FieldmonConfig} from '../model/configuration/fieldmon-config';
+import {SettingsDialogComponent} from './settings-dialog/settings-dialog.component';
 
 
 @Component({
@@ -38,8 +39,11 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   private positionChangeSubscription: Subscription;
   private fieldmonConfig: FieldmonConfig;
 
-  private dialogRef: MatDialogRef<FileUploadDialogComponent>;
+  private uploadDialogRef: MatDialogRef<FileUploadDialogComponent>;
+  private settingsDialogRef: MatDialogRef<SettingsDialogComponent>;
 
+  showUnnamedContacts = true;
+  showLastContact = true;
 
   @ViewChild('menu', { static: true })
   private myMenu;
@@ -67,13 +71,13 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    if (this.dialogRef) {
-      this.dialogRef.close();
+    if (this.uploadDialogRef) {
+      this.uploadDialogRef.close();
     }
     if (this.positionChangeSubscription) {
       this.positionChangeSubscription.unsubscribe();
     }
-    if(this.configSubscription) {
+    if (this.configSubscription) {
       this.configSubscription.unsubscribe();
     }
   }
@@ -103,23 +107,45 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     return {sectionTitle: 'Graph', showRefresh: true, showSearch: true};
   }
 
-  openDialog() {
-    if (this.dialogRef) {
+  openSettingsDialog() {
+    if (this.settingsDialogRef) {
       return;
     }
-    this.dialogRef = this.dialog.open(FileUploadDialogComponent, {
+    this.settingsDialogRef = this.dialog.open(SettingsDialogComponent, {
       hasBackdrop: false,
     });
 
-    const subscription = this.dialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
+    const subscription = this.settingsDialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
+      subscription.unsubscribe();
+      // this.graph.backgroundUrl = image;
+      // this.pulishConfig();
+    });
+
+
+    const closeSubscription = this.settingsDialogRef.afterClosed().subscribe(() => {
+      closeSubscription.unsubscribe();
+      this.settingsDialogRef = null;
+    });
+  }
+
+  openDialog() {
+    if (this.uploadDialogRef) {
+      return;
+    }
+    this.uploadDialogRef = this.dialog.open(FileUploadDialogComponent, {
+      hasBackdrop: false,
+    });
+
+    const subscription = this.uploadDialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
+      subscription.unsubscribe();
       this.graph.backgroundUrl = image;
       this.pulishConfig();
     });
 
 
-    const closeSubscription = this.dialogRef.afterClosed().subscribe(() => {
+    const closeSubscription = this.uploadDialogRef.afterClosed().subscribe(() => {
       closeSubscription.unsubscribe();
-      this.dialogRef = null;
+      this.uploadDialogRef = null;
     });
   }
 

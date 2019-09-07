@@ -57,9 +57,13 @@ export class GraphNG {
             this.fixedNodes.set(value.id, localNode);
           }
 
-          localNode.fixed = true;
-          localNode.fx = value.fx;
-          localNode.fy = value.fy;
+          if (localNode) {
+            localNode.fixed = true;
+            localNode.fx = value.fx;
+            localNode.fy = value.fy;
+          } else {
+            console.log('Bug triggered. Unable to set position for node "' + value.id + '" there is no d3 node for doing so. Known nodes', this.nodes);
+          }
 
         }
       });

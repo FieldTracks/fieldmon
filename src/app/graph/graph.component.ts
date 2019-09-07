@@ -24,6 +24,7 @@ import {NamesDialogComponent} from '../names/names-dialog';
 import {filter} from 'rxjs/operators';
 import {FieldmonConfig} from '../model/configuration/fieldmon-config';
 import {SettingsDialogComponent} from './settings-dialog/settings-dialog.component';
+import {ConfigService} from '../config.service';
 
 
 @Component({
@@ -54,7 +55,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private bottomSheet: MatBottomSheet,
               private headerBarService: HeaderBarService,
               private dialog: MatDialog,
-              private webdav: WebdavService) {
+              private webdav: WebdavService,
+              private configService: ConfigService) {
     this.graph = new GraphNG(webdav);
     this.d3Widget = new D3Widget(this.bottomSheet, this.graph);
 
@@ -93,7 +95,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
       this.graph.updateData(ag, this.stoneService.names.getValue());
       this.d3Widget.refresh();
     });
-    this.configSubscription = this.mqttService.fieldmonSubject().subscribe( (fmc) => {
+    this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
       if (this.graph.backgroundUrl !== fmc.backgroundImage) {
         this.graph.backgroundUrl = fmc.backgroundImage;
@@ -150,10 +152,10 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   }
 
   private pulishConfig() {
-    this.mqttService.publishFieldmonConfig({
-      backgroundImage: this.graph.backgroundUrl,
-      fixedNodes: Array.from(this.graph.fixedNodes.values())
-    });
+    this.fieldmonConfig.backgroundImage = this.graph.backgroundUrl;
+    this.fieldmonConfig.fixedNodes = Array.from(this.graph.fixedNodes.values());
+    this.configService.submitConfigration(this.fieldmonConfig);
+
   }
 }
 

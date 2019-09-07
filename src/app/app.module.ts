@@ -33,8 +33,8 @@ import {FileUploadDialogComponent} from './graph/file-upload-dialog.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HttpAuthInterceptor} from './helpers/http-auth-interceptor';
 import {SettingsDialogComponent} from './graph/settings-dialog/settings-dialog.component';
-import {ConfigService} from './config.service';
 import { D3WidgetComponent } from './graph/d3-widget/d3-widget.component';
+import {GraphConfigService} from './graph-config.service';
 
 @NgModule({
   declarations: [
@@ -74,7 +74,7 @@ import { D3WidgetComponent } from './graph/d3-widget/d3-widget.component';
 })
 export class AppModule {
 
-  constructor(mqttService: MqttAdapterService) {
+  constructor(mqttService: MqttAdapterService, graphConfigService: GraphConfigService) {
 
   }
 

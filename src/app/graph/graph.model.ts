@@ -12,8 +12,6 @@ export class GraphNG {
   readonly fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
   _backgroundUrl: string;
 
-  config: GraphConfig = {};
-
   set backgroundUrl(url: string) {
     this._backgroundUrl = url;
     this.webdavService.getAsObjectUrl(url).subscribe( (image) => {
@@ -127,11 +125,4 @@ export interface D3Node {
   fx?: number;
   fy?: number;
   fixed?: boolean;
-}
-
-export interface GraphConfig {
-  minRssi?: number;
-  maxLinkAgeSeconds?: number;
-  showLastContact?: boolean;
-  hideNoName?: boolean;
 }

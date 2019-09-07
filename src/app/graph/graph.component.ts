@@ -8,7 +8,6 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 import {AfterContentInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MqttAdapterService} from '../mqtt-adapter.service';
-import {D3Widget} from './d3-widget';
 import {Subscription} from 'rxjs';
 import {GraphNG, D3Node} from './graph.model';
 import {StoneService} from '../stone.service';
@@ -25,6 +24,7 @@ import {filter} from 'rxjs/operators';
 import {FieldmonConfig} from '../model/configuration/fieldmon-config';
 import {SettingsDialogComponent} from './settings-dialog/settings-dialog.component';
 import {ConfigService} from '../config.service';
+import {D3WidgetComponent} from './d3-widget/d3-widget.component';
 
 
 @Component({
@@ -34,7 +34,7 @@ import {ConfigService} from '../config.service';
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
   private graph: GraphNG;
-  private d3Widget: D3Widget;
+ // private d3Widget: D3WidgetComponent;
   private subscription: Subscription;
   private configSubscription: Subscription;
   private positionChangeSubscription: Subscription;
@@ -58,7 +58,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private webdav: WebdavService,
               private configService: ConfigService) {
     this.graph = new GraphNG(webdav);
-    this.d3Widget = new D3Widget(this.bottomSheet, this.graph);
+    // this.d3Widget = new D3WidgetComponent(this.bottomSheet, this.graph);
 
   }
 
@@ -90,19 +90,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
    */
   ngAfterContentInit(): void {
     this.headerBarService.setMatMenu(this.myMenu);
-    this.d3Widget.run();
-    this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
-      this.graph.updateData(ag, this.stoneService.names.getValue());
-      this.d3Widget.refresh();
-    });
-    this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
-      this.fieldmonConfig = fmc;
-      if (this.graph.backgroundUrl !== fmc.backgroundImage) {
-        this.graph.backgroundUrl = fmc.backgroundImage;
-      }
-      this.graph.onRemoteNodeChange(fmc.fixedNodes);
-      this.d3Widget.refresh();
-    });
+    // this.d3Widget.run();
   }
 
   fmHeader(): HeaderBarConfiguration {

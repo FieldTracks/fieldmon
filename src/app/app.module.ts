@@ -34,6 +34,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HttpAuthInterceptor} from './helpers/http-auth-interceptor';
 import {SettingsDialogComponent} from './graph/settings-dialog/settings-dialog.component';
 import {ConfigService} from './config.service';
+import { D3WidgetComponent } from './graph/d3-widget/d3-widget.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import {ConfigService} from './config.service';
     NodeInfoComponent,
     FileUploadDialogComponent,
     SettingsDialogComponent,
+    D3WidgetComponent,
   ],
   imports: [
     BrowserModule,

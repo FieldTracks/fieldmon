@@ -62,7 +62,8 @@ export class GraphNG {
             localNode.fx = value.fx;
             localNode.fy = value.fy;
           } else {
-            console.log('Bug triggered. Unable to set position for node "' + value.id + '" there is no d3 node for doing so. Known nodes', this.nodes);
+            // tslint:disable-next-line:max-line-length
+            console.log('FIXME: Bug triggered. Unable to set position for node "' + value.id + '" there is no d3 node for doing so. #known nodes', this.nodes.length);
           }
 
         }

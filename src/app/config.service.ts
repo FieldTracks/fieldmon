@@ -58,7 +58,7 @@ export class ConfigService {
   /**
    * Submit a new configuration, that is not used for preview
    */
-  submitConfigration(fieldmonConfig: FieldmonConfig): void {
+  submitConfiguration(fieldmonConfig: FieldmonConfig): void {
     this.mqttadapter.publishFieldmonConfig(fieldmonConfig);
   }
   /**

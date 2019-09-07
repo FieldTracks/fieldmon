@@ -123,7 +123,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     const subscription = this.uploadDialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
       subscription.unsubscribe();
       this.fieldmonConfig.backgroundImage = image;
-      this.configService.submitConfigration(this.fieldmonConfig);
+      this.configService.submitConfiguration(this.fieldmonConfig);
     });
 
 

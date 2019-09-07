@@ -38,7 +38,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
   readonly nodes: D3Node[] = [];
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
-  readonly fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
+  fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
   _backgroundUrl: string;
 
   set backgroundUrl(url: string) {
@@ -105,7 +105,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     this.positionChangeSubscription = this.manualPositionChange.subscribe(() => {
       this.fieldmonConfig.backgroundImage = this.backgroundUrl;
       this.fieldmonConfig.fixedNodes = Array.from(this.fixedNodes.values());
-      this.configService.submitConfigration(this.fieldmonConfig);
+      this.configService.submitConfiguration(this.fieldmonConfig);
     });
 
     this.graphConfigSubscription = this.graphConfigService.currentConfig.subscribe( (grc) => {
@@ -327,7 +327,6 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     const map = new Map<string, D3Node>();
 
     if (nodes) {
-
       nodes.forEach((value) => {
         if (value) {
           map.set(value.id, value);
@@ -348,17 +347,20 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
       });
     }
 
-    this.fixedNodes.forEach((value, key) => {
+    this.fixedNodes = map;
 
-      if (!map.has(key)) {
-        this.fixedNodes.delete(key);
+    this.nodes.forEach(node => {
+      const fixedNode = this.fixedNodes.get(node.id);
 
-        value.fixed = false;
-        value.fx = undefined;
-        value.fy = undefined;
+      if (node.fixed && !fixedNode) {
+        node.fixed = false;
+        node.fx = undefined;
+        node.fy = undefined;
+      } else if (fixedNode) {
+        node.fx = fixedNode.fx;
+        node.fy = fixedNode.fy;
       }
     });
-
 
   }
 

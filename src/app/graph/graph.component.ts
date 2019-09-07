@@ -21,6 +21,7 @@ import {filter} from 'rxjs/operators';
 import {FieldmonConfig} from '../model/configuration/fieldmon-config';
 import {SettingsDialogComponent} from './settings-dialog/settings-dialog.component';
 import {ConfigService} from '../config.service';
+import {GraphConfig, GraphConfigService} from '../graph-config.service';
 
 
 @Component({
@@ -32,16 +33,18 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
   private graph: GraphNG;
   private configSubscription: Subscription;
   private positionChangeSubscription: Subscription;
+  private graphConfigSubscription: Subscription;
+
+
   private fieldmonConfig: FieldmonConfig;
 
   private uploadDialogRef: MatDialogRef<FileUploadDialogComponent>;
   private settingsDialogRef: MatDialogRef<SettingsDialogComponent>;
 
-  showUnnamedContacts = true;
-  showLastContact = true;
 
   @ViewChild('menu', { static: true })
   private myMenu;
+  private graphConfig: GraphConfig;
 
   constructor(private snackBar: MatSnackBar,
               private mqttService: MqttAdapterService,
@@ -50,7 +53,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private headerBarService: HeaderBarService,
               private dialog: MatDialog,
               private webdav: WebdavService,
-              private configService: ConfigService) {
+              private configService: ConfigService,
+              private graphConfigService: GraphConfigService) {
     this.graph = new GraphNG(webdav);
 
   }
@@ -63,17 +67,27 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
     });
+    this.graphConfigSubscription = this.graphConfigService.currentConfig.subscribe( (gc) => {
+      this.graphConfig = gc;
+    });
   }
 
   ngOnDestroy(): void {
     if (this.uploadDialogRef) {
       this.uploadDialogRef.close();
     }
+    if (this.settingsDialogRef ) {
+      this.settingsDialogRef.close();
+    }
+
     if (this.positionChangeSubscription) {
       this.positionChangeSubscription.unsubscribe();
     }
     if (this.configSubscription) {
       this.configSubscription.unsubscribe();
+    }
+    if(this.graphConfigSubscription) {
+      this.graphConfigSubscription.unsubscribe();
     }
   }
 
@@ -135,6 +149,16 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.fieldmonConfig.fixedNodes = Array.from(this.graph.fixedNodes.values());
     this.configService.submitConfigration(this.fieldmonConfig);
 
+  }
+
+  showUnnamed(v: boolean) {
+   this.graphConfig.showUnnamned = v;
+   this.graphConfigService.currentConfig.next(this.graphConfig);
+  }
+
+  showLastContact(v: boolean) {
+    this.graphConfig.showLastContacts = v;
+    this.graphConfigService.currentConfig.next(this.graphConfig);
   }
 }
 

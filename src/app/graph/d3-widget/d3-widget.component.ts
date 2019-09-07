@@ -240,7 +240,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
         index,
         minDist = 99999999;
 
-      for (i = this.nodes.length - 1; i >= 0; --i) {
+      for (i = 0; i < this.nodes.length; i++) {
         const node = this.nodes[i];
         dx = eventX - node.x;
         dy = eventY - node.y;
@@ -253,7 +253,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
         }
       }
 
-      if (index) {
+      if (index !== undefined) {
         const node = this.nodes[index];
         node.x =  D3WidgetComponent.transform.applyX(node.x);
         node.y = D3WidgetComponent.transform.applyY(node.y);

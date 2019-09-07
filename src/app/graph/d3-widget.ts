@@ -20,9 +20,6 @@ export class D3Widget {
 
   static graph: GraphNG;
 
-  static endTime: number;
-  static simulationDuration = 3000;
-
   static getNodeColor(node: D3Node) {
     if (node.fixed) {
       return '#F00';
@@ -57,15 +54,6 @@ export class D3Widget {
       .attr('width', width + 'px')
       .attr('height', height + 'px');
     const canvas =  canvasElem.node();
-
-    canvas.addEventListener('pointerdown', () => {
-      D3Widget.endTime = undefined;
-      D3Widget.forceSimulation.alpha(1).restart();
-    });
-
-    canvas.addEventListener('pointerup', () => {
-      D3Widget.endTime = Date.now() + D3Widget.simulationDuration;
-    });
 
     window.addEventListener('resize', () => {
       console.log('Resizing to:', window.innerWidth, window.innerHeight - 75 );
@@ -103,8 +91,6 @@ export class D3Widget {
     D3Widget.width = width;
     D3Widget.height = height;
 
-    D3Widget.endTime = Date.now() + D3Widget.simulationDuration;
-
     this.initGraph();
   }
 
@@ -112,15 +98,11 @@ export class D3Widget {
    * Take changed node or link data in the model to account. Has to be called each time the data changes
    */
   refresh(): void {
-    if (!D3Widget.endTime ||  Date.now() < D3Widget.endTime) {
-      D3Widget.forceSimulation.stop();
-      D3Widget.forceSimulation.nodes(D3Widget.graph.nodes);
-      D3Widget.forceSimulation.force('link').links(D3Widget.graph.links);
-      D3Widget.forceSimulation.alpha(1).restart();
-      this.redrawCanvas();
-    } else {
-      D3Widget.forceSimulation.stop();
-    }
+    D3Widget.forceSimulation.stop();
+    D3Widget.forceSimulation.nodes(D3Widget.graph.nodes);
+    D3Widget.forceSimulation.force('link').links(D3Widget.graph.links);
+    D3Widget.forceSimulation.alpha(1).restart();
+    this.redrawCanvas();
   }
 
   /**

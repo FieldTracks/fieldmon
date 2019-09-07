@@ -9,7 +9,6 @@ This file is part of fieldmon - (C) The Fieldtracks Project
 import {AfterContentInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MqttAdapterService} from '../mqtt-adapter.service';
 import {Subscription} from 'rxjs';
-import {GraphNG, D3Node} from './graph.model';
 import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -30,9 +29,7 @@ import {GraphConfig, GraphConfigService} from '../graph-config.service';
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
-  private graph: GraphNG;
   private configSubscription: Subscription;
-  private positionChangeSubscription: Subscription;
   private graphConfigSubscription: Subscription;
 
 
@@ -44,7 +41,7 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
   @ViewChild('menu', { static: true })
   private myMenu;
-  private graphConfig: GraphConfig;
+  graphConfig: GraphConfig;
 
   constructor(private snackBar: MatSnackBar,
               private mqttService: MqttAdapterService,
@@ -55,15 +52,11 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private webdav: WebdavService,
               private configService: ConfigService,
               private graphConfigService: GraphConfigService) {
-    this.graph = new GraphNG(webdav);
 
   }
 
 
   ngOnInit(): void {
-    this.positionChangeSubscription = this.graph.manualPositionChange.subscribe(() => {
-      this.pulishConfig();
-    });
     this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
       this.fieldmonConfig = fmc;
     });
@@ -79,14 +72,10 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     if (this.settingsDialogRef ) {
       this.settingsDialogRef.close();
     }
-
-    if (this.positionChangeSubscription) {
-      this.positionChangeSubscription.unsubscribe();
-    }
     if (this.configSubscription) {
       this.configSubscription.unsubscribe();
     }
-    if(this.graphConfigSubscription) {
+    if (this.graphConfigSubscription) {
       this.graphConfigSubscription.unsubscribe();
     }
   }
@@ -133,8 +122,8 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
     const subscription = this.uploadDialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
       subscription.unsubscribe();
-      this.graph.backgroundUrl = image;
-      this.pulishConfig();
+      this.fieldmonConfig.backgroundImage = image;
+      this.configService.submitConfigration(this.fieldmonConfig);
     });
 
 
@@ -144,16 +133,9 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     });
   }
 
-  private pulishConfig() {
-    this.fieldmonConfig.backgroundImage = this.graph.backgroundUrl;
-    this.fieldmonConfig.fixedNodes = Array.from(this.graph.fixedNodes.values());
-    this.configService.submitConfigration(this.fieldmonConfig);
-
-  }
-
   showUnnamed(v: boolean) {
-   this.graphConfig.showUnnamned = v;
-   this.graphConfigService.currentConfig.next(this.graphConfig);
+    this.graphConfig.showUnnamned = v;
+    this.graphConfigService.currentConfig.next(this.graphConfig);
   }
 
   showLastContact(v: boolean) {

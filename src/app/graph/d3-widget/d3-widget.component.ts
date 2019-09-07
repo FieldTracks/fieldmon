@@ -1,13 +1,15 @@
+import { WebdavService } from './../../webdav.service';
+import { GraphConfigService, GraphConfig } from './../../graph-config.service';
 import {AfterContentInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import * as d3 from 'd3';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import {D3Node, GraphNG} from '../graph.model';
 import {NodeInfoComponent} from '../nodeinfo';
-import {Subscription} from 'rxjs';
+import {Subscription, Subject} from 'rxjs';
 import {MqttAdapterService} from '../../mqtt-adapter.service';
 import {StoneService} from '../../stone.service';
 import {ConfigService} from '../../config.service';
 import {FieldmonConfig} from '../../model/configuration/fieldmon-config';
+import { AggregatedGraph } from 'src/app/model/aggregated/aggregated-graph';
 
 @Component({
   selector: 'app-d3-widget',
@@ -27,19 +29,44 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
   private subscription: Subscription;
   private configSubscription: Subscription;
+  private graphConfigSubscription: Subscription;
+  private positionChangeSubscription: Subscription;
   private fieldmonConfig: FieldmonConfig;
+  private graphConfig: GraphConfig;
+
+  links: D3Link[] = [];
+  readonly nodes: D3Node[] = [];
+  readonly background: HTMLImageElement = new Image();
+  readonly manualPositionChange = new Subject<D3Node>();
+  readonly fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
+  _backgroundUrl: string;
+
+  set backgroundUrl(url: string) {
+    this._backgroundUrl = url;
+    this.webdavService.getAsObjectUrl(url).subscribe( (image) => {
+      this.background.src = image;
+    });
+  }
+
+  get backgroundUrl() {
+    return this._backgroundUrl;
+  }
 
 
   constructor(private bottomSheet: MatBottomSheet,
               private mqttService: MqttAdapterService,
               private stoneService: StoneService,
-              private configService: ConfigService) {
+              private configService: ConfigService,
+              private graphConfigService: GraphConfigService,
+              private webdavService: WebdavService) {
+    this.background.onerror = () => {
+      setTimeout(() => {
+        const url = this.background.src;
+        this.background.src = undefined;
+        this.background.src = url; // The url need to be reset, so the image can bes refetch
+      }, 5000);
+    };
   }
-
-
-
-  @Input()
-  graph: GraphNG;
 
   static getNodeColor(node: D3Node) {
     if (node.fixed) {
@@ -60,23 +87,40 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     if (this.configSubscription) {
       this.configSubscription.unsubscribe();
     }
+    if (this.graphConfigSubscription) {
+      this.graphConfigSubscription.unsubscribe();
+    }
+    if (this.positionChangeSubscription) {
+      this.positionChangeSubscription.unsubscribe();
+    }
   }
 
   ngAfterContentInit(): void {
     this.run();
     this.subscription = this.mqttService.aggregatedGraphSubject().subscribe( (ag) => {
-      this.graph.updateData(ag, this.stoneService.names.getValue());
-      this.refresh();
-    });
-    this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
-      this.fieldmonConfig = fmc;
-      if (this.graph.backgroundUrl !== fmc.backgroundImage) {
-        this.graph.backgroundUrl = fmc.backgroundImage;
-      }
-      this.graph.onRemoteNodeChange(fmc.fixedNodes);
+      this.updateData(ag, this.stoneService.names.getValue());
       this.refresh();
     });
 
+    this.positionChangeSubscription = this.manualPositionChange.subscribe(() => {
+      this.fieldmonConfig.backgroundImage = this.backgroundUrl;
+      this.fieldmonConfig.fixedNodes = Array.from(this.fixedNodes.values());
+      this.configService.submitConfigration(this.fieldmonConfig);
+    });
+
+    this.graphConfigSubscription = this.graphConfigService.currentConfig.subscribe( (grc) => {
+      this.graphConfig = grc;
+      // TODO: Parse config
+    });
+
+    this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
+      this.fieldmonConfig = fmc;
+      if (this.backgroundUrl !== fmc.backgroundImage) {
+        this.backgroundUrl = fmc.backgroundImage;
+      }
+      this.onRemoteNodeChange(fmc.fixedNodes);
+      this.refresh();
+    });
   }
 
 
@@ -98,7 +142,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     const height = y;
 
 
-    this.graph.background.onload = () => {
+    this.background.onload = () => {
       this.redrawCanvas();
     };
 
@@ -151,8 +195,8 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
    */
   refresh(): void {
     D3WidgetComponent.forceSimulation.stop();
-    D3WidgetComponent.forceSimulation.nodes(this.graph.nodes);
-    D3WidgetComponent.forceSimulation.force('link').links(this.graph.links);
+    D3WidgetComponent.forceSimulation.nodes(this.nodes);
+    D3WidgetComponent.forceSimulation.force('link').links(this.links);
     D3WidgetComponent.forceSimulation.alpha(1).restart();
     this.redrawCanvas();
   }
@@ -173,8 +217,8 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
       let i,
         dx,
         dy;
-      for (i = this.graph.nodes.length - 1; i >= 0; --i) {
-        const node = this.graph.nodes[i];
+      for (i = this.nodes.length - 1; i >= 0; --i) {
+        const node = this.nodes[i];
         dx = eventX - node.x;
         dy = eventY - node.y;
 
@@ -213,13 +257,13 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           d3.event.subject.fy = undefined;
         }
         this.bottomSheet.open(NodeInfoComponent, {
-          data: { width: D3WidgetComponent.width, node: d3.event.subject, graph: this.graph },
+          data: { width: D3WidgetComponent.width, node: d3.event.subject, d3widget: this },
         });
       } else {
         d3.event.subject.fx = D3WidgetComponent.transform.invertX(d3.event.x);
         d3.event.subject.fy = D3WidgetComponent.transform.invertY(d3.event.y);
         d3.event.subject.fixed = true;
-        this.graph.onLocalNodeChange(d3.event.subject);
+        this.onLocalNodeChange(d3.event.subject);
       }
     };
 
@@ -242,20 +286,20 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     D3WidgetComponent.context.translate(D3WidgetComponent.transform.x, D3WidgetComponent.transform.y);
     D3WidgetComponent.context.scale(D3WidgetComponent.transform.k, D3WidgetComponent.transform.k);
 
-    if (this.graph.background) {
-      D3WidgetComponent.context.drawImage(this.graph.background, 0 - (this.graph.background.width / 2),
-        0 - (this.graph.background.height / 2));
+    if (this.background) {
+      D3WidgetComponent.context.drawImage(this.background, 0 - (this.background.width / 2),
+        0 - (this.background.height / 2));
     }
 
     D3WidgetComponent.context.beginPath();
-    this.graph.links.forEach(function(d) {
+    this.links.forEach(function(d) {
       D3WidgetComponent.context.moveTo(d.source.x, d.source.y);
       D3WidgetComponent.context.lineTo(d.target.x, d.target.y);
     });
     D3WidgetComponent.context.strokeStyle = '#aaa';
     D3WidgetComponent.context.stroke();
     // Draw the nodes
-    this.graph.nodes.forEach(function(d, i) {
+    this.nodes.forEach(function(d, i) {
       D3WidgetComponent.context.fillStyle = D3WidgetComponent.getNodeColor(d);
       D3WidgetComponent.context.beginPath();
       D3WidgetComponent.context.moveTo(d.x + 3, d.y);
@@ -269,4 +313,101 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
     D3WidgetComponent.context.restore();
   }
+
+  onLocalNodeChange(node: D3Node) {
+    if (node.fixed) {
+      this.fixedNodes.set(node.id, node);
+    } else {
+      this.fixedNodes.delete(node.id);
+    }
+    this.manualPositionChange.next(node);
+  }
+
+  onRemoteNodeChange(nodes: D3Node[]) {
+    const map = new Map<string, D3Node>();
+
+    if (nodes) {
+
+      nodes.forEach((value) => {
+        if (value) {
+          map.set(value.id, value);
+
+          let localNode = this.fixedNodes.get(value.id);
+
+          if (!localNode) {
+            localNode = this.findNodeByMac(value.id);
+            this.fixedNodes.set(value.id, localNode);
+          }
+
+          if (localNode) {
+            localNode.fixed = true;
+            localNode.fx = value.fx;
+            localNode.fy = value.fy;
+          }
+        }
+      });
+    }
+
+    this.fixedNodes.forEach((value, key) => {
+
+      if (!map.has(key)) {
+        this.fixedNodes.delete(key);
+
+        value.fixed = false;
+        value.fx = undefined;
+        value.fy = undefined;
+      }
+    });
+
+
+  }
+
+  updateData(aggregatedGraph: AggregatedGraph, names: Map<string, string>) {
+    const now = new Date().getTime();
+    aggregatedGraph.nodes.forEach( (node) => {
+      if (!this.findNodeByMac(node.id) ) {
+        const fixedNode = this.fieldmonConfig.fixedNodes.find(n => n.id === node.id);
+        const newNode: D3Node = {name: names.get(node.id) || node.id, id: node.id, group: 1};
+
+        if (fixedNode) {
+          newNode.fixed = true;
+          newNode.fx = fixedNode.fx;
+          newNode.fy = fixedNode.fy;
+        }
+
+        this.nodes.push(newNode);
+      }
+    });
+    this.links = [];
+    aggregatedGraph.links.forEach( (link) => {
+    const isInPast = (now - link.timestamp.getTime() > 30000);
+    if (!isInPast) {
+        this.links.push({source: this.findNodeByMac(link.source),
+          target: this.findNodeByMac(link.target),
+          value: link.rssi,
+        });
+      }
+    });
+  }
+
+  private findNodeByMac(mac: string): D3Node {
+    return this.nodes.find((n) => n.id === mac);
+  }
+}
+
+export interface D3Link {
+  source: D3Node;
+  target: D3Node;
+  value: number;
+}
+
+export interface D3Node {
+  name: string;
+  id: string;
+  group: 1;
+  x?: number;
+  y?: number;
+  fx?: number;
+  fy?: number;
+  fixed?: boolean;
 }

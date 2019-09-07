@@ -1,4 +1,4 @@
-import { D3Node } from "src/app/graph/graph.model";
+import { D3Node } from "src/app/graph/d3-widget/d3-widget.component";
 
 export interface FieldmonConfig {
   backgroundImage?: string;

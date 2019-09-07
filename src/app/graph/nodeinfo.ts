@@ -19,6 +19,6 @@ export class NodeInfoComponent {
       this.data.node.fy = this.data.node.y;
       this.data.node.fixed = true;
     }
-    this.data.graph.onLocalNodeChange(this.data.node);
+    this.data.d3widget.onLocalNodeChange(this.data.node);
   }
 }

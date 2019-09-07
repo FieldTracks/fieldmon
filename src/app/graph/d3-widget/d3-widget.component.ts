@@ -236,19 +236,29 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
       let i,
         dx,
-        dy;
+        dy,
+        index,
+        minDist = 99999999;
+
       for (i = this.nodes.length - 1; i >= 0; --i) {
         const node = this.nodes[i];
         dx = eventX - node.x;
         dy = eventY - node.y;
 
-        if (dx * dx + dy * dy < 5 * 5) {
+        const dist = dx * dx + dy * dy;
 
-          node.x =  D3WidgetComponent.transform.applyX(node.x);
-          node.y = D3WidgetComponent.transform.applyY(node.y);
-
-          return node;
+        if (dist < 20 * 20 && dist < minDist) {
+          minDist = dist;
+          index = i;
         }
+      }
+
+      if (index) {
+        const node = this.nodes[index];
+        node.x =  D3WidgetComponent.transform.applyX(node.x);
+        node.y = D3WidgetComponent.transform.applyY(node.y);
+
+        return node;
       }
     };
 
@@ -380,6 +390,8 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
       } else if (fixedNode) {
         node.fx = fixedNode.fx;
         node.fy = fixedNode.fy;
+        node.x = fixedNode.fx;
+        node.y = fixedNode.fy;
       }
     });
 

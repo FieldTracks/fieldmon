@@ -38,8 +38,11 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
   readonly nodes: D3Node[] = [];
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
-  readonly fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
+  fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
   _backgroundUrl: string;
+
+  private endTime: number;
+  private simulationDuration = 3000;
 
   set backgroundUrl(url: string) {
     this._backgroundUrl = url;
@@ -105,7 +108,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     this.positionChangeSubscription = this.manualPositionChange.subscribe(() => {
       this.fieldmonConfig.backgroundImage = this.backgroundUrl;
       this.fieldmonConfig.fixedNodes = Array.from(this.fixedNodes.values());
-      this.configService.submitConfigration(this.fieldmonConfig);
+      this.configService.submitConfiguration(this.fieldmonConfig);
     });
 
     this.graphConfigSubscription = this.graphConfigService.currentConfig.subscribe( (grc) => {
@@ -151,6 +154,17 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
       .attr('height', height + 'px');
     const canvas =  canvasElem.node();
 
+    const click = () => {
+      this.endTime = undefined;
+      D3WidgetComponent.forceSimulation.alpha(1).restart();
+    };
+
+    canvas.addEventListener('pointerdown', click);
+    canvas.addEventListener('touchstart', click);
+
+    canvas.addEventListener('pointerup', this.startSimulation);
+    canvas.addEventListener('touchend', this.startSimulation);
+
     window.addEventListener('resize', () => {
       console.log('Resizing to:', window.innerWidth, window.innerHeight - 75 );
       canvasElem
@@ -188,17 +202,23 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     D3WidgetComponent.height = height;
 
     this.initGraph();
+
+    this.startSimulation();
   }
 
   /**
    * Take changed node or link data in the model to account. Has to be called each time the data changes
    */
   refresh(): void {
-    D3WidgetComponent.forceSimulation.stop();
-    D3WidgetComponent.forceSimulation.nodes(this.nodes);
-    D3WidgetComponent.forceSimulation.force('link').links(this.links);
-    D3WidgetComponent.forceSimulation.alpha(1).restart();
-    this.redrawCanvas();
+    if (!this.endTime ||  Date.now() < this.endTime) {
+      D3WidgetComponent.forceSimulation.stop();
+      D3WidgetComponent.forceSimulation.nodes(this.nodes);
+      D3WidgetComponent.forceSimulation.force('link').links(this.links);
+      D3WidgetComponent.forceSimulation.alpha(1).restart();
+      this.redrawCanvas();
+    } else {
+      D3WidgetComponent.forceSimulation.stop();
+    }
   }
 
   /**
@@ -327,7 +347,6 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     const map = new Map<string, D3Node>();
 
     if (nodes) {
-
       nodes.forEach((value) => {
         if (value) {
           map.set(value.id, value);
@@ -346,19 +365,23 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           }
         }
       });
+      this.startSimulation();
     }
 
-    this.fixedNodes.forEach((value, key) => {
+    this.fixedNodes = map;
 
-      if (!map.has(key)) {
-        this.fixedNodes.delete(key);
+    this.nodes.forEach(node => {
+      const fixedNode = this.fixedNodes.get(node.id);
 
-        value.fixed = false;
-        value.fx = undefined;
-        value.fy = undefined;
+      if (node.fixed && !fixedNode) {
+        node.fixed = false;
+        node.fx = undefined;
+        node.fy = undefined;
+      } else if (fixedNode) {
+        node.fx = fixedNode.fx;
+        node.fy = fixedNode.fy;
       }
     });
-
 
   }
 
@@ -392,6 +415,10 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
   private findNodeByMac(mac: string): D3Node {
     return this.nodes.find((n) => n.id === mac);
+  }
+
+  private startSimulation() {
+    this.endTime = Date.now() + this.simulationDuration;
   }
 }
 

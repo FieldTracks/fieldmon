@@ -15,7 +15,7 @@ export class SettingsDialogComponent implements OnInit, OnDestroy {
   error: Error;
 
   configSubscription: Subscription;
-  private fieldmonConfig: FieldmonConfig = {};
+  fieldmonConfig: FieldmonConfig = {};
 
   constructor(private configService: ConfigService, private dialogRef: MatDialogRef<SettingsDialogComponent>) { }
 

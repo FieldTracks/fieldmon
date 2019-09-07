@@ -4,12 +4,15 @@ import {AggregatedGraph} from '../model/aggregated/aggregated-graph';
 import {WebdavService} from '../webdav.service';
 
 export class GraphNG {
+
   links: D3Link[] = [];
   readonly nodes: D3Node[] = [];
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
   readonly fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
   _backgroundUrl: string;
+
+  config: GraphConfig = {};
 
   set backgroundUrl(url: string) {
     this._backgroundUrl = url;
@@ -63,7 +66,7 @@ export class GraphNG {
             localNode.fy = value.fy;
           } else {
             // tslint:disable-next-line:max-line-length
-            console.log('FIXME: Bug triggered. Unable to set position for node "' + value.id + '" there is no d3 node for doing so. #known nodes', this.nodes.length);
+            console.log('FIXME: Bug triggered. Unable to set position for node "' + value.id + '" there is no d3 node for doing so. #known nodes ', this.nodes.length);
           }
 
         }
@@ -124,4 +127,11 @@ export interface D3Node {
   fx?: number;
   fy?: number;
   fixed?: boolean;
+}
+
+export interface GraphConfig {
+  minRssi?: number;
+  maxLinkAgeSeconds?: number;
+  showLastContact?: boolean;
+  hideNoName?: boolean;
 }

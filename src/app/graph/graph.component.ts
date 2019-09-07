@@ -14,17 +14,13 @@ import {StoneService} from '../stone.service';
 import {FmComponent, HeaderBarConfiguration, MenuItem} from '../helpers/fm-component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatMenu } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {HeaderBarService} from '../header-bar.service';
 import {FileUploadDialogComponent} from './file-upload-dialog.component';
-import {NameInTable} from '../model/name-in-table';
-import {NamesDialogComponent} from '../names/names-dialog';
 import {filter} from 'rxjs/operators';
 import {FieldmonConfig} from '../model/configuration/fieldmon-config';
 import {SettingsDialogComponent} from './settings-dialog/settings-dialog.component';
 import {ConfigService} from '../config.service';
-import {D3WidgetComponent} from './d3-widget/d3-widget.component';
 
 
 @Component({
@@ -34,8 +30,6 @@ import {D3WidgetComponent} from './d3-widget/d3-widget.component';
 })
 export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmComponent {
   private graph: GraphNG;
- // private d3Widget: D3WidgetComponent;
-  private subscription: Subscription;
   private configSubscription: Subscription;
   private positionChangeSubscription: Subscription;
   private fieldmonConfig: FieldmonConfig;
@@ -58,7 +52,6 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
               private webdav: WebdavService,
               private configService: ConfigService) {
     this.graph = new GraphNG(webdav);
-    // this.d3Widget = new D3WidgetComponent(this.bottomSheet, this.graph);
 
   }
 
@@ -67,12 +60,12 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
     this.positionChangeSubscription = this.graph.manualPositionChange.subscribe(() => {
       this.pulishConfig();
     });
+    this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
+      this.fieldmonConfig = fmc;
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
     if (this.uploadDialogRef) {
       this.uploadDialogRef.close();
     }
@@ -107,8 +100,6 @@ export class GraphComponent implements OnInit, AfterContentInit, OnDestroy, FmCo
 
     const subscription = this.settingsDialogRef.afterClosed().pipe(filter((val) => val)).subscribe(image => {
       subscription.unsubscribe();
-      // this.graph.backgroundUrl = image;
-      // this.pulishConfig();
     });
 
 

@@ -4,5 +4,5 @@ export interface FieldmonConfig {
   backgroundImage?: string;
   fixedNodes?: D3Node[];
   minRssi?: number;
-  maxLinkAge?: number;
+  maxLinkAgeSeconds?: number;
 }

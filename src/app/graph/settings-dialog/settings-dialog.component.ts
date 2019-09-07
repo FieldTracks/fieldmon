@@ -1,25 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Form, FormControl, FormGroup} from '@angular/forms';
+import {ConfigService} from '../../config.service';
+import {Subscription} from 'rxjs';
+import {FieldmonConfig} from '../../model/configuration/fieldmon-config';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-settings-dialog',
   templateUrl: './settings-dialog.component.html',
   styleUrls: ['./settings-dialog.component.css']
 })
-export class SettingsDialogComponent implements OnInit {
+export class SettingsDialogComponent implements OnInit, OnDestroy {
 
   error: Error;
-  formGroup = new FormGroup ({
-    minRssi: new FormControl(),
-    maxLinkAgeSeconds: new FormControl(),
-    showUnnamedNodes: new FormControl(),
-    showOfflineLastContact: new FormControl()
-});
 
+  configSubscription: Subscription;
+  private fieldmonConfig: FieldmonConfig = {};
 
-  constructor() { }
+  constructor(private configService: ConfigService, private dialogRef: MatDialogRef<SettingsDialogComponent>) { }
 
   ngOnInit() {
+    this.configSubscription = this.configService.currentConfiguration().subscribe((fc) => {
+      this.fieldmonConfig = fc;
+      }
+    );
   }
 
+  ngOnDestroy(): void {
+    if (this.configSubscription) {
+      this.configSubscription.unsubscribe();
+    }
+  }
+
+  change(): void {
+    this.configService.applyTempConfiguration(this.fieldmonConfig);
+  }
+
+  submit(): void {
+    this.configService.submitTempConfiguration();
+    this.dialogRef.close();
+  }
+
+  cancel(): void {
+    this.configService.resetTempConfiguration();
+    this.dialogRef.close();
+  }
 }

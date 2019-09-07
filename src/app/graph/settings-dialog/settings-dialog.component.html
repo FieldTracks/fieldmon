@@ -3,21 +3,21 @@
   <div *ngIf="error">
     {{ error.message }}
   </div>
-  <form [formGroup]="formGroup" fxLayout="column" fxLayoutAlign="center left">
+  <form fxLayout="column" fxLayoutAlign="center left">
     <!-- <input type="file" hidden #imgFileInput name="upload" (change)="onFileChange($event)" accept="image/*" /> -->
     <mat-form-field>
       <mat-label>Min RSSI [dBm]</mat-label>
-      <input matInput placeholder="-70" formControlName="minRssi" required>
+      <input matInput placeholder="-70" name="minRssi" (change)="change()" [(ngModel)]="fieldmonConfig.minRssi" required>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label> Max link age [seconds]</mat-label>
-      <input matInput placeholder="20" formControlName="maxLinkAgeSeconds" required>
+      <input matInput placeholder="20" name="maxLingAgeSeconds"  (change)="change()" [(ngModel)]="fieldmonConfig.maxLingAgeSeconds" required>
       <mat-hint>seconds</mat-hint>
     </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button type="button" mat-dialog-close>Cancel</button>
-  <button mat-button type="button" type="submit">Ok</button>
+  <button mat-button type="button" mat-dialog-close (click)="cancel()">Cancel</button>
+  <button mat-button type="button" type="submit" (click)="submit()">Ok</button>
 </mat-dialog-actions>

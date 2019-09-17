@@ -70,10 +70,19 @@ export class StoneService implements OnDestroy {
   }
 
   private handleNameEvent(n: Map<string, AggregatedName>) {
+    const newMap = new Map(this.knownDevices.getValue());
+    let newDevicesDiscoverd = false;
     const newNames = new Map<string, string>();
     n.forEach( (name, mac) => {
       newNames.set(mac, name.name);
-    })
+      if (!newMap.get(mac)) {
+        newMap.set(mac, {timestamp: new Date('1970-01-01')});
+        newDevicesDiscoverd = true;
+      }
+    });
     this.names.next(newNames);
+    if (newDevicesDiscoverd) {
+      this.knownDevices.next(newMap);
+    }
   }
 }

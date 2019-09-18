@@ -29,14 +29,4 @@ export class NameInTable {
     }
     return this.mac;
   }
-
-  hardware_str(): string {
-   if (this.interval) {
-      return 'developer_board';
-    } else if (this.uuid) {
-      return 'wifi_tethering';
-    } else {
-      return 'bluetooth';
-    }
-  }
 }

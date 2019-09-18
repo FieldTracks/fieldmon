@@ -31,7 +31,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
-import {MatCheckboxModule} from '@angular/material';
+import {MatCheckboxModule, MatExpansionModule} from '@angular/material';
 
 @NgModule({
   imports: [MatTableModule,
@@ -57,7 +57,8 @@ import {MatCheckboxModule} from '@angular/material';
 //            MatFileUploadModule,
             MatSnackBarModule,
             MatCheckboxModule,
-            MatProgressBarModule],
+            MatProgressBarModule,
+            MatExpansionModule],
   exports: [MatTableModule,
             CommonModule,
             MatToolbarModule,
@@ -78,6 +79,7 @@ import {MatCheckboxModule} from '@angular/material';
             MatTooltipModule,
             MatMenuModule,
             MatBottomSheetModule,
+            MatExpansionModule,
 //            MatFileUploadModule,
     MatCheckboxModule,
 

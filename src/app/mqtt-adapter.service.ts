@@ -12,6 +12,7 @@ import {StoneEvent} from './model/StoneEvent';
 import { AggregatedName } from './model/aggregated/aggregated-name';
 import {AggregatedDevice} from './model/aggregated/aggregated-devices';
 import {FieldmonConfig} from './model/configuration/fieldmon-config';
+import {StoneStatus} from './model/stone-status';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -111,6 +112,15 @@ export class MqttAdapterService {
     ));
   }
 
+  public statusSubject(mac: string): Observable<StoneStatus> {
+    console.log(`Topic: JellingStoneStatus/${mac}`)
+    return this.mqttService.observe(`JellingStoneStatus/${mac}`).pipe(map(
+      (message: IMqttMessage) => {
+        return JSON.parse(message.payload.toString());
+      }
+    ));
+  }
+
   public aggregatedNamesSubject(): Observable<Map<string, AggregatedName>> {
     return this.mqttService.observe('Aggregated/Names').pipe(map(
       (message: IMqttMessage) => {
@@ -147,7 +157,7 @@ export class MqttAdapterService {
           const stone = stoneMap[mac];
           stone.contacts.forEach( (contact) => {
             links.push(
-              {source: mac, target: contact.mac, rssi: contact.rssi_avg, timestamp: new Date(stone.last_seen * 1000)});
+              {source: mac, target: contact.mac, rssi: contact.rssi_avg, timestamp: new Date(stone.timestamp)});
           });
         }
       }

@@ -35,6 +35,10 @@ import {HttpAuthInterceptor} from './helpers/http-auth-interceptor';
 import {SettingsDialogComponent} from './graph/settings-dialog/settings-dialog.component';
 import { D3WidgetComponent } from './graph/d3-widget/d3-widget.component';
 import {GraphConfigService} from './graph-config.service';
+import {registerLocaleData} from '@angular/common';
+
+import localeDe from '@angular/common/locales/de';
+import { DevIconComponent } from './shared/dev-icon/dev-icon.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +57,7 @@ import {GraphConfigService} from './graph-config.service';
     FileUploadDialogComponent,
     SettingsDialogComponent,
     D3WidgetComponent,
+    DevIconComponent,
   ],
   imports: [
     BrowserModule,
@@ -74,7 +79,9 @@ import {GraphConfigService} from './graph-config.service';
 })
 export class AppModule {
 
+
   constructor(mqttService: MqttAdapterService, graphConfigService: GraphConfigService) {
+    registerLocaleData(localeDe, 'de');
 
   }
 

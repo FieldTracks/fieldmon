@@ -3,8 +3,10 @@ import {MqttAdapterService} from './mqtt-adapter.service';
 import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
 import {AggregatedDevice} from './model/aggregated/aggregated-devices';
 import {StoneEvent} from './model/StoneEvent';
-import {map} from 'rxjs/operators';
+import {distinct, filter, map} from 'rxjs/operators';
 import {AggregatedName} from './model/aggregated/aggregated-name';
+import {StoneStatus} from './model/stone-status';
+import {AggregatedStone} from './model/aggregated/aggregated-stone';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,7 @@ export class StoneService implements OnDestroy {
   knownDevices: BehaviorSubject<Map<string, AggregatedDevice>>;
   names: BehaviorSubject<Map<string, string>> = new BehaviorSubject(new Map());
 
-  constructor(mqttServer: MqttAdapterService) {
+  constructor(private mqttServer: MqttAdapterService) {
     this.knownDevices =  new BehaviorSubject(new Map());
     this.stoneEventSubscription = mqttServer.stoneEventSubject().subscribe((sE) => {
       return this.handleStoneEvent(sE);
@@ -29,11 +31,20 @@ export class StoneService implements OnDestroy {
 
   }
 
-  public info(mac: string): AggregatedDevice {
+  public name(mac: string): Observable<AggregatedName> {
+    return this.mqttServer.aggregatedNamesSubject().pipe(
+      map( (nameMap: Map<string, AggregatedName>) => nameMap.get(mac),
+      distinct()
+      )
+    );
+  }
+
+
+  public infoStatic(mac: string): AggregatedDevice {
     return this.knownDevices.getValue().get(mac);
   }
 
-  public name(mac: string): string {
+  public nameStatic(mac: string): string {
     return this.names.getValue().get(mac);
   }
 

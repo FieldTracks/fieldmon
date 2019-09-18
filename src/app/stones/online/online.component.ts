@@ -32,7 +32,7 @@ export class OnlineComponent implements OnInit, OnDestroy {
       for (const mac in map) {
         if (mac) {
           const aStone: AggregatedStone = map[mac];
-          const name = this.stoneService.name(mac);
+          const name = this.stoneService.nameStatic(mac);
           newList.push(new StoneInTable(
             aStone.comment, aStone.uuid, aStone.major, aStone.minor, new Date(aStone.timestamp), name));
         }

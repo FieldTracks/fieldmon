@@ -1,5 +1,7 @@
 <form [formGroup]="form">
-  <h1 mat-dialog-title>Set Name:<br> <mat-icon style="font-size: 18px">{{data.subject.hardware_str()}}</mat-icon>&nbsp;{{data.subject.id_str()}}
+  <h1 mat-dialog-title>Set Name:<br>
+    <app-dev-icon [stone]="data.subject"></app-dev-icon>&nbsp;
+      {{data.subject.id_str()}}
   <span *ngIf="data.subject.uuid"><br/>{{data.subject.mac}}</span>
 
   </h1>

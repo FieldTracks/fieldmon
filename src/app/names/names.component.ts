@@ -62,7 +62,7 @@ export class NamesComponent implements OnInit, OnDestroy, FmComponent {
       const newData = [];
       // @ts-ignore
       devs.forEach( (dev, mac) => {
-        newData.unshift(new NameInTable(mac, dev.major, dev.minor, dev.uuid, dev.comment, this.stoneService.name(mac), dev.interval));
+        newData.unshift(new NameInTable(mac, dev.major, dev.minor, dev.uuid, dev.comment, this.stoneService.nameStatic(mac), dev.interval));
       });
       this.data = newData;
       this.triggerRefresh();

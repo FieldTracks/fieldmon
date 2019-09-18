@@ -68,7 +68,7 @@ export class SensorContactsComponent implements OnInit, OnDestroy, FmComponent {
   }
 
   private subject(obs: Observation): string {
-    const name = this.stoneService.name(obs.mac);
+    const name = this.stoneService.nameStatic(obs.mac);
     if (name) {
       return name;
     } else if (obs.minor) {
@@ -88,7 +88,7 @@ export class SensorContactsComponent implements OnInit, OnDestroy, FmComponent {
       contact.timestamp =  event.timestamp;
       contact.subject = this.subject(obs);
       contact.rssi = `${obs.min} / ${obs.max} /${obs.avg} / ${obs.remoteRssi}`;
-      contact.stone = this.stoneService.name(event.mac) || `${event.major}, ${event.minor}`;
+      contact.stone = this.stoneService.nameStatic(event.mac) || `${event.major}, ${event.minor}`;
       this.datasource.data = this.contacts;
     });
 

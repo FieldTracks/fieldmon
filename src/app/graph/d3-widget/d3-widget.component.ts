@@ -287,7 +287,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           d3.event.subject.fy = undefined;
         }
         this.bottomSheet.open(NodeInfoComponent, {
-          data: { width: D3WidgetComponent.width, node: d3.event.subject, d3widget: this },
+          data: { width: D3WidgetComponent.width, node: d3.event.subject, d3widget: this, mac: d3.event.subject.id },
         });
       } else {
         d3.event.subject.fx = D3WidgetComponent.transform.invertX(d3.event.x);

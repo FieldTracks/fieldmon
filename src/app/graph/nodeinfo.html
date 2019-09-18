@@ -1,13 +1,58 @@
-<div style="height: 100px">
-  <h1>{{this.data.node.name}}</h1>
+<div style="float:right">
+  <mat-checkbox matCheckbox id="pinned" name="pinned" [checked]="data.node.fixed" color="primary" (change)="change($event)">Fixed position</mat-checkbox>
 </div>
-<div style="display: grid;">
-  <div>
-      <label label-for="x">Position x:</label>
-      <input matInput readonly="true" type="number" name="x" id="x" [(ngModel)]="this.data.node.x" />
-      <label label-for="y">Position y:</label>
-      <input matInput readonly="true" type="number" name="y" id="y" [(ngModel)]="this.data.node.y" />
-      <label label-for="pinned">Pinned:</label>
-      <input type="checkbox" matCheckbox id="pinned" name="pinned" [(checked)]="this.data.node.fx || this.data.node.fy" color="primary" (click)="toggel();">
-    </div>
+<div style="float:right">
+
 </div>
+<!-- <div style="height: 100px"> -->
+
+  <h2><app-dev-icon [stone]="device | async"></app-dev-icon> {{this.data.node.name}}</h2>
+{{ this.mac }}
+<!-- </div> -->
+
+<table width="100%">
+  <thead>
+  <tr>
+    <td><b>Major</b></td>
+    <td><b>Minor</b></td>
+    <td><b>Last seen</b></td>
+    <td>  <a href="{{grafana_base + mac}}" target="_blank">
+      <img src="assets/svg/bar_chart.svg">
+    </a>
+    </td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>{{ ((device | async) || {}).major  }}</td>
+    <td>{{ ((device | async) || {}).minor}}</td>
+    <td>{{ ((device | async) || {}).timestamp }}</td>
+  </tr>
+  </tbody>
+</table>
+
+<table width="100%">
+  <tr>
+    <td><b>Device</b></td>
+    <td><b>Signal</b></td>
+    <td><b>Age</b></td>
+  </tr>
+  <tr *ngFor="let link of (aggregatedLinks | async)">
+    <td><app-dev-icon [stone]="link.rDev"></app-dev-icon> {{ link.name || link.rMac }}</td>
+    <td>{{ link.rssi}} dBm</td>
+    <td>{{ link.age()}}</td>
+  </tr>
+</table>
+
+<!--
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Contacts
+    </mat-panel-title>
+    <mat-panel-description>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+</mat-expansion-panel>
+-->
+

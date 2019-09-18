@@ -10,6 +10,5 @@ This file is part of fieldmon - (C) The Fieldtracks Project
  */
 
 export class AggregatedName {
-  name: string;
-  color: string;
+  name?: string;
 }

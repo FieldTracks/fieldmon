@@ -1,5 +1,5 @@
 export interface AggregatedDevice {
-  timestamp: Date;
+  timestamp?: Date;
   interval?: number;
   major?: number;
   minor?: number;

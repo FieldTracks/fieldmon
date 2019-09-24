@@ -162,8 +162,8 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     canvas.addEventListener('pointerdown', click);
     canvas.addEventListener('touchstart', click);
 
-    canvas.addEventListener('pointerup', this.startSimulation);
-    canvas.addEventListener('touchend', this.startSimulation);
+    canvas.addEventListener('pointerup', () => this.startSimulation(this));
+    canvas.addEventListener('touchend', () => this.startSimulation(this));
 
     window.addEventListener('resize', () => {
       console.log('Resizing to:', window.innerWidth, window.innerHeight - 75 );
@@ -185,7 +185,6 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
       .force('charge', d3.forceManyBody().strength(-0.125))
       .force('link', d3.forceLink().distance(() => 50)
         .strength((link) => {
-          // @ts-ignore
           const linkStrenght = Math.min(Math.pow(10, (link.value / 20) + 3 ), 1);
           return linkStrenght; }).id(function(node) { return node.id; }))
       .alphaTarget(0)
@@ -203,7 +202,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this.initGraph();
 
-    this.startSimulation();
+    this.startSimulation(this);
   }
 
   /**
@@ -375,7 +374,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           }
         }
       });
-      this.startSimulation();
+      this.startSimulation(this);
     }
 
     this.fixedNodes = map;
@@ -429,8 +428,8 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     return this.nodes.find((n) => n.id === mac);
   }
 
-  private startSimulation() {
-    this.endTime = Date.now() + this.simulationDuration;
+  private startSimulation(context) {
+    context.endTime = Date.now() + context.simulationDuration;
   }
 }
 

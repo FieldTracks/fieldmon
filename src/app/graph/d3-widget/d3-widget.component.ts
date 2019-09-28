@@ -35,7 +35,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
   private graphConfig: GraphConfig;
 
   links: D3Link[] = [];
-  readonly nodes: D3Node[] = [];
+  nodes: D3Node[] = [];
   readonly background: HTMLImageElement = new Image();
   readonly manualPositionChange = new Subject<D3Node>();
   fixedNodes = new Map<string, D3Node>(); // Holds *references* to nodes in this.nodes having fixed position
@@ -399,12 +399,13 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
   updateData(aggregatedGraph: AggregatedGraph, names: Map<string, string>) {
     const now = new Date().getTime();
     aggregatedGraph.nodes.forEach( (node) => {
-      if (!this.findNodeByMac(node.id) ) {
+      const d3Node = this.findNodeByMac(node.id);
+      if (!d3Node) {
         let fixedNode;
         if (this.fieldmonConfig.fixedNodes) {
           fixedNode = this.fieldmonConfig.fixedNodes.find(n => n.id === node.id);
         }
-        const newNode: D3Node = {name: names.get(node.id) || node.id, id: node.id, group: 1};
+        const newNode: D3Node = {name: names.get(node.id) || node.id, id: node.id, timestamp: node.timestamp, group: 1};
 
         if (fixedNode) {
           newNode.fixed = true;
@@ -412,12 +413,19 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           newNode.fy = fixedNode.fy;
         }
 
+        if (newNode.timestamp && now - newNode.timestamp.getTime() > this.fieldmonConfig.maxLinkAgeSeconds) {
+          return;
+        }
+
         this.nodes.push(newNode);
+      } else {
+        d3Node.timestamp = node.timestamp;
       }
     });
     this.links = [];
     aggregatedGraph.links.forEach( (link) => {
-    const isInPast = (now - link.timestamp.getTime() > 30000);
+    console.log(now, link.timestamp.getTime(), now - link.timestamp.getTime(), this.fieldmonConfig.maxLinkAgeSeconds);
+    const isInPast = (now - link.timestamp.getTime() > this.fieldmonConfig.maxLinkAgeSeconds);
     if (!isInPast) {
         this.links.push({source: this.findNodeByMac(link.source),
           target: this.findNodeByMac(link.target),
@@ -425,6 +433,10 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
         });
       }
     });
+    if (!this.graphConfig.showUnnamned) {
+      this.nodes = this.nodes.filter(node => node.id !== node.name);
+    }
+    this.nodes = this.nodes.filter(node => now - node.timestamp.getTime() <= this.fieldmonConfig.maxLinkAgeSeconds);
   }
 
   private findNodeByMac(mac: string): D3Node {
@@ -451,4 +463,5 @@ export interface D3Node {
   fx?: number;
   fy?: number;
   fixed?: boolean;
+  timestamp?: Date;
 }

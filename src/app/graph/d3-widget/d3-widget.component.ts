@@ -437,6 +437,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
       this.nodes = this.nodes.filter(node => node.id !== node.name);
     }
     this.nodes = this.nodes.filter(node => now - node.timestamp.getTime() <= this.fieldmonConfig.maxLinkAgeSeconds);
+    this.links = this.links.filter(link => this.findNodeByMac(link.source.id) || this.findNodeByMac(link.target.id));
   }
 
   private findNodeByMac(mac: string): D3Node {

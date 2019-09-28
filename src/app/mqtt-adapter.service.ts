@@ -144,7 +144,7 @@ export class MqttAdapterService {
       // Build node database
       for (const mac in stoneMap) {
         if (mac) {
-          nodeMap.set(mac, {id: mac});
+          nodeMap.set(mac, {id: mac, timestamp: new Date(stoneMap[mac].timestamp)});
           stoneMap[mac].contacts.forEach( (contact) => {
             nodeMap.set(contact.mac, {id: contact.mac});
           });

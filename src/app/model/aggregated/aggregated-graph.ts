@@ -4,6 +4,7 @@ export interface AggregatedGraph {
 }
 export interface AggregatedGraphNode {
   id: string;
+  timestamp?: Date;
 }
 export interface AggregatedGraphLink {
   source: string;

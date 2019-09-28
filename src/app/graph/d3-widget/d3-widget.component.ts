@@ -400,7 +400,10 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     const now = new Date().getTime();
     aggregatedGraph.nodes.forEach( (node) => {
       if (!this.findNodeByMac(node.id) ) {
-        const fixedNode = this.fieldmonConfig.fixedNodes.find(n => n.id === node.id);
+        let fixedNode;
+        if (this.fieldmonConfig.fixedNodes) {
+          fixedNode = this.fieldmonConfig.fixedNodes.find(n => n.id === node.id);
+        }
         const newNode: D3Node = {name: names.get(node.id) || node.id, id: node.id, group: 1};
 
         if (fixedNode) {

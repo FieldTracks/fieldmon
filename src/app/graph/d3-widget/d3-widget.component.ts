@@ -113,7 +113,6 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this.graphConfigSubscription = this.graphConfigService.currentConfig.subscribe( (grc) => {
       this.graphConfig = grc;
-      // TODO: Parse config
     });
 
     this.configSubscription = this.configService.currentConfiguration().subscribe( (fmc) => {
@@ -433,11 +432,15 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
         });
       }
     });
+    console.log('My nodes are', this.nodes);
     if (!this.graphConfig.showUnnamned) {
+      console.log('not show unnamed');
       this.nodes = this.nodes.filter(node => node.id !== node.name);
     }
-    this.nodes = this.nodes.filter(node => now - node.timestamp.getTime() <= this.fieldmonConfig.maxLinkAgeSeconds);
+
+    this.nodes = this.nodes.filter(node => (!node.timestamp || now - node.timestamp.getTime() <= this.fieldmonConfig.maxLinkAgeSeconds));
     this.links = this.links.filter(link => this.findNodeByMac(link.source.id) || this.findNodeByMac(link.target.id));
+    this.startSimulation(this);
   }
 
   private findNodeByMac(mac: string): D3Node {

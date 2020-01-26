@@ -1,8 +1,8 @@
-import { D3Node } from "src/app/graph/d3-widget/d3-widget.component";
+import {D3Node, FixedNode} from 'src/app/graph/d3-widget/d3-widget.component';
 
 export interface FieldmonConfig {
   backgroundImage?: string;
-  fixedNodes?: D3Node[];
+  fixedNodes?: FixedNode[];
   minRssi?: number;
   maxLinkAgeSeconds?: number;
 }

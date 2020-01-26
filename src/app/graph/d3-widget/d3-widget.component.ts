@@ -345,7 +345,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
 
   onLocalNodeChange(node: D3Node) {
     if (node.fixed) {
-      this.fixedNodes.set(node.id, node);
+      this.fixedNodes.set(node.id, {group: node.group, name: node.name, id: node.id, fx: node.fx, fy: node.fy, fixed: true});
     } else {
       this.fixedNodes.delete(node.id);
     }
@@ -361,6 +361,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           map.set(value.id, value);
 
           let localNode = this.fixedNodes.get(value.id);
+          console.log('Local node is a fixed node', value.id)
 
           if (!localNode) {
             localNode = this.findNodeByMac(value.id);
@@ -422,6 +423,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
         });
       }
     });
+    this.startSimulation(this);
   }
 
   private findNodeByMac(mac: string): D3Node {

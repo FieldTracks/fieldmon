@@ -48,7 +48,7 @@ export class NamesComponent implements OnInit, OnDestroy, FmComponent {
               private headerBarService: HeaderBarService,
               private stoneService: StoneService) { }
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   ngOnInit() {
     this.headerBarService.refreshEnabled(true);

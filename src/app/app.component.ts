@@ -17,7 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   searchString: string;
 
-  @ViewChild('searchInput', { static: false }) searchField: ElementRef;
+  @ViewChild('searchInput') searchField: ElementRef;
 
   private menu: MatMenu;
 

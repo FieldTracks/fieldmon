@@ -9,7 +9,7 @@ import {AggregatedStone} from '../model/aggregated/aggregated-stone';
 import {map, startWith} from 'rxjs/operators';
 import {AggregatedDevice} from '../model/aggregated/aggregated-devices';
 import {environment} from '../../environments/environment';
-import {MatCheckboxChange} from '@angular/material';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import {AggregatedGraph, AggregatedGraphLink} from '../model/aggregated/aggregated-graph';
 import {ageC} from '../helpers/age-helper';
 // [style.width.px]="this.data.width * 0.8"

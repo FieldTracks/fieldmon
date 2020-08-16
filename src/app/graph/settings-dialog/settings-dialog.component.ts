@@ -3,7 +3,7 @@ import {Form, FormControl, FormGroup} from '@angular/forms';
 import {ConfigService} from '../../config.service';
 import {Subscription} from 'rxjs';
 import {FieldmonConfig} from '../../model/configuration/fieldmon-config';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-settings-dialog',

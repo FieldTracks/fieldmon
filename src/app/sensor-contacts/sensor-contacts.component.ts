@@ -37,8 +37,8 @@ export class SensorContactsComponent implements OnInit, OnDestroy, FmComponent {
 
   constructor(private mqttAdapter: MqttAdapterService, private titleService: HeaderBarService, private stoneService: StoneService) { }
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   ngOnInit() {
     this.datasource = new MatTableDataSource(this.contacts);
     this.datasource.sort = this.sort;

@@ -65,3 +65,10 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+(window as any).global = window; // https://github.com/angular/angular-cli/issues/8160#issuecomment-386153833
+// @ts-ignore
+window.Buffer = window.Buffer || require('buffer').Buffer; // https://github.com/agoncal/swagger-ui-angular6/issues/2
+
+// https://stackoverflow.com/questions/50313745/angular-6-process-is-not-defined-when-trying-to-serve-application
+import * as process from 'process';
+window['process'] = process;

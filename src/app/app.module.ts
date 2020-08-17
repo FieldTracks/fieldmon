@@ -80,10 +80,10 @@ import { DevIconComponent } from './shared/dev-icon/dev-icon.component';
 export class AppModule {
 
 
-  constructor(mqttService: MqttAdapterService, graphConfigService: GraphConfigService) {
-    registerLocaleData(localeDe, 'de');
+ // constructor(mqttService: MqttAdapterService, graphConfigService: GraphConfigService) {
+ //   registerLocaleData(localeDe, 'de');
 
-  }
+  // }
 
 
 }

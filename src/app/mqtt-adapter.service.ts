@@ -13,6 +13,7 @@ import { AggregatedName } from './model/aggregated/aggregated-name';
 import {AggregatedDevice} from './model/aggregated/aggregated-devices';
 import {FieldmonConfig} from './model/configuration/fieldmon-config';
 import {StoneStatus} from './model/stone-status';
+import {LoginService} from './login.service';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: environment.mqtt_broker,
@@ -24,59 +25,37 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
 @Injectable({
   providedIn: 'root',
 })
-export class MqttAdapterService {
+export class MqttAdapterService implements OnDestroy {
 
   private mqttService: MqttService = new MqttService(MQTT_SERVICE_OPTIONS);
   private loginSubscript: Subscription;
 
-  authChange = new BehaviorSubject<boolean>(false);
-
-
-  constructor(private router: Router) {
-    if (sessionStorage.getItem('username') !== null && sessionStorage.getItem('password') !== null) {
-      this.login(sessionStorage.getItem('username'), sessionStorage.getItem('password'));
-    }
+  constructor(private router: Router, private loginService: LoginService) {
+    MQTT_SERVICE_OPTIONS.password = 'jwt';
+    this.loginSubscript = loginService.token().subscribe( (v) => this.credential_update(v));
   }
 
-  public login(username: string, password: string): BehaviorSubject<MqttConnectionState> {
-    sessionStorage.setItem('username', username);
-    sessionStorage.setItem('password', password);
-
-    MQTT_SERVICE_OPTIONS.username = sessionStorage.getItem('username');
-    MQTT_SERVICE_OPTIONS.password = sessionStorage.getItem('password');
-
+  credential_update(token: string) {
+    MQTT_SERVICE_OPTIONS.username = token;
     try {
       this.mqttService.disconnect();
-    } catch (err) {
-      // Ignore error - we just disconnect.
+    } catch (e) {
+      // Ingore errors when disconnecting
     }
-    console.log('Connecting', MQTT_SERVICE_OPTIONS.hostname, MQTT_SERVICE_OPTIONS.port, MQTT_SERVICE_OPTIONS.protocol, MQTT_SERVICE_OPTIONS.username);
 
-    this.loginSubscript = this.mqttService.state.subscribe((status) => {
-      if (status === MqttConnectionState.CONNECTED) {
-        this.authChange.next(true);
-        if (this.loginSubscript) {
-          this.loginSubscript.unsubscribe();
-        }
-      } else if (status === MqttConnectionState.CLOSED) {
-        this.authChange.next(false);
-        if (this.loginSubscript) {
-          this.loginSubscript.unsubscribe();
-        }
-      }
-    });
-    this.mqttService.connect(MQTT_SERVICE_OPTIONS);
+    finally {
+      this.mqttService.connect(MQTT_SERVICE_OPTIONS);
 
-    return this.mqttService.state;
-  }
-
-  public logout(): void {
-    sessionStorage.setItem('username', '');
-    sessionStorage.setItem('password', '');
-    this.mqttService.disconnect();
-    this.authChange.next(false);
+    }
 
   }
+
+  ngOnDestroy(): void {
+       if (this.loginSubscript) {
+         this.loginSubscript.unsubscribe();
+       }
+    }
+
 
   public publishName(mac: String, name: String): void {
     this.mqttService.publish('NameUpdate', JSON.stringify({
@@ -113,7 +92,7 @@ export class MqttAdapterService {
   }
 
   public statusSubject(mac: string): Observable<StoneStatus> {
-    console.log(`Topic: JellingStoneStatus/${mac}`)
+    console.log(`Topic: JellingStoneStatus/${mac}`);
     return this.mqttService.observe(`JellingStoneStatus/${mac}`).pipe(map(
       (message: IMqttMessage) => {
         return JSON.parse(message.payload.toString());

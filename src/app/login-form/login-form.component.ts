@@ -16,57 +16,42 @@ import {Router} from '@angular/router';
 import {BehaviorSubject, Subscription} from 'rxjs';
 import {MqttConnectionState} from 'ngx-mqtt';
 import {HeaderBarService} from '../header-bar.service';
+import {LoginService} from '../login.service';
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
-export class LoginFormComponent implements OnInit, OnDestroy {
+export class LoginFormComponent implements OnInit {
   broker: String;
 
   username: string;
   password: string;
 
   showSpinner: Boolean;
-  private subs: Subscription;
   private connectionProblem: boolean;
 
 
-  constructor(private router: Router, private mqttService: MqttAdapterService, private titleService: HeaderBarService) {
+  constructor(private router: Router, private loginService: LoginService, private titleService: HeaderBarService) {
   }
 
   ngOnInit() {
     this.titleService.currentConfiguration.next({sectionTitle: 'Login'});
-    this.broker = environment.mqtt_broker;
     this.showSpinner = false;
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribe();
-  }
 
   login() {
     this.showSpinner = true;
-    const subj = this.mqttService.login(this.username, this.password);
-    this.subs = subj.subscribe( (state) => {
-      if (state === MqttConnectionState.CLOSED) {
-        this.showSpinner = false;
+    this.loginService.login(this.username, this.password).subscribe(
+      () => this.router.navigate(['/stone-overview']),
+      (e) => {
+        console.log('Error: ', e);
         this.connectionProblem = true;
-        this.unsubscribe();
-      } else if (state === MqttConnectionState.CONNECTING) {
-        this.showSpinner = true;
-        this.connectionProblem = false;
-      } else if (state === MqttConnectionState.CONNECTED) {
-        this.router.navigateByUrl('/stone-overview');
-        this.unsubscribe();
+        this.showSpinner = false;
       }
-    });
+    );
   }
 
-  private unsubscribe() {
-    if (this.subs) {
-      this.subs.unsubscribe();
-    }
-  }
 }

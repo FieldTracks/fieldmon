@@ -171,7 +171,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "fieldmon:build"
+            "browserTarget": "fieldmon:build",
+            "proxyConfig": "src/environments/proxy.docker.json"
           },
           "configurations": {
             "production": {

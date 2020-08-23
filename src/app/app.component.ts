@@ -3,6 +3,8 @@ import {Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterContentInit} f
 import { HeaderBarService } from './header-bar.service';
 import {FmComponent} from './helpers/fm-component';
 import { MatMenu } from '@angular/material/menu';
+import {LoginService} from './login.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +23,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private menu: MatMenu;
 
-  constructor(private headerBarService: HeaderBarService) { }
+  constructor(private headerBarService: HeaderBarService, private loginService: LoginService, private router: Router) {
+    if (loginService.isLoggedOut()) {
+      this.router.navigate(['login']);
+    }
+
+  }
 
   public updateSearch(): void {
     setTimeout(() => {  // Timeout for better UX

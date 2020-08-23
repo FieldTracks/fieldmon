@@ -31,7 +31,6 @@ import { NamesDialogComponent } from './names/names-dialog';
 import { NodeInfoComponent } from './graph/nodeinfo';
 import {FileUploadDialogComponent} from './graph/file-upload-dialog.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {HttpAuthInterceptor} from './helpers/http-auth-interceptor';
 import {SettingsDialogComponent} from './graph/settings-dialog/settings-dialog.component';
 import { D3WidgetComponent } from './graph/d3-widget/d3-widget.component';
 import {GraphConfigService} from './graph-config.service';
@@ -39,6 +38,7 @@ import {registerLocaleData} from '@angular/common';
 
 import localeDe from '@angular/common/locales/de';
 import { DevIconComponent } from './shared/dev-icon/dev-icon.component';
+import {AuthInterceptor} from './login.service';
 
 @NgModule({
   declarations: [
@@ -72,7 +72,7 @@ import { DevIconComponent } from './shared/dev-icon/dev-icon.component';
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS)
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
   entryComponents: [NamesDialogComponent, NodeInfoComponent, FileUploadDialogComponent, SettingsDialogComponent]

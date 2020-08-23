@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MqttAdapterService } from '../../mqtt-adapter.service';
 import { Subscription } from 'rxjs';
+import {LoginService} from '../../login.service';
 
 @Component({
   selector: 'app-sidenav-list',
@@ -16,7 +17,7 @@ export class SidenavListComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(private mqttService: MqttAdapterService) { }
+  constructor(private loginService: LoginService) { }
 
   ngOnDestroy() {
     if (this.subscription) {
@@ -25,8 +26,9 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription = this.mqttService.authChange.subscribe( (loggedIn) => {
-      this.isAuth = loggedIn;
+    this.subscription = this.loginService.tokenSubject.subscribe( (loggedIn) => {
+      console.log("Is logged in? ",this.loginService.isLoggedIn())
+      this.isAuth = this.loginService.isLoggedIn();
     });
   }
 
@@ -36,8 +38,8 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-      this.mqttService.logout();
-      this.sidebarTooggle.emit();
+    this.loginService.logout();
+    this.sidebarTooggle.emit();
       sessionStorage.removeItem('password');
       sessionStorage.removeItem('username');
   }

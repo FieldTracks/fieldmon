@@ -18,13 +18,18 @@ export class LoginService {
   }
 
   login(email: string, password: string ) {
+    console.log('Logging in ...');
     const encoder = new HttpUrlEncodingCodec();
     const options = {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     };
 
+    console.log('Login:', email);
     return this.http.post('/api/login', 'user=' + encoder.encodeValue(email) + '&password=' + encoder.encodeValue(password) , options).pipe(
-      tap((res) => {this.setSession(res); })
+      tap((res) => {
+        console.log('Login-Result', res);
+        this.setSession(res); }
+       )
     );
   }
 

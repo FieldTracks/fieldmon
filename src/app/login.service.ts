@@ -10,7 +10,7 @@ import * as jwt_decode from 'jwt-decode';
 })
 export class LoginService {
 
-  tokenSubject = new BehaviorSubject<string>('token');
+  tokenSubject = new BehaviorSubject<string>(localStorage.getItem('id_token') || 'token');
   constructor(private http: HttpClient) {  }
 
   token(): BehaviorSubject<string> {
@@ -70,7 +70,7 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>,
             next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const idToken = this.loginService.tokenSubject.getValue();
+    const idToken = localStorage.getItem('id_token');
 
     if (idToken) {
       const cloned = req.clone({

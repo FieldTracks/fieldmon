@@ -361,7 +361,7 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
           map.set(value.id, value);
 
           let localNode = this.fixedNodes.get(value.id);
-          console.log('Local node is a fixed node', value.id)
+          console.log('Local node is a fixed node', value.id);
 
           if (!localNode) {
             localNode = this.findNodeByMac(value.id);
@@ -401,13 +401,17 @@ export class D3WidgetComponent implements OnInit, AfterContentInit, OnDestroy {
     const now = new Date().getTime();
     aggregatedGraph.nodes.forEach( (node) => {
       if (!this.findNodeByMac(node.id) ) {
-        const fixedNode = this.fieldmonConfig.fixedNodes.find(n => n.id === node.id);
         const newNode: D3Node = {name: names.get(node.id) || node.id, id: node.id, group: 1};
 
-        if (fixedNode) {
-          newNode.fixed = true;
-          newNode.fx = fixedNode.fx;
-          newNode.fy = fixedNode.fy;
+        if (this.fieldmonConfig.fixedNodes) {
+          const fixedNode = this.fieldmonConfig.fixedNodes.find(n => n.id === node.id);
+
+          if (fixedNode) {
+            newNode.fixed = true;
+            newNode.fx = fixedNode.fx;
+            newNode.fy = fixedNode.fy;
+          }
+
         }
 
         this.nodes.push(newNode);
